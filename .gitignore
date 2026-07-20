@@ -13,3 +13,8 @@ __pycache__/
 .mypy_cache/
 
 assets/pet/runtime/*-preview.png
+
+# Large 3D models and animation files (untracked, local only)
+assets/Miyabi/
+assets/Cat/
+assets/mixamo/
