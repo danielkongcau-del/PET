@@ -109,7 +109,7 @@ Decoder: d_model → (10 四元数 + Vec3 root + 5 面部)
 ```
 CausalMotionTransformer
 ├── Input Projection: Linear(48, 256)
-├── Learned Positional Encoding: [20, 256]
+├── Learned Positional Encoding: [21, 256]  (positions 0..20)
 ├── Transformer Blocks × 6
 │   ├── Causal Self-Attention (n_heads=8, d_head=32)
 │   ├── MLP (dim_feedforward=1024, GELU)
@@ -174,12 +174,21 @@ def bone_length_loss(pred_joints, skeleton):
 
 ### 5.3 速度平滑损失
 
+对相邻帧的四元数计算测地线角速度，惩罚加速度（jerk）:
+
 ```python
-def velocity_smoothness_loss(poses):
-    # poses: [B, H, 10, 4] — quaternion deltas over time
-    vel = poses[:, 1:] - poses[:, :-1]
-    acc = vel[:, 1:] - vel[:, :-1]
-    return acc.pow(2).mean()  # minimize jerk
+def quat_angular_velocity(q_prev, q_curr, dt):
+    # q_diff = q_curr * inverse(q_prev)
+    q_diff = quat_mul(q_curr, quat_conj(q_prev))
+    # Angular velocity magnitude = 2 * acos(|qw|) / dt
+    angle = 2 * torch.acos(torch.clamp(q_diff[..., 3:4].abs(), -1, 1))
+    return angle / max(dt, 0.001)
+
+def velocity_smoothness_loss(poses, dt):
+    # poses: [B, H, 10, 4] — quaternion deltas
+    vel = quat_angular_velocity(poses[:, :-1], poses[:, 1:], dt)  # [B, H-1, 10, 1]
+    acc = vel[:, 1:] - vel[:, :-1]                                 # [B, H-2, 10, 1]
+    return acc.pow(2).mean()  # minimize angular jerk
 ```
 
 ### 5.4 总损失

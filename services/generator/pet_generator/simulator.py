@@ -481,7 +481,18 @@ class DesktopSimulator:
     def _encode_world_state(self, world: WorldState) -> dict[str, Any]:
         """Encode WorldState into the 48-dim feature vector expected by the model."""
         pet = world.pet
-        # Pet state (12 dims)
+        # Pet state (12 dims: §3.1)
+        # surface_id hash (4 dims): one-hot of 16 buckets
+        surf_hash = [0.0] * 4
+        if pet.surface_id:
+            h = hash(pet.surface_id) & 0xF
+            surf_hash[h >> 2] = 1.0  # 4 buckets, simplified from 16 one-hot
+        # current surface y-diff (1 dim)
+        surf_y_diff = 0.0
+        if pet.surface_id:
+            surf = next((s for s in world.surfaces if s.id == pet.surface_id), None)
+            if surf:
+                surf_y_diff = (pet.foot_y - surf.y) / 100.0
         pet_feats = {
             "foot_x": pet.foot_x / 2000.0,
             "foot_y": pet.foot_y / 2000.0,
@@ -491,6 +502,9 @@ class DesktopSimulator:
             "behavior": {"idle": 0, "walk": 1, "jump": 2, "click_reaction": 3,
                           "falling": 4, "landing": 5, "hidden": 6, "fallback": 7}.get(pet.behavior, 0),
             "on_surface": 1.0 if pet.surface_id else 0.0,
+            "surf_hash_0": surf_hash[0], "surf_hash_1": surf_hash[1],
+            "surf_hash_2": surf_hash[2], "surf_hash_3": surf_hash[3],
+            "surf_y_diff": surf_y_diff,
         }
         # Nearest 4 surfaces (5 dims each)
         usable = [s for s in world.surfaces if s.enabled and not s.occluded]
@@ -510,27 +524,34 @@ class DesktopSimulator:
                 pet_feats[f"{prefix}_x2_rel"] = 0.0
                 pet_feats[f"{prefix}_kind"] = 0.0
                 pet_feats[f"{prefix}_width"] = 0.0
-        # Cursor (4 dims)
+        # Cursor (4 dims: §3.3)
         if world.cursor:
             pet_feats["cur_x"] = (world.cursor.x - pet.foot_x) / 200.0
             pet_feats["cur_y"] = (world.cursor.y - pet.foot_y) / 200.0
-            pet_feats["cur_over"] = 1.0 if world.cursor.left_down else 0.0  # simplified
+            pet_feats["cur_over"] = 0.0  # simulator has no hit-test; always 0
             pet_feats["cur_down"] = 1.0 if world.cursor.left_down else 0.0
         else:
             pet_feats["cur_x"] = pet_feats["cur_y"] = pet_feats["cur_over"] = pet_feats["cur_down"] = 0.0
-        # Click (4 dims)
+        # Click (4 dims: §3.3)
         if world.clicks:
             c = world.clicks[-1]
-            pet_feats["click_pending"] = 1.0
+            pending = min(len(world.clicks), 3)
+            pet_feats["click_pending"] = pending / 3.0
             pet_feats["click_age"] = min((world.timestamp_ms - c.timestamp_ms) / 500.0, 1.0)
             pet_feats["click_x"] = (c.x - pet.foot_x) / 200.0
             pet_feats["click_y"] = (c.y - pet.foot_y) / 200.0
         else:
             pet_feats["click_pending"] = pet_feats["click_age"] = pet_feats["click_x"] = pet_feats["click_y"] = 0.0
-        # Scene (4 dims)
+        # Scene (4 dims: §3.4)
         pet_feats["pet_allowed"] = 1.0 if world.scene.pet_allowed else 0.0
         pet_feats["fullscreen"] = 1.0 if world.scene.fullscreen_active else 0.0
+        pet_feats["gen_status"] = 1.0  # simulator always 'ready'
         pet_feats["time_phase"] = math.sin(world.timestamp_ms / 1000.0)
+        # Behavior goal (4 dims: §3.5) — placeholder; training loop fills from teacher
+        pet_feats["goal_behavior_0"] = 0.0
+        pet_feats["goal_behavior_1"] = 0.0
+        pet_feats["goal_behavior_2"] = 0.0
+        pet_feats["goal_surface_y"] = 0.0
         return pet_feats
 
     def _encode_plan_point(self, point: Any) -> dict[str, Any]:
