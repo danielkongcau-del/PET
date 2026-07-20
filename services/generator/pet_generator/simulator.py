@@ -316,9 +316,11 @@ class DesktopSimulator:
     # ── Physics tick ──────────────────────────────────────────────────
 
     def _apply_plan_point(
-        self, dx: float, dy: float, dt_s: float = TICK_DT_S,
+        self, dx: float, dy: float, dt_s: float | None = None,
     ) -> None:
         """Apply a single plan-point offset to pet position."""
+        if dt_s is None:
+            dt_s = TICK_DT_S  # fresh lookup each call (not import-time default)
         target_x = self.pet.foot_x + dx
         target_y = self.pet.foot_y + dy
 
@@ -431,6 +433,7 @@ class DesktopSimulator:
 
         plan: MotionPlan | None = None
         plan_elapsed_ms = 0
+        surfaces_changed = False
 
         while self.time_ms < cfg.duration_ms:
             self.time_ms += PLAN_DT_MS
@@ -440,6 +443,7 @@ class DesktopSimulator:
             if episode_rng.random() < cfg.window_move_probability:
                 self._random_window_move(episode_rng)
                 self.surfaces = _generate_surfaces(self.displays, self.windows)
+                surfaces_changed = True
             if episode_rng.random() < cfg.click_probability:
                 self.clicks.append(ClickState(
                     id=f"click-{self.time_ms}",
@@ -452,12 +456,13 @@ class DesktopSimulator:
 
             world = self._build_world_state()
 
-            # Regenerate plan when none exists, expired, or topology changed
+            # Regenerate plan when none exists, expired, topology changed, or clicks arrive
             if (plan is None or plan_elapsed_ms >= plan.valid_until_ms - plan.generated_at_ms
-                    or self.clicks):
+                    or surfaces_changed or self.clicks):
                 plan_seed = episode_rng.randint(0, 2**31 - 1)
                 plan = backend.generate(world, plan_seed, self.time_ms)
                 plan_elapsed_ms = 0
+                surfaces_changed = False
 
             # Sample plan at current elapsed time
             point = self._sample_plan_at(plan, plan_elapsed_ms) if plan else None
