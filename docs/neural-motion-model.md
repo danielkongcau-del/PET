@@ -53,11 +53,11 @@ Decoder: d_model → (11 四元数 + 4 motion + 5 面部) = 53 dims
 
 | 字段 | 维度 | 编码 |
 |---|---|---|
-| foot_x, foot_y (相对屏幕中心) | 2 | float, normalized by screen width |
+| foot_x, foot_y (normalized by screen width) | 2 | float, /2000 |
 | vx, vy | 2 | float, clipped to [-2000, 2000] then /2000 |
 | facing | 1 | -1 or 1 |
-| behavior | 1 | scalar: idle=0, walk=1, jump=2, click_reaction=3, falling=4, landing=5 |
-| current surface_id hash | 4 | one-hot of 16 hash buckets |
+| behavior | 1 | scalar: idle=0, walk=1, jump=2, click_reaction=3, falling=4, landing=5, hidden=6, fallback=7 |
+| current surface_id hash | 4 | one-hot of 4 hash buckets (FNV-1a deterministic) |
 | 是否在表面上 | 1 | 0 or 1 |
 | 当前表面 y 差值 | 1 | pet.foot_y - surface.y, /100 |
 
@@ -241,12 +241,10 @@ class NeuralMotionBackend(TorchMotionBackend):
         context = self.encoder.encode(world)  # [1, 8, 48]
         # 2. Autoregressive decode
         with torch.no_grad():
-            poses = self.model.generate(context)  # [1, 12, 48]
-        # 3. Convert to MotionPlan — derive dx/dy/vx/vy from root_translation deltas
+            poses = self.model.generate(context)  # [1, 12, 53]
+        # 3. Convert to MotionPlan — dx/dy/vx/vy from motion head
         points = []
-        prev_root = None
         for i in range(12):
-            q_start = i * 53
             quats_flat = poses[0, i, :44]
             quats = quats_flat.reshape(11, 4)
             quats = F.normalize(quats, dim=-1)
