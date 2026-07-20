@@ -241,10 +241,30 @@ class DesktopSimulator:
         self.windows = []
         for i in range(n_windows):
             d = self.rng.choice(self.displays)
-            w = self.rng.randint(cfg.window_min_w, cfg.window_max_w)
-            h = self.rng.randint(cfg.window_min_h, cfg.window_max_h)
-            x = self.rng.randint(int(d.work_x), int(d.work_x + d.work_width - w))
-            y = self.rng.randint(int(d.work_y + 48), int(d.work_y + d.work_height - h))
+            max_w = max(48, int(d.work_width) - 4)
+            max_h = max(48, int(d.work_height) - 52)  # 48 taskbar + 4 margin
+            w_min = min(cfg.window_min_w, max_w)
+            w_max = min(cfg.window_max_w, max_w)
+            h_min = min(cfg.window_min_h, max_h)
+            h_max = min(cfg.window_max_h, max_h)
+            if w_max < w_min:
+                w_max = w_min
+            if h_max < h_min:
+                h_max = h_min
+            w = self.rng.randint(w_min, w_max)
+            h = self.rng.randint(h_min, h_max)
+            x_max = int(d.work_x + d.work_width - w)
+            x_min = int(d.work_x)
+            if x_max <= x_min:
+                x = x_min
+            else:
+                x = self.rng.randint(x_min, x_max)
+            y_max = int(d.work_y + d.work_height - h)
+            y_min = int(d.work_y + 48)
+            if y_max <= y_min:
+                y = y_min
+            else:
+                y = self.rng.randint(y_min, y_max)
             self.windows.append(SimWindow(
                 win_id=i, display_id=d.id, x=x, y=y, width=w, height=h,
             ))
@@ -286,24 +306,14 @@ class DesktopSimulator:
 
     # ── Physics tick ──────────────────────────────────────────────────
 
-    def _apply_plan_to_pet(
-        self, plan: MotionPlan, dt_s: float = TICK_DT_S,
+    def _apply_plan_point(
+        self, dx: float, dy: float, dt_s: float = TICK_DT_S,
     ) -> None:
-        """Advance pet position using the first point of a teacher plan.
+        """Apply a single plan-point offset to pet position."""
+        target_x = self.pet.foot_x + dx
+        target_y = self.pet.foot_y + dy
 
-        Mirrors motion-controller.ts #tick() plan-driven path:
-        limitStep → clampToWorkArea → findCrossedSurface → snap or apply.
-        NO gravity — the teacher's plan points already encode falling.
-        """
-        if not plan.points:
-            return
-        point = plan.points[0]
-        target_x = self.pet.foot_x + point.dx
-        target_y = self.pet.foot_y + point.dy
-
-        # limitStep: cap speed
-        dx = target_x - self.pet.foot_x
-        dy = target_y - self.pet.foot_y
+        # limitStep
         dist = math.hypot(dx, dy)
         max_dist = MAX_ROOT_SPEED * dt_s
         if dist > max_dist and dist > 0:
@@ -316,7 +326,7 @@ class DesktopSimulator:
         if display:
             target_x, target_y = _clamp_to_work_area(target_x, target_y, display)
 
-        # findCrossedSurface (landing detection)
+        # findCrossedSurface
         landed = _find_crossed_surface(
             self.pet.foot_x, self.pet.foot_y, target_x, target_y, self.surfaces,
         )
@@ -328,11 +338,20 @@ class DesktopSimulator:
         else:
             self.pet.foot_x = target_x
             self.pet.foot_y = target_y
-            # surfaceIdForMotionSample: keep current surface if still supported
             if self.pet.surface_id:
                 surf = next((s for s in self.surfaces if s.id == self.pet.surface_id), None)
                 if not (surf and _surface_supports_point(target_x, target_y, surf)):
                     self.pet.surface_id = None
+
+    def _sample_plan_at(self, plan: MotionPlan, elapsed_ms: int) -> Any:
+        """Find the plan point closest to elapsed_ms (no interpolation needed at 33ms ticks)."""
+        if not plan.points:
+            return None
+        # Linear search for the point at or just past elapsed_ms.
+        for p in plan.points:
+            if p.t_ms >= elapsed_ms:
+                return p
+        return plan.points[-1]  # past end: hold last point
 
     def _display_for_point(self, x: float, y: float) -> DisplayState | None:
         for d in self.displays:
@@ -388,7 +407,8 @@ class DesktopSimulator:
         # deterministic replay.
 
         world = self.reset(cfg)
-        backend.cancel()
+        self.session_id = f"sim-ep-{episode_seed:08x}"  # unique per episode
+        backend.cancel()  # reset planner state
         backend.configure_timing(PLAN_HORIZON_MS, PLAN_DT_MS)
         if not hasattr(backend, '_skeletal_3d') or not getattr(backend, '_skeletal_3d'):
             backend.set_skeletal_3d(True)
@@ -397,10 +417,11 @@ class DesktopSimulator:
         K = 8   # context frames
         H = 12  # horizon frames
 
-        # Collect all (condition, target) pairs during the episode first;
-        # then slice into aligned windows at the end.
         all_conds: list[dict[str, Any]] = []
         all_targs: list[dict[str, Any]] = []
+
+        plan: MotionPlan | None = None
+        plan_elapsed_ms = 0
 
         while self.time_ms < cfg.duration_ms:
             self.time_ms += PLAN_DT_MS
@@ -422,22 +443,33 @@ class DesktopSimulator:
 
             world = self._build_world_state()
 
-            # Teacher plan
-            plan_seed = episode_rng.randint(0, 2**31 - 1)
-            plan = backend.generate(world, plan_seed, self.time_ms)
+            # Regenerate plan when none exists, expired, or topology changed
+            if (plan is None or plan_elapsed_ms >= plan.valid_until_ms - plan.generated_at_ms
+                    or self.clicks):
+                plan_seed = episode_rng.randint(0, 2**31 - 1)
+                plan = backend.generate(world, plan_seed, self.time_ms)
+                plan_elapsed_ms = 0
+
+            # Sample plan at current elapsed time
+            point = self._sample_plan_at(plan, plan_elapsed_ms) if plan else None
 
             # Encode world state → condition
             all_conds.append(self._encode_world_state(world))
 
-            # Apply plan to advance simulation
-            self._apply_plan_to_pet(plan)
-
-            # Encode plan first-point → target
-            if plan.points:
-                all_targs.append(self._encode_plan_point(plan.points[0]))
+            # Apply the sampled point to advance simulation
+            if point:
+                self._apply_plan_point(point.dx, point.dy)
+                # Sync velocity/behavior from plan for next world state
+                self.pet.vx = point.vx
+                self.pet.vy = point.vy
+                if point.facing in (-1, 1):
+                    self.pet.facing = point.facing
+                # Encode plan point → target (ALL motion fields, not just skeletal)
+                all_targs.append(self._encode_plan_point_full(point))
             else:
-                all_targs.append(None)  # placeholder for skipped frames
+                all_targs.append(None)
 
+            plan_elapsed_ms += PLAN_DT_MS
             self.clicks = []
 
         # Slice into aligned (K context, H target) windows.
@@ -471,11 +503,15 @@ class DesktopSimulator:
         """Encode WorldState into the 48-dim feature vector expected by the model."""
         pet = world.pet
         # Pet state (12 dims: §3.1)
-        # surface_id hash (4 dims): one-hot of 16 buckets
+        # surface_id hash (4 dims): deterministic bucket from id string
         surf_hash = [0.0] * 4
         if pet.surface_id:
-            h = hash(pet.surface_id) & 0xF
-            surf_hash[h >> 2] = 1.0  # 4 buckets, simplified from 16 one-hot
+            # FNV-1a 32-bit hash — deterministic across processes.
+            h = 0x811c9dc5
+            for c in pet.surface_id:
+                h = ((h ^ ord(c)) * 0x01000193) & 0xFFFFFFFF
+            bucket = h & 0x3  # 4 buckets
+            surf_hash[bucket] = 1.0
         # current surface y-diff (1 dim)
         surf_y_diff = 0.0
         if pet.surface_id:
@@ -543,15 +579,15 @@ class DesktopSimulator:
         pet_feats["goal_surface_y"] = 0.0
         return pet_feats
 
-    def _encode_plan_point(self, point: Any) -> dict[str, Any]:
-        """Extract the 48-dim target vector from a MotionPoint."""
+    def _encode_plan_point_full(self, point: Any) -> dict[str, Any]:
+        """Extract ALL motion fields as training targets, not just skeletal placeholders."""
         p = point
         quats = []
         if p.local_rotation_deltas:
             for q in p.local_rotation_deltas:
                 quats.extend(q[:4])
         else:
-            quats = [0.0] * 40  # 10 quaternions × 4
+            quats = [0.0] * 40
         root = list(p.root_translation) if p.root_translation else [0.0, 0.0, 0.0]
         facial = [
             p.facial_params.get("eye_scale", 1.0) if p.facial_params else 1.0,
@@ -562,6 +598,15 @@ class DesktopSimulator:
         ]
         return {
             "t_ms": p.t_ms,
+            "dx": p.dx,
+            "dy": p.dy,
+            "vx": p.vx,
+            "vy": p.vy,
+            "facing": p.facing,
+            "lean": p.lean,
+            "squash": p.squash,
+            "bob": p.bob,
+            "expression": p.expression,
             "quaternions": quats,
             "root": root,
             "facial": facial,
