@@ -123,7 +123,10 @@ class AutoregressiveMotionBackend(MotionBackend):
 
     def set_skeletal_3d(self, enabled_3d: bool) -> None:
         """Called when 3D capability is specifically negotiated (not just 2D)."""
+        changed = self._skeletal_3d != enabled_3d
         self._skeletal_3d = enabled_3d
+        if changed and enabled_3d:
+            self._load_skeletal_metadata()  # reload with correct file
 
     def _load_skeletal_metadata(self) -> None:
         """Read the skeleton definition matching the negotiated capability."""

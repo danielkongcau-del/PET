@@ -296,8 +296,9 @@ class GeneratorService:
             host_caps = []
         skeletal_enabled = "skeletal_motion_3d_local_quat" in host_caps or "skeletal_motion" in host_caps
         skeletal_3d = "skeletal_motion_3d_local_quat" in host_caps
+        # set 3D flag first: _load_skeletal_metadata reads _skeletal_3d to pick cat-skeleton-3d.json
+        self.backend.set_skeletal_3d(skeletal_3d)
         self.backend.set_skeletal_enabled(skeletal_enabled)
-        self.backend.set_skeletal_3d(skeletal_3d)  # explicitly set both directions
         if not skeletal_enabled:
             LOGGER.info("Host does not advertise skeletal_motion; bone rotations will not be generated.")
 
