@@ -380,9 +380,18 @@ export class MotionController {
       expression = this.#generatorStatus === "ready" ? "neutral" : "sleepy";
       boneRotations = undefined;
       facialParams = undefined;
-      rootTranslation = undefined;
-      rootRotation = undefined;
-      localRotationDeltas = undefined;
+      // During fallback, hold the last skeletal pose so the FK renderer
+      // doesn't flicker back to whole-sprite mode.  rootTranslation stays
+      // at identity because dx/dy carries the world motion.
+      if (this.#modelDrivenCount > 0) {
+        rootTranslation = [0, 0, 0];
+        rootRotation = [0, 0, 0, 1];
+        localRotationDeltas = new Array<[number,number,number,number]>(this.#modelDrivenCount).fill([0, 0, 0, 1]);
+      } else {
+        rootTranslation = undefined;
+        rootRotation = undefined;
+        localRotationDeltas = undefined;
+      }
     }
 
     const clickAge = now - this.#clickFeedbackStartedAt;
