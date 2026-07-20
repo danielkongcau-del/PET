@@ -289,15 +289,19 @@ class DesktopSimulator:
     def _apply_plan_to_pet(
         self, plan: MotionPlan, dt_s: float = TICK_DT_S,
     ) -> None:
-        """Advance pet position using the first point(s) of a teacher plan."""
+        """Advance pet position using the first point of a teacher plan.
+
+        Mirrors motion-controller.ts #tick() plan-driven path:
+        limitStep → clampToWorkArea → findCrossedSurface → snap or apply.
+        NO gravity — the teacher's plan points already encode falling.
+        """
         if not plan.points:
             return
         point = plan.points[0]
-        # Absolute target position = current foot + plan offset
         target_x = self.pet.foot_x + point.dx
         target_y = self.pet.foot_y + point.dy
 
-        # Limit speed (mirror motion-controller.ts limitStep)
+        # limitStep: cap speed
         dx = target_x - self.pet.foot_x
         dy = target_y - self.pet.foot_y
         dist = math.hypot(dx, dy)
@@ -307,12 +311,12 @@ class DesktopSimulator:
             target_x = self.pet.foot_x + dx * scale
             target_y = self.pet.foot_y + dy * scale
 
-        # Work area clamp
+        # clampToWorkArea
         display = self._display_for_point(target_x, target_y)
         if display:
             target_x, target_y = _clamp_to_work_area(target_x, target_y, display)
 
-        # Detect landing
+        # findCrossedSurface (landing detection)
         landed = _find_crossed_surface(
             self.pet.foot_x, self.pet.foot_y, target_x, target_y, self.surfaces,
         )
@@ -321,34 +325,14 @@ class DesktopSimulator:
             self.pet.foot_y = landed.y
             self.pet.surface_id = landed.id
             self.pet.vy = 0.0
-            return
-
-        # Check surface support
-        support = _nearest_supporting_surface(target_x, target_y, self.surfaces)
-        if support:
-            self.pet.foot_x = target_x
-            self.pet.foot_y = support.y
-            self.pet.surface_id = support.id
-            self.pet.vy = 0.0
-            return
-
-        # No support — falling
-        self.pet.vy += GRAVITY * dt_s
-        target_y_fall = self.pet.foot_y + self.pet.vy * dt_s
-
-        # Check if falling crosses a surface
-        fall_landed = _find_crossed_surface(
-            self.pet.foot_x, self.pet.foot_y, target_x, target_y_fall, self.surfaces,
-        )
-        if fall_landed:
-            self.pet.foot_x = _clamp(target_x, fall_landed.x1, fall_landed.x2)
-            self.pet.foot_y = fall_landed.y
-            self.pet.surface_id = fall_landed.id
-            self.pet.vy = 0.0
         else:
             self.pet.foot_x = target_x
-            self.pet.foot_y = target_y_fall
-            self.pet.surface_id = None
+            self.pet.foot_y = target_y
+            # surfaceIdForMotionSample: keep current surface if still supported
+            if self.pet.surface_id:
+                surf = next((s for s in self.surfaces if s.id == self.pet.surface_id), None)
+                if not (surf and _surface_supports_point(target_x, target_y, surf)):
+                    self.pet.surface_id = None
 
     def _display_for_point(self, x: float, y: float) -> DisplayState | None:
         for d in self.displays:
@@ -391,10 +375,17 @@ class DesktopSimulator:
         config: ScenarioConfig | None = None,
         episode_seed: int = 0,
     ) -> list[TrainingSample]:
-        """Run one episode and collect training samples."""
+        """Run one episode and collect training samples.
+
+        Samples use overlapping sliding windows: K context frames (world
+        states at frames [i-K+1 .. i]) predict H target frames (plan
+        first-points at frames [i+1 .. i+H]).
+        """
         cfg = config or ScenarioConfig()
         episode_rng = random.Random(episode_seed)
         self.rng = random.Random(episode_rng.randint(0, 2**31 - 1))
+        # All random decisions within the episode use a single RNG for
+        # deterministic replay.
 
         world = self.reset(cfg)
         backend.cancel()
@@ -403,65 +394,63 @@ class DesktopSimulator:
             backend.set_skeletal_3d(True)
             backend.set_skeletal_enabled(True)
 
-        samples: list[TrainingSample] = []
-        condition_buffer: list[dict[str, Any]] = []
-        target_buffer: list[dict[str, Any]] = []
-
-        plan: MotionPlan | None = None
-        plan_consumed_ms = 0
-
         K = 8   # context frames
         H = 12  # horizon frames
+
+        # Collect all (condition, target) pairs during the episode first;
+        # then slice into aligned windows at the end.
+        all_conds: list[dict[str, Any]] = []
+        all_targs: list[dict[str, Any]] = []
 
         while self.time_ms < cfg.duration_ms:
             self.time_ms += PLAN_DT_MS
             self.seq += 1
 
             # Inject random events
-            if self.rng.random() < cfg.window_move_probability:
+            if episode_rng.random() < cfg.window_move_probability:
                 self._random_window_move(episode_rng)
                 self.surfaces = _generate_surfaces(self.displays, self.windows)
-            if self.rng.random() < cfg.click_probability:
+            if episode_rng.random() < cfg.click_probability:
                 self.clicks.append(ClickState(
                     id=f"click-{self.time_ms}",
-                    button=self.rng.choice(("left", "right", "middle")),
-                    x=self.pet.foot_x + self.rng.randint(-30, 30),
-                    y=self.pet.foot_y + self.rng.randint(-30, 30),
+                    button=episode_rng.choice(("left", "right", "middle")),
+                    x=self.pet.foot_x + episode_rng.randint(-30, 30),
+                    y=self.pet.foot_y + episode_rng.randint(-30, 30),
                     target="pet",
                     timestamp_ms=self.time_ms,
                 ))
 
             world = self._build_world_state()
 
-            # Get teacher plan
+            # Teacher plan
             plan_seed = episode_rng.randint(0, 2**31 - 1)
-            generated_at = self.time_ms
-            plan = backend.generate(world, plan_seed, generated_at)
-            plan_consumed_ms = 0
+            plan = backend.generate(world, plan_seed, self.time_ms)
 
-            # Encode condition frame
-            cond = self._encode_world_state(world)
-            condition_buffer.append(cond)
-            if len(condition_buffer) > K:
-                condition_buffer.pop(0)
+            # Encode world state → condition
+            all_conds.append(self._encode_world_state(world))
 
-            # Apply plan to pet
+            # Apply plan to advance simulation
             self._apply_plan_to_pet(plan)
 
-            # Collect target pose from plan's first point
+            # Encode plan first-point → target
             if plan.points:
-                target_buffer.append(self._encode_plan_point(plan.points[0]))
-                if len(target_buffer) >= H:
-                    if len(condition_buffer) >= K:
-                        samples.append(TrainingSample(
-                            condition_frames=list(condition_buffer),
-                            target_poses=list(target_buffer),
-                            metadata={"seed": episode_seed, "time_ms": self.time_ms},
-                        ))
-                    target_buffer = []
+                all_targs.append(self._encode_plan_point(plan.points[0]))
+            else:
+                all_targs.append(None)  # placeholder for skipped frames
 
-            # Clear consumed clicks
             self.clicks = []
+
+        # Slice into aligned (K context, H target) windows.
+        samples: list[TrainingSample] = []
+        for i in range(K - 1, len(all_conds) - H):
+            cond = all_conds[i - K + 1 : i + 1]  # K frames ending at i
+            targ = all_targs[i + 1 : i + 1 + H]  # H frames starting after i
+            if len(cond) == K and len(targ) == H and all(t is not None for t in targ):
+                samples.append(TrainingSample(
+                    condition_frames=cond,
+                    target_poses=targ,
+                    metadata={"seed": episode_seed, "time_ms": (i + 1) * PLAN_DT_MS},
+                ))
 
         return samples
 
