@@ -469,22 +469,50 @@ export class GeneratorBridge {
     }
   }
 
-  /** Loads and parses cat-skeleton-3d.json once, computing SHA-256 and model_driven joint metadata. */
+  /** Loads and parses the 3D skeleton once, computing SHA-256 and model_driven joint metadata. */
   async #loadSkeletalConfig(): Promise<SkeletalConfig> {
     if (this.#skeletalConfigLoaded) return this.#skeletalConfig;
     try {
-      const path = join(this.#options.projectRoot, "assets", "pet", "runtime", "cat-skeleton-3d.json");
+      const name = process.env.PET_SKELETON_3D ?? "cat-skeleton-3d.json";
+      const path = join(this.#options.projectRoot, "assets", "pet", "runtime", name);
       const raw = await readFile(path);
       const sha256 = createHash("sha256").update(raw).digest("hex");
       const parsed = JSON.parse(raw.toString("utf8")) as Record<string, unknown>;
 
+      if (parsed.schema !== "pet-rig-v2") throw new Error(`Unsupported skeleton schema: ${String(parsed.schema)}`);
+      const motionRoot = typeof parsed.motionRoot === "string" ? parsed.motionRoot : null;
+      if (!motionRoot) throw new Error("Skeleton missing motionRoot");
+
       const joints = Array.isArray(parsed.joints) ? parsed.joints as Record<string, unknown>[] : [];
+      if (joints.length < 2) throw new Error("Skeleton must have at least 2 joints");
+
+      const rootJoint = joints.find((j) => j.id === motionRoot);
+      if (!rootJoint) throw new Error(`motionRoot "${motionRoot}" not found`);
+      if (rootJoint.parent !== null) throw new Error("motionRoot parent must be null");
+      if (rootJoint.deform !== false) throw new Error("motionRoot deform must be false");
+
+      const ids = new Set<string>();
+      for (const j of joints) {
+        const id = typeof j.id === "string" ? j.id : "";
+        if (!id || ids.has(id)) throw new Error(`Duplicate or empty joint id: "${id}"`);
+        ids.add(id);
+      }
+      for (const j of joints) {
+        if (j.parent !== null && typeof j.parent === "string" && !ids.has(j.parent)) {
+          throw new Error(`Joint "${String(j.id)}" references missing parent "${j.parent}"`);
+        }
+      }
+
+      const drawOrder = Array.isArray(parsed.drawOrder) ? parsed.drawOrder as string[] : [];
+      for (const entry of drawOrder) {
+        if (!ids.has(entry)) throw new Error(`drawOrder entry "${entry}" is not a joint id`);
+      }
+
       const modelDrivenJointIds = joints
         .filter((j) => {
+          if (j.id === motionRoot) return false;
           const physics = j.physics as Record<string, unknown> | undefined;
           const poseDofs = j.poseDofs as Record<string, unknown> | undefined;
-          // Exclude __motion_root__ (parent===null, deform===false) and secondary-physics joints.
-          if (j.deform === false && j.parent === null) return false;
           if (physics?.mode === "secondary" || physics?.mode === "static") return false;
           return poseDofs?.rotation === true;
         })
@@ -498,9 +526,8 @@ export class GeneratorBridge {
         modelDrivenCount: modelDrivenJointIds.length,
       };
     } catch (error) {
-      debug("skeleton", "cat-skeleton-3d.json not available; 3D skeletal motion disabled", {
-        reason: error instanceof Error ? error.message : "unknown",
-      });
+      const message = error instanceof Error ? error.message : "unknown";
+      warn("skeleton", `Rig validation failed: ${message}; 3D skeletal motion disabled`);
     }
     this.#skeletalConfigLoaded = true;
     return this.#skeletalConfig;

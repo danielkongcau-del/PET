@@ -210,7 +210,8 @@ class FacialParams(TypedDict, total=False):
     brow_tilt: float
 
 
-class PlanPoint(TypedDict, total=False):
+class PlanPointRequired(TypedDict):
+    """Plan point fields that are always required."""
     t_ms: int
     dx: float
     dy: float
@@ -221,6 +222,10 @@ class PlanPoint(TypedDict, total=False):
     squash: float
     bob: float
     expression: str
+
+
+class PlanPoint(PlanPointRequired, total=False):
+    """Full plan point including optional skeletal pose fields."""
     bone_rotations: List[float]
     facial_params: FacialParams
     # ── 3D skeletal pose (v2) ──

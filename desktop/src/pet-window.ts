@@ -75,6 +75,7 @@ export class PetWindow {
   #rendererFailureCount = 0;
   #sceneAllowed = true;
   #disposed = false;
+  #lastSkeletalConfig: Record<string, unknown> | null = null;
 
   constructor(options: PetWindowOptions) {
     this.#options = options;
@@ -199,6 +200,7 @@ export class PetWindow {
 
   /** Send the skeleton definition to the renderer for FK rendering. Safe to call multiple times. */
   sendSkeletalConfig(config: Record<string, unknown> | null): void {
+    this.#lastSkeletalConfig = config;
     if (!this.#rendererReady || this.#window.isDestroyed() || this.#window.webContents.isDestroyed() || !config) return;
     this.#window.webContents.send("pet:skeletal-config", config);
   }
@@ -231,6 +233,8 @@ export class PetWindow {
       this.#rendererFailureCount = 0;
     }, RENDERER_STABLE_RESET_MS);
     this.#rendererStableTimer.unref?.();
+    // Re-send skeletal config after renderer reload to prevent stale null state.
+    if (this.#lastSkeletalConfig) this.sendSkeletalConfig(this.#lastSkeletalConfig);
     debug("pet.window", "renderer ready", { window_id: this.#window.id });
   };
 

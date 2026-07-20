@@ -20,7 +20,13 @@ let lastReportedHit = null;
 
 window.petHost.onState((next) => {
   if (!next || typeof next !== "object") return;
+  // Merge, but explicitly clear absent skeletal fields so a mode downgrade
+  // does not leave stale bone data from the previous frame.
   state = { ...state, ...next };
+  if (!("boneRotations" in next)) state.boneRotations = undefined;
+  if (!("rootTranslation" in next)) state.rootTranslation = undefined;
+  if (!("rootRotation" in next)) state.rootRotation = undefined;
+  if (!("localRotationDeltas" in next)) state.localRotationDeltas = undefined;
   document.documentElement.dataset.generator = String(state.generatorStatus || "stopped");
   document.documentElement.dataset.debug = state.debug === true ? "true" : "false";
   const spriteMetadata = readSpriteMetadata(state.assetParts);
