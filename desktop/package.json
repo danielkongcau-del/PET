@@ -1,0 +1,31 @@
+{
+  "name": "@pet/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Windows 11 Electron host for the generative PET prototype.",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/main.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.9.0",
+  "scripts": {
+    "build:deps": "pnpm --filter @pet/protocol build",
+    "build": "pnpm build:deps && tsc -p tsconfig.json",
+    "typecheck": "pnpm build:deps && tsc -p tsconfig.json --noEmit",
+    "test:build": "pnpm build:deps && tsc -p tsconfig.tests.json",
+    "test": "pnpm test:build && node --test .test-dist/tests/protocol.test.js .test-dist/tests/motion-safety.test.js .test-dist/tests/surfaces.test.js .test-dist/tests/renderer.test.js",
+    "check": "pnpm typecheck && pnpm test",
+    "dev": "pnpm build && electron ."
+  },
+  "dependencies": {
+    "@pet/protocol": "workspace:*",
+    "get-windows": "^9.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.0",
+    "electron": "^42.0.0",
+    "typescript": "^6.0.3"
+  }
+}

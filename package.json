@@ -1,0 +1,24 @@
+{
+  "name": "pet-workspace",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Locally generated Windows 11 pixel desktop pet.",
+  "license": "UNLICENSED",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:protocol": "pnpm --filter @pet/protocol build",
+    "dev": "pnpm build:protocol && pnpm --filter @pet/desktop dev",
+    "build": "pnpm build:protocol && pnpm --filter @pet/desktop build",
+    "typecheck": "pnpm build:protocol && pnpm --filter @pet/protocol typecheck && pnpm --filter @pet/desktop typecheck",
+    "test:desktop": "pnpm build:protocol && pnpm --filter @pet/desktop test",
+    "test:generator": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s services/generator/tests -t services/generator -p test_*.py -v",
+    "test:protocol": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tests/protocol -p test_*.py -v",
+    "test:integration": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tests/integration -p test_*.py -v",
+    "test:assets": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tools/assets -p test_*.py -v",
+    "test": "pnpm test:desktop && pnpm test:generator && pnpm test:protocol && pnpm test:integration && pnpm test:assets",
+    "check": "pnpm typecheck && pnpm test"
+  }
+}

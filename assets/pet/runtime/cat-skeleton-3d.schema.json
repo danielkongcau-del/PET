@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pet.local/schemas/v2/cat-skeleton-3d.schema.json",
+  "title": "PET 3D Rig Definition v2",
+  "description": "Defines a 3D skeleton with explicit motion_root, restLocal transforms, and per-joint pose degrees of freedom.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "coordinateSystem", "motionRoot", "joints", "drawOrder"],
+  "properties": {
+    "schema": { "const": "pet-rig-v2" },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handedness", "up", "forward"],
+      "properties": {
+        "handedness": { "enum": ["right", "left"] },
+        "up": { "enum": ["+Y", "-Y", "+Z", "-Z"] },
+        "forward": { "enum": ["+X", "-X", "+Y", "-Y", "+Z", "-Z"] }
+      }
+    },
+    "motionRoot": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "ID of the virtual motion root joint."
+    },
+    "canvas": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": { "type": "integer", "minimum": 16, "maximum": 512 }
+    },
+    "displayScale": { "type": "integer", "minimum": 1, "maximum": 8 },
+    "sourceFacing": { "enum": [-1, 1] },
+    "facialDefaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "eyePosition": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } },
+        "mouthPosition": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "number" } }
+      }
+    },
+    "joints": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 128,
+      "items": { "$ref": "#/$defs/joint" }
+    },
+    "drawOrder": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": { "type": "string", "minLength": 1, "maxLength": 64 }
+    }
+  },
+  "$defs": {
+    "vec3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "quat": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number", "minimum": -1, "maximum": 1 }
+    },
+    "poseDofs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["translation", "rotation", "scale"],
+      "properties": {
+        "translation": { "type": "boolean" },
+        "rotation": { "type": "boolean" },
+        "scale": { "type": "boolean" }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rotation": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": { "type": "number" },
+          "description": "Per-axis rotation limits. 2 values = Z-only (planar). 6 values = [xMin, xMax, yMin, yMax, zMin, zMax]."
+        }
+      }
+    },
+    "physics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["model_driven", "secondary", "static"] },
+        "damping": { "type": "number", "minimum": 0, "maximum": 1 },
+        "stiffness": { "type": "number", "minimum": 0, "maximum": 1 },
+        "inertiaFactor": { "type": "number", "minimum": 0, "maximum": 2 }
+      }
+    },
+    "joint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "parent", "restLocal", "poseDofs"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z_][a-z0-9_]*$" },
+        "name": { "type": "string", "maxLength": 128 },
+        "parent": {
+          "oneOf": [ { "type": "null" }, { "type": "string", "minLength": 1 } ]
+        },
+        "role": { "type": "string", "maxLength": 32 },
+        "deform": { "type": "boolean" },
+        "restLocal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["translation", "rotation", "scale"],
+          "properties": {
+            "translation": { "$ref": "#/$defs/vec3" },
+            "rotation": { "$ref": "#/$defs/quat" },
+            "scale": { "$ref": "#/$defs/vec3" }
+          }
+        },
+        "poseDofs": { "$ref": "#/$defs/poseDofs" },
+        "limits": { "$ref": "#/$defs/limits" },
+        "physics": { "$ref": "#/$defs/physics" },
+        "sprite": {
+          "oneOf": [ { "type": "string", "maxLength": 64 }, { "type": "null" } ]
+        }
+      }
+    }
+  }
+}

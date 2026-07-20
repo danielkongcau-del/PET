@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pet-motion-protocol"
+version = "1.0.0"
+description = "Shared Python types and NDJSON codec for PET Motion Protocol v1"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+test = ["jsonschema>=4.20,<5"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pet_protocol*"]

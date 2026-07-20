@@ -1,0 +1,15 @@
+node_modules/
+.pnpm-store/
+dist/
+.test-dist/
+*.log
+
+data/recordings/
+data/reports/
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+assets/pet/runtime/*-preview.png

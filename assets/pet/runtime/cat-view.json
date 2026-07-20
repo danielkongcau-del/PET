@@ -1,0 +1,9 @@
+{
+  "schema": "pet-view-v1",
+  "projection": "orthographic",
+  "pitchDeg": 0,
+  "yawOffsetDeg": 0,
+  "orthoScale": 1.0,
+  "depthMode": "layered",
+  "depthHysteresisThreshold": 0.5
+}

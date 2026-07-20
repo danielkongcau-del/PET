@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pet-generator"
+version = "0.1.0"
+description = "Realtime motion generator sidecar for PET"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+pet-generator = "pet_generator.cli:main"
+
+[tool.setuptools]
+packages = ["pet_generator"]

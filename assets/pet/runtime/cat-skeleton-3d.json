@@ -1,0 +1,278 @@
+{
+  "schema": "pet-rig-v2",
+  "coordinateSystem": {
+    "handedness": "right",
+    "up": "+Y",
+    "forward": "+X"
+  },
+  "motionRoot": "__motion_root__",
+  "canvas": [48, 48],
+  "displayScale": 2,
+  "sourceFacing": -1,
+  "joints": [
+    {
+      "id": "__motion_root__",
+      "parent": null,
+      "role": "motion_root",
+      "deform": false,
+      "restLocal": {
+        "translation": [0, 0, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": false,
+        "scale": false
+      },
+      "limits": {}
+    },
+    {
+      "id": "body_root",
+      "name": "骨盆",
+      "parent": "__motion_root__",
+      "role": "body_root",
+      "deform": true,
+      "restLocal": {
+        "translation": [0, 12, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": true,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.15, 0.15, -0.15, 0.15, -0.15, 0.15]
+      },
+      "sprite": null
+    },
+    {
+      "id": "spine",
+      "name": "脊柱",
+      "parent": "body_root",
+      "role": "spine",
+      "deform": true,
+      "restLocal": {
+        "translation": [0, 8, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.25, 0.25, -0.15, 0.15, -0.15, 0.15]
+      },
+      "sprite": "body"
+    },
+    {
+      "id": "head",
+      "name": "头部",
+      "parent": "spine",
+      "role": "head",
+      "deform": true,
+      "restLocal": {
+        "translation": [0, 10, 0],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.45, 0.45, -0.25, 0.25, -0.25, 0.25]
+      },
+      "sprite": "head"
+    },
+    {
+      "id": "ear_left",
+      "name": "左耳",
+      "parent": "head",
+      "role": "ear",
+      "deform": true,
+      "restLocal": {
+        "translation": [-6, 8, 2],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.1, 0.1, -0.1, 0.1, -0.1, 0.1]
+      },
+      "sprite": null
+    },
+    {
+      "id": "ear_right",
+      "name": "右耳",
+      "parent": "head",
+      "role": "ear",
+      "deform": true,
+      "restLocal": {
+        "translation": [6, 8, -2],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.1, 0.1, -0.1, 0.1, -0.1, 0.1]
+      },
+      "sprite": null
+    },
+    {
+      "id": "upper_arm_left",
+      "name": "左上臂",
+      "parent": "spine",
+      "role": "arm",
+      "deform": true,
+      "restLocal": {
+        "translation": [-6, 0, 3],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.3, 0.6, -0.2, 0.2, -0.2, 0.2]
+      },
+      "sprite": "upper_arm_left"
+    },
+    {
+      "id": "upper_arm_right",
+      "name": "右上臂",
+      "parent": "spine",
+      "role": "arm",
+      "deform": true,
+      "restLocal": {
+        "translation": [6, 0, -3],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.6, 0.3, -0.2, 0.2, -0.2, 0.2]
+      },
+      "sprite": "upper_arm_right"
+    },
+    {
+      "id": "upper_leg_left",
+      "name": "左腿",
+      "parent": "body_root",
+      "role": "leg",
+      "deform": true,
+      "restLocal": {
+        "translation": [-4, -4, 2],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.35, 0.5, -0.2, 0.2, -0.2, 0.2]
+      },
+      "sprite": "upper_leg_left"
+    },
+    {
+      "id": "upper_leg_right",
+      "name": "右腿",
+      "parent": "body_root",
+      "role": "leg",
+      "deform": true,
+      "restLocal": {
+        "translation": [4, -4, -2],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.5, 0.35, -0.2, 0.2, -0.2, 0.2]
+      },
+      "sprite": "upper_leg_right"
+    },
+    {
+      "id": "tail_base",
+      "name": "尾根",
+      "parent": "body_root",
+      "role": "tail",
+      "deform": true,
+      "restLocal": {
+        "translation": [0, -6, -4],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {
+        "rotation": [-0.7, 0.7, -0.4, 0.4, -0.3, 0.3]
+      },
+      "sprite": "tail_base"
+    },
+    {
+      "id": "tail_tip",
+      "name": "尾尖",
+      "parent": "tail_base",
+      "role": "tail_tip",
+      "deform": true,
+      "restLocal": {
+        "translation": [4, -6, -2],
+        "rotation": [0, 0, 0, 1],
+        "scale": [1, 1, 1]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": false,
+        "scale": false
+      },
+      "physics": {
+        "mode": "secondary",
+        "damping": 0.82,
+        "stiffness": 0.12,
+        "inertiaFactor": 0.25
+      },
+      "limits": {
+        "rotation": [-0.9, 0.9, -0.5, 0.5, -0.4, 0.4]
+      },
+      "sprite": "tail_tip"
+    }
+  ],
+  "drawOrder": [
+    "tail_tip",
+    "tail_base",
+    "upper_leg_left",
+    "upper_leg_right",
+    "upper_arm_left",
+    "upper_arm_right",
+    "spine",
+    "head"
+  ]
+}

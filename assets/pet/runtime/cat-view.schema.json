@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pet.local/schemas/v1/cat-view.schema.json",
+  "title": "PET View Profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "projection", "pitchDeg", "yawOffsetDeg", "orthoScale", "depthMode"],
+  "properties": {
+    "schema": { "const": "pet-view-v1" },
+    "projection": { "const": "orthographic" },
+    "pitchDeg": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 30,
+      "description": "Camera pitch angle in degrees (0 = strict side view)."
+    },
+    "yawOffsetDeg": {
+      "type": "number",
+      "minimum": -30,
+      "maximum": 30,
+      "description": "Camera yaw offset in degrees."
+    },
+    "orthoScale": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 4,
+      "description": "Orthographic scale factor."
+    },
+    "depthMode": {
+      "enum": ["z_buffer", "layered"],
+      "description": "z_buffer for true 3D meshes; layered for sprite-based rendering."
+    },
+    "depthHysteresisThreshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Minimum Z difference to trigger a draw-order swap in layered mode."
+    }
+  }
+}

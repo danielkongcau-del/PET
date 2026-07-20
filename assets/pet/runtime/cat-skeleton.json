@@ -1,0 +1,148 @@
+{
+  "schema": "pet-skeleton-v1",
+  "canvas": [48, 48],
+  "displayScale": 2,
+  "footAnchor": [24, 46],
+  "sourceFacing": -1,
+  "facialDefaults": {
+    "eyePosition": [18, 18],
+    "mouthPosition": [19, 23]
+  },
+  "bones": [
+    {
+      "id": "root",
+      "name": "骨盆",
+      "parent": null,
+      "joint": [24, 34],
+      "length": 1,
+      "restAngle": 0,
+      "sprite": null,
+      "physics": { "mode": "static" }
+    },
+    {
+      "id": "spine",
+      "name": "脊柱",
+      "parent": "root",
+      "joint": [24, 26],
+      "length": 10,
+      "restAngle": 0,
+      "sprite": "body",
+      "limits": { "rotation": [-0.25, 0.25] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "head",
+      "name": "头部",
+      "parent": "spine",
+      "joint": [24, 16],
+      "length": 10,
+      "restAngle": 0,
+      "sprite": "head",
+      "limits": { "rotation": [-0.45, 0.45] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "ear_left",
+      "name": "左耳",
+      "parent": "head",
+      "joint": [18, 8],
+      "length": 5,
+      "restAngle": -0.5,
+      "sprite": null,
+      "limits": { "rotation": [-0.1, 0.1] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "ear_right",
+      "name": "右耳",
+      "parent": "head",
+      "joint": [30, 8],
+      "length": 5,
+      "restAngle": 0.5,
+      "sprite": null,
+      "limits": { "rotation": [-0.1, 0.1] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "upper_arm_left",
+      "name": "左上臂",
+      "parent": "spine",
+      "joint": [18, 26],
+      "length": 8,
+      "restAngle": 0.5,
+      "sprite": "upper_arm_left",
+      "limits": { "rotation": [-0.3, 0.6] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "upper_arm_right",
+      "name": "右上臂",
+      "parent": "spine",
+      "joint": [30, 26],
+      "length": 8,
+      "restAngle": -0.5,
+      "sprite": "upper_arm_right",
+      "limits": { "rotation": [-0.6, 0.3] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "upper_leg_left",
+      "name": "左腿",
+      "parent": "root",
+      "joint": [20, 38],
+      "length": 9,
+      "restAngle": 0.3,
+      "sprite": "upper_leg_left",
+      "limits": { "rotation": [-0.35, 0.5] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "upper_leg_right",
+      "name": "右腿",
+      "parent": "root",
+      "joint": [28, 38],
+      "length": 9,
+      "restAngle": -0.3,
+      "sprite": "upper_leg_right",
+      "limits": { "rotation": [-0.5, 0.35] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "tail_base",
+      "name": "尾根",
+      "parent": "root",
+      "joint": [24, 40],
+      "length": 12,
+      "restAngle": 0.6,
+      "sprite": "tail_base",
+      "limits": { "rotation": [-0.7, 0.7] },
+      "physics": { "mode": "model_driven" }
+    },
+    {
+      "id": "tail_tip",
+      "name": "尾尖",
+      "parent": "tail_base",
+      "joint": [28, 46],
+      "length": 10,
+      "restAngle": 0.3,
+      "sprite": "tail_tip",
+      "limits": { "rotation": [-0.9, 0.9] },
+      "physics": {
+        "mode": "secondary",
+        "damping": 0.82,
+        "stiffness": 0.12,
+        "inertiaFactor": 0.25
+      }
+    }
+  ],
+  "drawOrder": [
+    "tail_tip",
+    "tail_base",
+    "upper_leg_left",
+    "upper_leg_right",
+    "upper_arm_left",
+    "upper_arm_right",
+    "spine",
+    "head"
+  ]
+}

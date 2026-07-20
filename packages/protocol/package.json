@@ -1,0 +1,28 @@
+{
+  "name": "@pet/protocol",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./v1": {
+      "types": "./dist/v1.d.ts",
+      "import": "./dist/v1.js"
+    },
+    "./schema/v1": "./schemas/v1/pet-motion.schema.json"
+  },
+  "files": ["dist", "schemas", "fixtures", "python"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

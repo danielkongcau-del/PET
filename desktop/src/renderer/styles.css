@@ -1,0 +1,48 @@
+:root {
+  color-scheme: light;
+  background: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+}
+
+#pet {
+  display: block;
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#status {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgb(0 0 0 / 70%);
+  border-radius: 50%;
+  background: #f7b731;
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root[data-debug="true"] #status {
+  opacity: 1;
+}
+
+:root[data-generator="ready"] #status {
+  background: #20bf6b;
+}
+
+:root[data-generator="degraded"] #status,
+:root[data-generator="stopped"] #status {
+  background: #eb3b5a;
+}
