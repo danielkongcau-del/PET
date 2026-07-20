@@ -37,7 +37,7 @@ Causal Transformer
   - 因果 mask: 帧 t 只看到 ≤t 的帧
   │
   ▼
-Decoder: d_model → (10 四元数 + Vec3 root + 5 面部)
+Decoder: d_model → (11 四元数 + 4 motion + 5 面部) = 53 dims
   │
   ▼
 宿主安全层 FK → 渲染
@@ -114,9 +114,9 @@ CausalMotionTransformer
 │   ├── Causal Self-Attention (n_heads=8, d_head=32)
 │   ├── MLP (dim_feedforward=1024, GELU)
 │   └── Pre-LayerNorm
-├── Output Head: Linear(256, 48)
-│   ├── quat_head: 40 dim → 10×4, normalize each
-│   ├── root_head: 3 dim
+├── Output Head: Linear(256, 53)
+│   ├── quat_head: 44 dim → 11×4 (root + 10 local), normalize each
+│   ├── motion_head: 4 dim (dx, dy, vx, vy)
 │   └── facial_head: 5 dim
 └── Total params: ~2.1M
 ```
@@ -242,23 +242,26 @@ class NeuralMotionBackend(TorchMotionBackend):
         # 2. Autoregressive decode
         with torch.no_grad():
             poses = self.model.generate(context)  # [1, 12, 48]
-        # 3. Convert to MotionPlan
+        # 3. Convert to MotionPlan — derive dx/dy/vx/vy from root_translation deltas
         points = []
+        prev_root = None
         for i in range(12):
-            q_start = i * 48
-            quats = poses[0, i, :40].reshape(10, 4)
-            quats = F.normalize(quats, dim=-1)  # ensure unit quaternions
-            root = poses[0, i, 40:43]
-            facial = poses[0, i, 43:48]
+            q_start = i * 53
+            quats_flat = poses[0, i, :44]
+            quats = quats_flat.reshape(11, 4)
+            quats = F.normalize(quats, dim=-1)
+            motion = poses[0, i, 44:48]  # dx, dy, vx, vy
+            facial = poses[0, i, 48:53]
+            root = quats[0].tolist()  # first quaternion is root_rotation
+            locals = tuple(tuple(q.tolist()) for q in quats[1:])
             points.append(MotionPoint(
                 t_ms=i * 33,
-                dx=0, dy=0,  # host controls position via dx/dy
-                vx=0, vy=0,
-                facing=1,  # derived from root_rotation
-                lean=0, squash=1, bob=0, expression="neutral",
-                root_translation=tuple(root.tolist()),
-                root_rotation=tuple(quats[0].tolist()),
-                local_rotation_deltas=tuple(tuple(q.tolist()) for q in quats[1:]),
+                dx=motion[0].item(), dy=motion[1].item(),
+                vx=motion[2].item(), vy=motion[3].item(),
+                facing=1, lean=0, squash=1, bob=0, expression="neutral",
+                root_translation=(0.0, 0.0, 0.0),
+                root_rotation=tuple(root),
+                local_rotation_deltas=locals,
                 facial_params={...},
             ))
         return MotionPlan(...)

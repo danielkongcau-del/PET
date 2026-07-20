@@ -84,7 +84,7 @@ def _nearest_supporting_surface(
 def _clamp_to_work_area(
     x: float, y: float,
     display: DisplayState,
-    anchor_x: float = 24, anchor_y: float = 46,
+    anchor_x: float = 48, anchor_y: float = 92,
     window_w: float = 96, window_h: float = 96,
 ) -> tuple[float, float]:
     """Keep the pet window within one display's work area."""
@@ -218,6 +218,15 @@ class DesktopSimulator:
         )
         self.seq: int = 0
         self.session_id: str = "sim-session"
+
+    # ── Configuration ──────────────────────────────────────────────────
+
+    def set_timing(self, dt_ms: int, horizon_ms: int) -> None:
+        """Override timing constants for data generation."""
+        global PLAN_DT_MS, PLAN_HORIZON_MS, TICK_DT_S
+        PLAN_DT_MS = dt_ms
+        PLAN_HORIZON_MS = horizon_ms
+        TICK_DT_S = dt_ms / 1000.0
 
     # ── Scene generation ──────────────────────────────────────────────
 
@@ -583,11 +592,16 @@ class DesktopSimulator:
         """Extract ALL motion fields as training targets, not just skeletal placeholders."""
         p = point
         quats = []
+        # root_rotation first, then local_rotation_deltas
+        if p.root_rotation:
+            quats.extend(p.root_rotation[:4])
+        else:
+            quats.extend([0.0, 0.0, 0.0, 1.0])
         if p.local_rotation_deltas:
             for q in p.local_rotation_deltas:
                 quats.extend(q[:4])
         else:
-            quats = [0.0] * 40
+            quats.extend([0.0] * 40)  # 10 locals × 4
         root = list(p.root_translation) if p.root_translation else [0.0, 0.0, 0.0]
         facial = [
             p.facial_params.get("eye_scale", 1.0) if p.facial_params else 1.0,

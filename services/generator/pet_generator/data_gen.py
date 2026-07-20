@@ -54,6 +54,8 @@ def main(argv: list[str] | None = None) -> int:
     planner_config = PlannerConfig(horizon_steps=args.horizon_steps, dt_ms=args.dt_ms)
     backend = AutoregressiveMotionBackend(planner_config)
     sim = DesktopSimulator()
+    # Pass timing through to the simulator constants.
+    sim.set_timing(args.dt_ms, args.horizon_steps * args.dt_ms)
 
     total_samples = 0
     start_time = time.monotonic()
