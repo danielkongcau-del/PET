@@ -108,7 +108,8 @@
         "pid": { "$ref": "#/$defs/nonNegativeSafeInteger" },
         "python_version": { "type": "string", "maxLength": 64 },
         "torch_version": { "type": "string", "maxLength": 64 },
-        "device": { "type": "string", "maxLength": 128 }
+        "device": { "type": "string", "maxLength": 128 },
+        "skeleton_sha256": { "type": "string", "minLength": 64, "maxLength": 64 }
       }
     },
     "privacyConfig": {

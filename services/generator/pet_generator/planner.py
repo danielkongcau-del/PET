@@ -126,22 +126,34 @@ class AutoregressiveMotionBackend(MotionBackend):
         self._skeletal_3d = enabled_3d
 
     def _load_skeletal_metadata(self) -> None:
-        """Read cat-skeleton-3d.json to discover the expected 3D joint count."""
+        """Read the skeleton definition matching the negotiated capability."""
         try:
             import json
             from pathlib import Path
-            skeleton_path = Path(__file__).resolve().parents[3] / "assets" / "pet" / "runtime" / "cat-skeleton-3d.json"
+            if self._skeletal_3d:
+                name = "cat-skeleton-3d.json"
+                joints_key = "joints"
+            else:
+                name = "cat-skeleton.json"
+                joints_key = "bones"
+            skeleton_path = Path(__file__).resolve().parents[3] / "assets" / "pet" / "runtime" / name
             if not skeleton_path.is_file():
                 return
             data = json.loads(skeleton_path.read_text(encoding="utf-8"))
-            joints = data.get("joints", [])
-            model_driven = [
-                j for j in joints
-                if isinstance(j, dict)
-                and not (j.get("deform") is False and j.get("parent") is None)  # exclude __motion_root__
-                and j.get("poseDofs", {}).get("rotation") is True
-                and j.get("physics", {}).get("mode") not in ("secondary", "static")
-            ]
+            entries = data.get(joints_key, [])
+            if self._skeletal_3d:
+                model_driven = [
+                    j for j in entries
+                    if isinstance(j, dict)
+                    and not (j.get("deform") is False and j.get("parent") is None)
+                    and j.get("poseDofs", {}).get("rotation") is True
+                    and j.get("physics", {}).get("mode") not in ("secondary", "static")
+                ]
+            else:
+                model_driven = [
+                    b for b in entries
+                    if isinstance(b, dict) and b.get("physics", {}).get("mode") == "model_driven"
+                ]
             self._model_driven_count = len(model_driven)
         except Exception:
             self._model_driven_count = 0
@@ -154,6 +166,8 @@ class AutoregressiveMotionBackend(MotionBackend):
         self._next_jump_due_ms = None
         self._walk_velocity = 0.0
         self._last_plan_id = None
+        self._skeletal_enabled = False
+        self._skeletal_3d = False
         if was_active:
             self._cancelled_count += 1
         return was_active
@@ -736,9 +750,21 @@ class AutoregressiveMotionBackend(MotionBackend):
             points = [
                 replace(
                     point,
-                    root_translation=(float(point.dx), float(-point.dy), 0.0),
+                    root_translation=(0.0, 0.0, 0.0),
                     root_rotation=(0.0, 0.0, 0.0, 1.0),
                     local_rotation_deltas=zero_rotations,
+                    facial_params=dict(default_facial),
+                )
+                for point in points
+            ]
+        elif self._skeletal_enabled and self._model_driven_count > 0:
+            # Legacy 2D fallback: emit planar angle arrays.
+            zero_rotations = tuple(0.0 for _ in range(self._model_driven_count))
+            default_facial = {"eye_scale": 1.0, "eye_squint": 0.0, "mouth_open": 0.0, "ear_angle": 0.0, "brow_tilt": 0.0}
+            points = [
+                replace(
+                    point,
+                    bone_rotations=zero_rotations,
                     facial_params=dict(default_facial),
                 )
                 for point in points

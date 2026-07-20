@@ -163,6 +163,11 @@ function isPlanPoint(value: unknown): value is PlanPoint {
   if (value.bone_rotations !== undefined && (value.root_translation !== undefined || value.local_rotation_deltas !== undefined)) {
     return false; // mutual exclusion
   }
+  // 3D pose fields must be all-or-none
+  const has3D = value.root_translation !== undefined || value.root_rotation !== undefined || value.local_rotation_deltas !== undefined;
+  if (has3D && (value.root_translation === undefined || value.root_rotation === undefined || value.local_rotation_deltas === undefined)) {
+    return false; // partial 3D data
+  }
   return true;
 }
 
@@ -191,8 +196,11 @@ function isVec3(value: unknown): value is Vec3 {
 }
 
 function isQuat(value: unknown): value is Quat {
-  return Array.isArray(value) && value.length === 4 &&
-    value.every((item) => isFiniteNumber(item) && item >= -1 && item <= 1);
+  if (!(Array.isArray(value) && value.length === 4)) return false;
+  if (!value.every((item) => isFiniteNumber(item) && item >= -1 && item <= 1)) return false;
+  // Reject degenerate quaternions (zero vector, or norm far from 1).
+  const norm = Math.hypot(value[0], value[1], value[2], value[3]);
+  return norm > 0.001 && Math.abs(norm - 1) < 0.001;
 }
 
 function isQuatArray(value: unknown): value is Quat[] {

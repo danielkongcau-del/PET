@@ -297,8 +297,7 @@ class GeneratorService:
         skeletal_enabled = "skeletal_motion_3d_local_quat" in host_caps or "skeletal_motion" in host_caps
         skeletal_3d = "skeletal_motion_3d_local_quat" in host_caps
         self.backend.set_skeletal_enabled(skeletal_enabled)
-        if skeletal_3d:
-            self.backend.set_skeletal_3d(True)
+        self.backend.set_skeletal_3d(skeletal_3d)  # explicitly set both directions
         if not skeletal_enabled:
             LOGGER.info("Host does not advertise skeletal_motion; bone rotations will not be generated.")
 
@@ -476,9 +475,8 @@ class GeneratorService:
             for name in ("cat-skeleton-3d.json", "cat-skeleton.json"):
                 skeleton_path = Path(__file__).resolve().parents[3] / "assets" / "pet" / "runtime" / name
                 if skeleton_path.is_file():
-                    content = skeleton_path.read_text(encoding="utf-8")
-                    normalized = json.dumps(json.loads(content), separators=(",", ":"))
-                    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
+                    raw = skeleton_path.read_bytes()
+                    return hashlib.sha256(raw).hexdigest()
             return None
         except Exception:
             LOGGER.warning("Failed to compute skeleton SHA-256", exc_info=True)

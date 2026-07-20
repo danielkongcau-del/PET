@@ -474,10 +474,9 @@ export class GeneratorBridge {
     if (this.#skeletalConfigLoaded) return this.#skeletalConfig;
     try {
       const path = join(this.#options.projectRoot, "assets", "pet", "runtime", "cat-skeleton-3d.json");
-      const content = await readFile(path, "utf8");
-      const parsed = JSON.parse(content) as Record<string, unknown>;
-      const normalized = JSON.stringify(parsed);
-      const sha256 = createHash("sha256").update(normalized).digest("hex");
+      const raw = await readFile(path);
+      const sha256 = createHash("sha256").update(raw).digest("hex");
+      const parsed = JSON.parse(raw.toString("utf8")) as Record<string, unknown>;
 
       const joints = Array.isArray(parsed.joints) ? parsed.joints as Record<string, unknown>[] : [];
       const modelDrivenJointIds = joints

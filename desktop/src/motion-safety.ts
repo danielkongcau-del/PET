@@ -4,7 +4,7 @@
  * to reach the sole BrowserWindow position writer.
  */
 import { clamp } from "./geometry.js";
-import type { HorizonPlanPayload, PlanPoint, SurfaceState } from "./protocol.js";
+import type { HorizonPlanPayload, PlanPoint, Quat, SurfaceState } from "./protocol.js";
 
 export interface FootAnchor {
   readonly x: number;
@@ -277,7 +277,10 @@ function pointAtTime(plan: HorizonPlanPayload, now: number): PlanPoint | null {
 
 function interpolatePoint(left: PlanPoint, right: PlanPoint, alpha: number, tMs: number): PlanPoint {
   const lerp = (a: number, b: number): number => a + (b - a) * alpha;
-  return {
+  const src = alpha < 0.5 ? left : right;
+  const boneRotations = src.bone_rotations?.slice();
+  const lrd = src.local_rotation_deltas?.map((q) => [...q] as Quat);
+  const point: PlanPoint = {
     t_ms: tMs,
     dx: lerp(left.dx, right.dx),
     dy: lerp(left.dy, right.dy),
@@ -289,4 +292,10 @@ function interpolatePoint(left: PlanPoint, right: PlanPoint, alpha: number, tMs:
     bob: lerp(left.bob, right.bob),
     expression: alpha < 0.5 ? left.expression : right.expression,
   };
+  if (boneRotations !== undefined) point.bone_rotations = boneRotations;
+  if (src.facial_params !== undefined) point.facial_params = src.facial_params;
+  if (src.root_translation !== undefined) point.root_translation = src.root_translation;
+  if (src.root_rotation !== undefined) point.root_rotation = src.root_rotation;
+  if (lrd !== undefined) point.local_rotation_deltas = lrd;
+  return point;
 }

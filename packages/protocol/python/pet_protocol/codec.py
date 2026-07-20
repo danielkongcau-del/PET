@@ -136,6 +136,9 @@ def _quat(value: Any, path: str) -> None:
         _fail(path, "expected exactly 4 elements")
     for i, item in enumerate(arr):
         _number(item, f"{path}[{i}]", minimum=-1, maximum=1)
+    norm = math.hypot(float(arr[0]), float(arr[1]), float(arr[2]), float(arr[3]))
+    if norm < 0.001 or abs(norm - 1.0) >= 0.001:
+        _fail(path, f"expected unit quaternion, got norm {norm:.6f}")
 
 
 def _rect(value: Any, path: str) -> None:
@@ -391,6 +394,9 @@ def _validate_plan(payload: Mapping[str, Any]) -> None:
         has_3d = "root_translation" in point or "root_rotation" in point or "local_rotation_deltas" in point
         if has_legacy and has_3d:
             _fail(path, "bone_rotations and 3D skeletal fields are mutually exclusive")
+        if has_3d:
+            if "root_translation" not in point or "root_rotation" not in point or "local_rotation_deltas" not in point:
+                _fail(path, "3D skeletal fields (root_translation, root_rotation, local_rotation_deltas) must be all-or-none")
         if "root_translation" in point:
             _vec3(point["root_translation"], f"{path}.root_translation")
         if "root_rotation" in point:

@@ -273,7 +273,7 @@ async function bootstrap(): Promise<void> {
         if (config && config.modelDrivenCount > 0) {
           motion?.setSkeletalConfig(config);
           petWindow.sendSkeletalConfig(config.raw);
-          info("skeleton", "FK rendering active", { modelDrivenCount: config.modelDrivenCount });
+          info("skeleton", "3D skeletal negotiation complete; renderer FK not yet implemented", { modelDrivenCount: config.modelDrivenCount });
         }
       }
     },
