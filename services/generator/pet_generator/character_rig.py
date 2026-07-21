@@ -69,22 +69,24 @@ def project_root() -> Path:
 
 def load_selected_character_rig(*, root: Path | None = None) -> SelectedCharacterRig:
     workspace = (root or project_root()).resolve()
-    configured_manifest = os.environ.get("PET_CHARACTER_MANIFEST")
-    manifest_path = _resolve_configured(
-        workspace,
-        configured_manifest,
-        Path("assets/pet/runtime/cat-character-rig.manifest.json"),
-    )
-    if manifest_path.is_file():
-        return _load_manifest(manifest_path)
-    if configured_manifest:
-        raise ValueError(
-            f"Configured character manifest is unavailable: {manifest_path.name}"
-        )
-
     configured_legacy = os.environ.get("PET_CHARACTER_RIG") or os.environ.get(
         "PET_SKELETON_3D"
     )
+    # When the user explicitly selects a legacy rig, skip the manifest path.
+    if not configured_legacy:
+        configured_manifest = os.environ.get("PET_CHARACTER_MANIFEST")
+        manifest_path = _resolve_configured(
+            workspace,
+            configured_manifest,
+            Path("assets/pet/runtime/cat-character-rig.manifest.json"),
+        )
+        if manifest_path.is_file():
+            return _load_manifest(manifest_path)
+        if configured_manifest:
+            raise ValueError(
+                f"Configured character manifest is unavailable: {manifest_path.name}"
+            )
+
     legacy_path = _resolve_legacy(workspace, configured_legacy)
     return _load_legacy(legacy_path)
 
