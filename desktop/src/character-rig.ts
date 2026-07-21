@@ -207,7 +207,7 @@ async function loadLegacyRig(path: string, environment: Environment, projectRoot
       displayScale: typeof rig.displayScale === "number" && rig.displayScale > 0 ? rig.displayScale : 2,
       footAnchor: [canvas[0] / 2, Math.max(0, canvas[1] - 2)],
       sourceFacing,
-      mode: "sprite",
+      mode: (environment.PET_RENDER_MODE as "skinned_mesh" | "sprite" | "debug_skeleton") ?? "sprite",
       fallbackModes: ["debug_skeleton"],
       spriteImagePath: configuredSprite
         ? (isAbsolute(configuredSprite) ? resolve(configuredSprite) : resolve(projectRoot, configuredSprite))
