@@ -206,7 +206,7 @@ function isQuat(value: unknown): value is Quat {
 }
 
 function isQuatArray(value: unknown): value is Quat[] {
-  return Array.isArray(value) && value.length >= 1 && value.length <= 128 &&
+  return Array.isArray(value) && value.length >= 1 && value.length <= 512 &&
     value.every((item) => isQuat(item));
 }
 
