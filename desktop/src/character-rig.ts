@@ -16,7 +16,7 @@ export const CHECKPOINT_NORMALIZATION_SCHEMA = "pet-feature-normalization-v1" as
 export const CHECKPOINT_NORMALIZATION_TRANSFORM = "(value-offset)/scale" as const;
 export const CHECKPOINT_MODEL_CONFIG_SCHEMA = "pet-motion-model-config-v1" as const;
 export const F64_ACCUMULATION = "pet-left-to-right-f64-sum-v1" as const;
-export const MAX_DRIVEN_JOINTS = 128;
+export const MAX_DRIVEN_JOINTS = 512;
 
 export interface CharacterCheckpointContract {
   readonly format: typeof CHECKPOINT_FORMAT;
@@ -365,7 +365,7 @@ function validateManifestRig(rig: Record<string, unknown>): readonly string[] {
   if (jointOrder.length !== joints.length || jointOrder.length < 2) {
     throw new Error("rig.jointOrder and rig.joints must align one-to-one");
   }
-  if (jointOrder.length > 512) throw new Error("rig.jointOrder exceeds the manifest limit of 512 joints");
+  if (jointOrder.length > 1024) throw new Error("rig.jointOrder exceeds the manifest limit of 1024 joints");
   if (new Set(jointOrder).size !== jointOrder.length) throw new Error("rig.jointOrder contains duplicate ids");
   if (jointOrder[0] !== motionRoot) throw new Error("rig.motionRoot must be joint index 0");
   let rootCount = 0;

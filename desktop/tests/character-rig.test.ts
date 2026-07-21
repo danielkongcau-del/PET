@@ -415,12 +415,12 @@ test("character manifest rejects a stale rig fingerprint", async () => {
   });
 });
 
-test("full rigs may be large but protocol-driven joints are capped at 128", async () => {
-  const rig = makeRig(129);
+test("full rigs may be large but protocol-driven joints are capped at 512", async () => {
+  const rig = makeRig(1025);
   await withManifest(makeManifest(rig), async (path) => {
     await assert.rejects(
       loadCharacterRigConfig("C:/unused", { PET_CHARACTER_MANIFEST: path }),
-      /between 1 and 128/,
+      /exceeds the manifest limit/,
     );
   });
 });

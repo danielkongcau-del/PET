@@ -18,7 +18,7 @@ from typing import Any, Mapping
 
 
 CHARACTER_RIG_SCHEMA = "pet-character-rig-manifest-v1"
-MAX_DRIVEN_JOINTS = 128
+MAX_DRIVEN_JOINTS = 512
 _SHA256_LENGTH = 64
 RIG_FINGERPRINT_ALGORITHM = "pet-canonical-json-f64-v1+sha256"
 RIG_FINGERPRINT_CANONICALIZATION = "pet-canonical-json-f64-v1"

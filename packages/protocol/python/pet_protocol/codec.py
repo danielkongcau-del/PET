@@ -402,7 +402,7 @@ def _validate_plan(payload: Mapping[str, Any]) -> None:
         if "root_rotation" in point:
             _quat(point["root_rotation"], f"{path}.root_rotation")
         if "local_rotation_deltas" in point:
-            deltas = _array(point["local_rotation_deltas"], f"{path}.local_rotation_deltas", maximum=128)
+            deltas = _array(point["local_rotation_deltas"], f"{path}.local_rotation_deltas", maximum=512)
             if not deltas:
                 _fail(f"{path}.local_rotation_deltas", "expected at least one entry")
             for di, q in enumerate(deltas):
