@@ -92,14 +92,18 @@ export async function loadCharacterRigConfig(
   projectRoot: string,
   environment: Environment = process.env,
 ): Promise<CharacterRigConfig> {
-  const manifestPath = resolveConfiguredPath(
-    projectRoot,
-    environment.PET_CHARACTER_MANIFEST,
-    join("assets", "pet", "runtime", "cat-character-rig.manifest.json"),
-  );
-  if (existsSync(manifestPath)) return loadCharacterManifest(manifestPath);
-  if (environment.PET_CHARACTER_MANIFEST) {
-    throw new Error(`Configured character manifest does not exist: ${basename(manifestPath)}`);
+  // When the user explicitly sets PET_CHARACTER_RIG (legacy), skip the
+  // manifest path entirely so the env var takes full precedence.
+  if (!environment.PET_CHARACTER_RIG && !environment.PET_SKELETON_3D) {
+    const manifestPath = resolveConfiguredPath(
+      projectRoot,
+      environment.PET_CHARACTER_MANIFEST,
+      join("assets", "pet", "runtime", "cat-character-rig.manifest.json"),
+    );
+    if (existsSync(manifestPath)) return loadCharacterManifest(manifestPath);
+    if (environment.PET_CHARACTER_MANIFEST) {
+      throw new Error(`Configured character manifest does not exist: ${basename(manifestPath)}`);
+    }
   }
 
   const legacyPath = resolveConfiguredPath(
