@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import sys
+from typing import get_args
 import unittest
 from pathlib import Path
 
@@ -21,6 +22,12 @@ from pet_protocol import (  # noqa: E402
     decode_ndjson_line,
     encode_ndjson,
     validate_message,
+)
+from pet_protocol.v1 import (  # noqa: E402
+    PlanPoint,
+    PlanPoint3DPose,
+    PlanPointLegacyPose,
+    PlanPointWithoutSkeletalPose,
 )
 
 SCHEMA_PATH = ROOT / "packages" / "protocol" / "schemas" / "v1" / "pet-motion.schema.json"
@@ -111,6 +118,22 @@ class ProtocolV1ContractTest(unittest.TestCase):
         with self.assertRaises(ProtocolValidationError):
             decode_ndjson_line(invalid_json)
 
+    def test_sparse_facial_overrides_match_schema_and_python_runtime(self) -> None:
+        plan = copy.deepcopy(next(message for message in self.messages if message["type"] == "horizon_plan"))
+        point = plan["payload"]["points"][0]
+        point["facial_params"] = {"mouth_open": 0.5}
+        if self.schema_validator is not None:
+            self.assertTrue(self.schema_validator.is_valid(plan))
+        self.assertIs(plan, validate_message(plan))
+
+        for invalid in ({"unknown": 0.5}, {"mouth_open": 1.1}):
+            candidate = copy.deepcopy(plan)
+            candidate["payload"]["points"][0]["facial_params"] = invalid
+            if self.schema_validator is not None:
+                self.assertFalse(self.schema_validator.is_valid(candidate))
+            with self.assertRaises(ProtocolValidationError):
+                validate_message(candidate)
+
     def test_deep_json_and_huge_numbers_are_validation_errors(self) -> None:
         with self.assertRaises(ProtocolValidationError):
             decode_ndjson_line("[" * 1_200 + "0" + "]" * 1_200)
@@ -145,6 +168,49 @@ class ProtocolV1ContractTest(unittest.TestCase):
         self.assertEqual(0, plan["payload"]["points"][0]["t_ms"])
         self.assertEqual(0, plan["payload"]["points"][0]["dx"])
         self.assertEqual(0, plan["payload"]["points"][0]["dy"])
+
+    def test_3d_pose_atomic_group_matches_schema_and_python_runtime(self) -> None:
+        plan = copy.deepcopy(
+            next(message for message in self.messages if message["type"] == "horizon_plan")
+        )
+        for point in plan["payload"]["points"]:
+            point["root_translation"] = [0, 0, 0]
+            point["root_rotation"] = [0, 0, 0, 1]
+            point["local_rotation_deltas"] = [[0, 0, 0, 1]]
+
+        if self.schema_validator is not None:
+            self.assertTrue(self.schema_validator.is_valid(plan))
+        self.assertIs(plan, validate_message(plan))
+
+        mutations = {
+            "missing root translation": lambda point: point.pop("root_translation"),
+            "missing root rotation": lambda point: point.pop("root_rotation"),
+            "missing local rotations": lambda point: point.pop("local_rotation_deltas"),
+            "mixed legacy and 3D": lambda point: point.update(bone_rotations=[0.0]),
+        }
+        for name, mutate in mutations.items():
+            invalid = copy.deepcopy(plan)
+            mutate(invalid["payload"]["points"][0])
+            with self.subTest(name=name):
+                if self.schema_validator is not None:
+                    self.assertFalse(self.schema_validator.is_valid(invalid))
+                with self.assertRaises(ProtocolValidationError):
+                    validate_message(invalid)
+
+    def test_python_plan_point_type_mirrors_atomic_pose_branches(self) -> None:
+        self.assertEqual(
+            set(get_args(PlanPoint)),
+            {PlanPointWithoutSkeletalPose, PlanPointLegacyPose, PlanPoint3DPose},
+        )
+        base_required = PlanPointWithoutSkeletalPose.__required_keys__
+        self.assertEqual(
+            {"bone_rotations"},
+            PlanPointLegacyPose.__required_keys__ - base_required,
+        )
+        self.assertEqual(
+            {"root_translation", "root_rotation", "local_rotation_deltas"},
+            PlanPoint3DPose.__required_keys__ - base_required,
+        )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pet.local/schemas/v1/character-motion-checkpoint-metadata.schema.json",
+  "title": "PET Character Motion Checkpoint Metadata v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "characterId",
+    "rigFingerprint",
+    "drivenJointOrder",
+    "dataset",
+    "normalization",
+    "model"
+  ],
+  "properties": {
+    "schema": { "const": "pet-character-motion-checkpoint-metadata-v1" },
+    "characterId": { "$ref": "#/$defs/characterId" },
+    "rigFingerprint": { "$ref": "#/$defs/sha256" },
+    "drivenJointOrder": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/jointId" }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "format", "manifestSha256"],
+      "properties": {
+        "schema": { "const": "pet-training-dataset-v1" },
+        "format": { "const": "episode-ndjson-v1" },
+        "manifestSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "normalization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "transform", "condition", "target"],
+      "properties": {
+        "schema": { "const": "pet-feature-normalization-v1" },
+        "transform": { "const": "(value-offset)/scale" },
+        "condition": { "$ref": "#/$defs/normalizationGroup" },
+        "target": { "$ref": "#/$defs/normalizationGroup" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "architecture", "implementationVersion", "config"],
+      "properties": {
+        "schema": { "const": "pet-motion-model-config-v1" },
+        "architecture": { "$ref": "#/$defs/id" },
+        "implementationVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "config": {
+          "type": "object"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "characterId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|$))[a-z0-9](?:[a-z0-9._-]*[a-z0-9_-])?$"
+    },
+    "jointId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "featureOrder": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 128
+      }
+    },
+    "finiteVector": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": { "type": "number" }
+    },
+    "positiveFiniteVector": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": { "type": "number", "exclusiveMinimum": 0 }
+    },
+    "normalizationGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["featureOrder", "offset", "scale"],
+      "properties": {
+        "featureOrder": { "$ref": "#/$defs/featureOrder" },
+        "offset": { "$ref": "#/$defs/finiteVector" },
+        "scale": { "$ref": "#/$defs/positiveFiniteVector" }
+      }
+    }
+  }
+}

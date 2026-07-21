@@ -18,7 +18,8 @@
     "test:protocol": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tests/protocol -p test_*.py -v",
     "test:integration": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tests/integration -p test_*.py -v",
     "test:assets": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tools/assets -p test_*.py -v",
-    "test": "pnpm test:desktop && pnpm test:generator && pnpm test:protocol && pnpm test:integration && pnpm test:assets",
+    "test:trace": "D:/Anaconda/envs/pet-core/python.exe -m unittest discover -s tools/trace -p test_*.py -v",
+    "test": "pnpm test:desktop && pnpm test:generator && pnpm test:protocol && pnpm test:integration && pnpm test:assets && pnpm test:trace",
     "check": "pnpm typecheck && pnpm test"
   }
 }

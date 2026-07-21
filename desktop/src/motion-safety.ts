@@ -4,7 +4,7 @@
  * to reach the sole BrowserWindow position writer.
  */
 import { clamp } from "./geometry.js";
-import type { HorizonPlanPayload, PlanPoint, Quat, SurfaceState } from "./protocol.js";
+import type { FacialParams, HorizonPlanPayload, PlanPoint, PlanPointBase, Quat, SurfaceState, Vec3 } from "./protocol.js";
 
 export interface FootAnchor {
   readonly x: number;
@@ -29,6 +29,7 @@ export type PlanRejection =
   | "invalid_target"
   | "carrier_changed"
   | "state_conflict"
+  | "pose_encoding_mismatch"
   | "low_confidence";
 
 export interface CarrierAnchor {
@@ -278,9 +279,7 @@ function pointAtTime(plan: HorizonPlanPayload, now: number): PlanPoint | null {
 function interpolatePoint(left: PlanPoint, right: PlanPoint, alpha: number, tMs: number): PlanPoint {
   const lerp = (a: number, b: number): number => a + (b - a) * alpha;
   const src = alpha < 0.5 ? left : right;
-  const boneRotations = src.bone_rotations?.slice();
-  const lrd = src.local_rotation_deltas?.map((q) => [...q] as Quat);
-  const point: PlanPoint = {
+  const base: PlanPointBase = {
     t_ms: tMs,
     dx: lerp(left.dx, right.dx),
     dy: lerp(left.dy, right.dy),
@@ -292,10 +291,147 @@ function interpolatePoint(left: PlanPoint, right: PlanPoint, alpha: number, tMs:
     bob: lerp(left.bob, right.bob),
     expression: alpha < 0.5 ? left.expression : right.expression,
   };
-  if (boneRotations !== undefined) point.bone_rotations = boneRotations;
-  if (src.facial_params !== undefined) point.facial_params = src.facial_params;
-  if (src.root_translation !== undefined) point.root_translation = src.root_translation;
-  if (src.root_rotation !== undefined) point.root_rotation = src.root_rotation;
-  if (lrd !== undefined) point.local_rotation_deltas = lrd;
+
+  const leftLegacy = left.bone_rotations;
+  const rightLegacy = right.bone_rotations;
+  const canInterpolateLegacy = leftLegacy !== undefined && rightLegacy !== undefined &&
+    leftLegacy.length === rightLegacy.length;
+  const left3D = complete3DPose(left);
+  const right3D = complete3DPose(right);
+  const canInterpolate3D = left3D !== null && right3D !== null &&
+    left3D.localRotationDeltas.length === right3D.localRotationDeltas.length;
+
+  let point: PlanPoint;
+  if (canInterpolateLegacy) {
+    point = {
+      ...base,
+      bone_rotations: leftLegacy.map((angle, index) =>
+        interpolateAngle(angle, rightLegacy[index]!, alpha)),
+    };
+  } else if (canInterpolate3D) {
+    point = {
+      ...base,
+      root_translation: interpolateVec3(
+        left3D.rootTranslation,
+        right3D.rootTranslation,
+        alpha,
+      ),
+      root_rotation: slerpQuat(left3D.rootRotation, right3D.rootRotation, alpha),
+      local_rotation_deltas: left3D.localRotationDeltas.map((quaternion, index) =>
+        slerpQuat(quaternion, right3D.localRotationDeltas[index]!, alpha)),
+    };
+  } else if (src.bone_rotations !== undefined) {
+    point = { ...base, bone_rotations: [...src.bone_rotations] };
+  } else {
+    const pose = complete3DPose(src);
+    point = pose
+      ? {
+          ...base,
+          root_translation: [...pose.rootTranslation] as Vec3,
+          root_rotation: [...pose.rootRotation] as Quat,
+          local_rotation_deltas: pose.localRotationDeltas.map((quaternion) =>
+            [...quaternion] as Quat),
+        }
+      : base;
+  }
+
+  const leftFace = left.facial_params;
+  const rightFace = right.facial_params;
+  if (leftFace !== undefined && rightFace !== undefined) {
+    return { ...point, facial_params: interpolateFacialParams(leftFace, rightFace, alpha) };
+  } else if (src.facial_params !== undefined) {
+    return { ...point, facial_params: { ...src.facial_params } };
+  }
   return point;
+}
+
+interface Complete3DPose {
+  readonly rootTranslation: Vec3;
+  readonly rootRotation: Quat;
+  readonly localRotationDeltas: readonly Quat[];
+}
+
+function complete3DPose(point: PlanPoint): Complete3DPose | null {
+  if (point.root_translation === undefined || point.root_rotation === undefined ||
+      point.local_rotation_deltas === undefined) return null;
+  return {
+    rootTranslation: point.root_translation,
+    rootRotation: point.root_rotation,
+    localRotationDeltas: point.local_rotation_deltas,
+  };
+}
+
+function interpolateVec3(left: Vec3, right: Vec3, alpha: number): Vec3 {
+  return [
+    left[0] + (right[0] - left[0]) * alpha,
+    left[1] + (right[1] - left[1]) * alpha,
+    left[2] + (right[2] - left[2]) * alpha,
+  ];
+}
+
+function wrapAngle(angle: number): number {
+  let wrapped = angle;
+  while (wrapped > Math.PI) wrapped -= Math.PI * 2;
+  while (wrapped < -Math.PI) wrapped += Math.PI * 2;
+  return wrapped;
+}
+
+function interpolateAngle(left: number, right: number, alpha: number): number {
+  const delta = wrapAngle(right - left);
+  return wrapAngle(left + delta * alpha);
+}
+
+function normalizeQuaternion(quaternion: Quat): Quat {
+  const norm = Math.hypot(...quaternion);
+  if (!Number.isFinite(norm) || norm <= 1e-12) return [0, 0, 0, 1];
+  return quaternion.map((component) => component / norm) as Quat;
+}
+
+function slerpQuat(leftInput: Quat, rightInput: Quat, alpha: number): Quat {
+  const left = normalizeQuaternion(leftInput);
+  let right = normalizeQuaternion(rightInput);
+  let dot = left[0] * right[0] + left[1] * right[1] +
+    left[2] * right[2] + left[3] * right[3];
+  if (dot < 0) {
+    right = right.map((component) => -component) as Quat;
+    dot = -dot;
+  }
+  dot = clamp(dot, -1, 1);
+
+  if (dot > 0.9995) {
+    return normalizeQuaternion(left.map((component, index) =>
+      component + (right[index]! - component) * alpha) as Quat);
+  }
+
+  const theta = Math.acos(dot);
+  const sinTheta = Math.sin(theta);
+  if (Math.abs(sinTheta) <= 1e-12) return left;
+  const leftWeight = Math.sin((1 - alpha) * theta) / sinTheta;
+  const rightWeight = Math.sin(alpha * theta) / sinTheta;
+  return normalizeQuaternion(left.map((component, index) =>
+    component * leftWeight + right[index]! * rightWeight) as Quat);
+}
+
+function interpolateFacialParams(
+  left: FacialParams,
+  right: FacialParams,
+  alpha: number,
+): FacialParams {
+  const result: FacialParams = {};
+  const keys = [
+    "eye_scale", "eye_squint", "mouth_open", "ear_angle", "brow_tilt",
+  ] as const;
+  for (const key of keys) {
+    const leftValue = left[key];
+    const rightValue = right[key];
+    if (leftValue !== undefined && rightValue !== undefined) {
+      result[key] = leftValue + (rightValue - leftValue) * alpha;
+      continue;
+    }
+    // A sparse channel appears and disappears at the same nearest-keyframe
+    // boundary used by expression/facing, rather than entering NaN arithmetic.
+    const sourceValue = alpha < 0.5 ? leftValue : rightValue;
+    if (sourceValue !== undefined) result[key] = sourceValue;
+  }
+  return result;
 }

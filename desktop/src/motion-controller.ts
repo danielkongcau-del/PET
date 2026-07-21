@@ -12,8 +12,8 @@ import { debug, info, warn } from "./logger.js";
 import { SafePlanExecutor, type PlanRejection } from "./motion-safety.js";
 import { PET_WINDOW_DIP, PetWindow } from "./pet-window.js";
 import { resolveSurfaceAttachment, surfaceIdForMotionSample } from "./surface-attachment.js";
-import type { GeneratorStatus, SkeletalConfig } from "./generator-bridge.js";
-import type { Behavior, DisplayState, FacialParams, HorizonPlanPayload, PetState, SurfaceState, WindowState } from "./protocol.js";
+import type { GeneratorStatus, SkeletalConfig, SkeletalMode } from "./generator-bridge.js";
+import type { Behavior, DisplayState, FacialParams, HorizonPlanPayload, PetState, PlanPoint, Quat, SurfaceState, Vec3, WindowState } from "./protocol.js";
 import { validateBoneRotationsLength } from "./protocol.js";
 import type { SurfaceSnapshot } from "./surface-tracker.js";
 
@@ -51,6 +51,106 @@ const TICK_MS = 16;
 // plan gap during an involuntary fall cannot change acceleration mid-air.
 const GRAVITY_PHYSICAL_PER_SECOND_SQUARED = 980;
 const MAX_ROOT_SPEED_PHYSICAL_PER_SECOND = 2_200;
+const MAX_LEGACY_BONE_ROTATIONS = 32;
+
+export interface SelectedSkeletalPose {
+  readonly boneRotations?: readonly number[];
+  readonly facialParams?: FacialParams;
+  readonly rootTranslation?: Vec3;
+  readonly rootRotation?: Quat;
+  readonly localRotationDeltas?: readonly Quat[];
+}
+
+/** Pure mode gate: a negotiated encoding can never consume the other branch. */
+export function selectSkeletalPoseForMode(
+  mode: SkeletalMode,
+  modelDrivenCount: number,
+  point: PlanPoint,
+): SelectedSkeletalPose {
+  const facial = point.facial_params
+    ? { facialParams: { ...point.facial_params } }
+    : {};
+  if (mode === "full_2d") {
+    if (
+      modelDrivenCount < 1
+      || modelDrivenCount > MAX_LEGACY_BONE_ROTATIONS
+      || !point.bone_rotations
+      || !validateBoneRotationsLength(point.bone_rotations, modelDrivenCount)
+    ) return facial;
+    return {
+      boneRotations: point.bone_rotations,
+      ...facial,
+    };
+  }
+  if (mode === "full_3d") {
+    if (
+      modelDrivenCount < 1
+      || !point.root_translation
+      || !point.root_rotation
+      || !point.local_rotation_deltas
+      || point.local_rotation_deltas.length !== modelDrivenCount
+    ) return facial;
+    return {
+      rootTranslation: point.root_translation,
+      rootRotation: point.root_rotation,
+      localRotationDeltas: point.local_rotation_deltas,
+      ...facial,
+    };
+  }
+  return facial;
+}
+
+/** Every point in an accepted horizon must use the encoding negotiated for this rig. */
+export function planMatchesSkeletalMode(
+  mode: SkeletalMode,
+  modelDrivenCount: number,
+  plan: HorizonPlanPayload,
+): boolean {
+  if (mode === "full_2d") {
+    if (modelDrivenCount < 1 || modelDrivenCount > MAX_LEGACY_BONE_ROTATIONS) return false;
+    return plan.points.every((point) => (
+      point.bone_rotations !== undefined
+      && validateBoneRotationsLength(point.bone_rotations, modelDrivenCount)
+      && point.root_translation === undefined
+      && point.root_rotation === undefined
+      && point.local_rotation_deltas === undefined
+    ));
+  }
+  if (mode === "full_3d") {
+    if (modelDrivenCount < 1) return false;
+    return plan.points.every((point) => (
+      point.bone_rotations === undefined
+      && point.root_translation !== undefined
+      && point.root_rotation !== undefined
+      && point.local_rotation_deltas !== undefined
+      && point.local_rotation_deltas.length === modelDrivenCount
+    ));
+  }
+  // Non-rendering modes intentionally ignore optional pose fields while still
+  // accepting the plan's root trajectory and independent facial parameters.
+  return true;
+}
+
+export function fallbackSkeletalPoseForMode(
+  mode: SkeletalMode,
+  modelDrivenCount: number,
+): SelectedSkeletalPose {
+  if (mode === "full_3d" && modelDrivenCount > 0) {
+    return {
+      rootTranslation: [0, 0, 0],
+      rootRotation: [0, 0, 0, 1],
+      localRotationDeltas: Array.from({ length: modelDrivenCount }, () => [0, 0, 0, 1] as Quat),
+    };
+  }
+  if (
+    mode === "full_2d"
+    && modelDrivenCount > 0
+    && modelDrivenCount <= MAX_LEGACY_BONE_ROTATIONS
+  ) {
+    return { boneRotations: new Array<number>(modelDrivenCount).fill(0) };
+  }
+  return {};
+}
 
 export class MotionController {
   readonly #petWindow: PetWindow;
@@ -75,6 +175,7 @@ export class MotionController {
   #lastPlanRejection: PlanRejection | null = null;
   #clickFeedbackStartedAt = 0;
   #modelDrivenCount = 0;
+  #skeletalMode: SkeletalMode = "none";
 
   constructor(options: MotionControllerOptions) {
     this.#petWindow = options.petWindow;
@@ -227,9 +328,29 @@ export class MotionController {
     this.#debug = enabled;
   }
 
-  /** Must be called after skeletal negotiation to enable bone rotation length validation. */
-  setSkeletalConfig(config: SkeletalConfig): void {
+  /** Bind one negotiated pose encoding to this character's exact joint ABI. */
+  setSkeletalConfig(config: SkeletalConfig, mode: SkeletalMode): boolean {
+    if (mode !== "full_2d" && mode !== "full_3d") {
+      this.clearSkeletalConfig();
+      return false;
+    }
+    if (mode === "full_2d" && config.modelDrivenCount > MAX_LEGACY_BONE_ROTATIONS) {
+      this.clearSkeletalConfig();
+      warn("motion", "legacy 2D skeletal mode exceeds protocol joint ceiling", {
+        received: config.modelDrivenCount,
+        maximum: MAX_LEGACY_BONE_ROTATIONS,
+      });
+      return false;
+    }
     this.#modelDrivenCount = config.modelDrivenCount;
+    this.#skeletalMode = mode;
+    return config.modelDrivenCount > 0;
+  }
+
+  /** Clear the previous session's pose contract before a downgrade or reconnect. */
+  clearSkeletalConfig(): void {
+    this.#modelDrivenCount = 0;
+    this.#skeletalMode = "none";
   }
 
   registerClickFeedback(): void {
@@ -246,6 +367,14 @@ export class MotionController {
   }
 
   offerPlan(plan: HorizonPlanPayload): PlanRejection {
+    if (!planMatchesSkeletalMode(this.#skeletalMode, this.#modelDrivenCount, plan)) {
+      this.#lastPlanRejection = "pose_encoding_mismatch";
+      warn("motion", "horizon plan rejected for negotiated pose encoding mismatch", {
+        mode: this.#skeletalMode,
+        based_on_seq: plan.based_on_seq,
+      });
+      return "pose_encoding_mismatch";
+    }
     if (plan.behavior === "falling" && this.#surfaceId !== null) {
       this.#lastPlanRejection = "state_conflict";
       debug("motion", "late falling plan ignored after landing", { based_on_seq: plan.based_on_seq });
@@ -349,30 +478,19 @@ export class MotionController {
       squash = sample.point.squash;
       bob = sample.point.bob;
       expression = sample.point.expression;
-      boneRotations = sample.point.bone_rotations;
-      if (boneRotations && !validateBoneRotationsLength(boneRotations, this.#modelDrivenCount)) {
-        warn("motion", "bone_rotations length mismatch; ignoring skeletal pose", {
-          received: boneRotations.length,
-          expected: this.#modelDrivenCount,
-        });
-        boneRotations = undefined;
-      }
-      // 3D pose takes precedence over legacy 2D when both the plan and the
-      // negotiated mode provide it.  The protocol layer already enforces
-      // mutual exclusion — a point cannot carry both encodings.
-      rootTranslation = sample.point.root_translation;
-      rootRotation = sample.point.root_rotation;
-      localRotationDeltas = sample.point.local_rotation_deltas;
-      if (localRotationDeltas && localRotationDeltas.length !== this.#modelDrivenCount) {
-        warn("motion", "local_rotation_deltas length mismatch; ignoring 3D skeletal pose", {
-          received: localRotationDeltas.length,
-          expected: this.#modelDrivenCount,
-        });
-        rootTranslation = undefined;
-        rootRotation = undefined;
-        localRotationDeltas = undefined;
-      }
-      facialParams = sample.point.facial_params;
+      const skeletalPose = selectSkeletalPoseForMode(
+        this.#skeletalMode,
+        this.#modelDrivenCount,
+        sample.point,
+      );
+      boneRotations = skeletalPose.boneRotations ? [...skeletalPose.boneRotations] : undefined;
+      // The negotiated mode owns the pose branch; wrong-encoding fields are ignored.
+      rootTranslation = skeletalPose.rootTranslation;
+      rootRotation = skeletalPose.rootRotation;
+      localRotationDeltas = skeletalPose.localRotationDeltas
+        ? [...skeletalPose.localRotationDeltas]
+        : undefined;
+      facialParams = skeletalPose.facialParams;
     } else {
       this.#facing.resetPending();
       this.#applyFallback(dt);
@@ -380,18 +498,15 @@ export class MotionController {
       expression = this.#generatorStatus === "ready" ? "neutral" : "sleepy";
       boneRotations = undefined;
       facialParams = undefined;
-      // During fallback, hold the last skeletal pose so the FK renderer
-      // doesn't flicker back to whole-sprite mode.  rootTranslation stays
-      // at identity because dx/dy carries the world motion.
-      if (this.#modelDrivenCount > 0) {
-        rootTranslation = [0, 0, 0];
-        rootRotation = [0, 0, 0, 1];
-        localRotationDeltas = new Array<[number,number,number,number]>(this.#modelDrivenCount).fill([0, 0, 0, 1]);
-      } else {
-        rootTranslation = undefined;
-        rootRotation = undefined;
-        localRotationDeltas = undefined;
-      }
+      // During fallback, keep exactly the negotiated encoding present so the
+      // renderer does not flicker between pose branches.
+      const fallbackPose = fallbackSkeletalPoseForMode(this.#skeletalMode, this.#modelDrivenCount);
+      boneRotations = fallbackPose.boneRotations ? [...fallbackPose.boneRotations] : undefined;
+      rootTranslation = fallbackPose.rootTranslation;
+      rootRotation = fallbackPose.rootRotation;
+      localRotationDeltas = fallbackPose.localRotationDeltas
+        ? [...fallbackPose.localRotationDeltas]
+        : undefined;
     }
 
     const clickAge = now - this.#clickFeedbackStartedAt;
@@ -400,6 +515,10 @@ export class MotionController {
       squash *= phase < 0.45 ? 0.72 + phase * 0.35 : 0.88 + (phase - 0.45) * 0.22;
       bob -= Math.sin(phase * Math.PI) * 2.5;
       expression = "surprised";
+      // The renderer gives explicit continuous parameters precedence over the
+      // expression fallback. A host-owned click reaction must therefore clear
+      // the sampled frame's parameters together with replacing its expression.
+      facialParams = undefined;
       this.#behavior = "click_reaction";
     }
 

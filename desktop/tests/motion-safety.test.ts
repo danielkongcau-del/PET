@@ -4,7 +4,7 @@ import test from "node:test";
 import { FacingStabilizer } from "../src/facing-stabilizer.js";
 import { findCrossedSurface, surfaceSupportsPoint } from "../src/geometry.js";
 import { SafePlanExecutor } from "../src/motion-safety.js";
-import type { HorizonPlanPayload, SurfaceState } from "../src/protocol.js";
+import type { HorizonPlanPayload, PlanPoint, PlanPointBase, SurfaceState } from "../src/protocol.js";
 
 const surface: SurfaceState = {
   id: "window-1:top:0",
@@ -33,6 +33,22 @@ function plan(now: number): HorizonPlanPayload {
       { t_ms: 0, dx: 0, dy: 0, vx: 0, vy: 0, facing: 1, lean: 0, squash: 1, bob: 0, expression: "neutral" },
       { t_ms: 100, dx: 20, dy: 0, vx: 200, vy: 0, facing: 1, lean: 0.2, squash: 1, bob: 1, expression: "happy" },
     ],
+  };
+}
+
+function planPointBase(point: PlanPoint): PlanPointBase {
+  return {
+    t_ms: point.t_ms,
+    dx: point.dx,
+    dy: point.dy,
+    vx: point.vx,
+    vy: point.vy,
+    facing: point.facing,
+    lean: point.lean,
+    squash: point.squash,
+    bob: point.bob,
+    expression: point.expression,
+    ...(point.facial_params ? { facial_params: { ...point.facial_params } } : {}),
   };
 }
 
@@ -197,6 +213,127 @@ test("a plan whose sampled horizon is already exhausted is rejected", () => {
 
   assert.equal(executor.offer(exhausted, [surface], now + 201), "expired");
   assert.equal(executor.activePlanId, null);
+});
+
+test("3D pose sampling lerps root motion and uses normalized shortest-arc SLERP", () => {
+  const now = 1_800_000_000_000;
+  const executor = new SafePlanExecutor();
+  executor.rememberWorldState(10, { x: 280, y: 400 });
+  const half = Math.sqrt(0.5);
+  const skeletal = {
+    ...plan(now),
+    points: [
+      {
+        ...planPointBase(plan(now).points[0]!),
+        root_translation: [0, 2, 4] as [number, number, number],
+        root_rotation: [0, 0, 0, 1] as [number, number, number, number],
+        local_rotation_deltas: [[0, 0, 0, 1] as [number, number, number, number]],
+        facial_params: {
+          eye_scale: 0.5, eye_squint: 0, mouth_open: 0,
+          ear_angle: -0.5, brow_tilt: -1,
+        },
+      },
+      {
+        ...planPointBase(plan(now).points[1]!),
+        root_translation: [10, 4, 8] as [number, number, number],
+        // q and -q describe the same orientation; interpolation must not spin.
+        root_rotation: [0, 0, 0, -1] as [number, number, number, number],
+        local_rotation_deltas: [[0, 0, 1, 0] as [number, number, number, number]],
+        facial_params: {
+          eye_scale: 1.5, eye_squint: 1, mouth_open: 1,
+          ear_angle: 0.5, brow_tilt: 1,
+        },
+      },
+    ],
+  } satisfies HorizonPlanPayload;
+
+  assert.equal(executor.offer(skeletal, [surface], now), "accepted");
+  const midpoint = executor.sample(now + 50)?.point;
+  assert.ok(midpoint);
+  assert.deepEqual(midpoint.root_translation, [5, 3, 6]);
+  assert.deepEqual(midpoint.root_rotation, [0, 0, 0, 1]);
+  assert.ok(Math.abs(midpoint.local_rotation_deltas![0]![2] - half) < 1e-12);
+  assert.ok(Math.abs(midpoint.local_rotation_deltas![0]![3] - half) < 1e-12);
+  assert.deepEqual(midpoint.facial_params, {
+    eye_scale: 1, eye_squint: 0.5, mouth_open: 0.5,
+    ear_angle: 0, brow_tilt: 0,
+  });
+});
+
+test("sparse facial channels interpolate without manufacturing NaN fields", () => {
+  const now = 1_800_000_000_000;
+  const executor = new SafePlanExecutor();
+  executor.rememberWorldState(10, { x: 280, y: 400 });
+  const sparse = {
+    ...plan(now),
+    points: [
+      {
+        ...planPointBase(plan(now).points[0]!),
+        facial_params: { eye_scale: 0.5, mouth_open: 0 },
+      },
+      {
+        ...planPointBase(plan(now).points[1]!),
+        facial_params: { mouth_open: 1, brow_tilt: 0.5 },
+      },
+    ],
+  } satisfies HorizonPlanPayload;
+
+  assert.equal(executor.offer(sparse, [surface], now), "accepted");
+  assert.deepEqual(executor.sample(now + 25)?.point.facial_params, {
+    eye_scale: 0.5,
+    mouth_open: 0.25,
+  });
+  assert.deepEqual(executor.sample(now + 50)?.point.facial_params, {
+    mouth_open: 0.5,
+    brow_tilt: 0.5,
+  });
+  assert.ok(Object.values(executor.sample(now + 50)?.point.facial_params ?? {}).every(Number.isFinite));
+});
+
+test("legacy pose sampling follows the shortest angular arc across pi", () => {
+  const now = 1_800_000_000_000;
+  const executor = new SafePlanExecutor();
+  executor.rememberWorldState(10, { x: 280, y: 400 });
+  const legacy = {
+    ...plan(now),
+    points: [
+      { ...planPointBase(plan(now).points[0]!), bone_rotations: [3.13] },
+      { ...planPointBase(plan(now).points[1]!), bone_rotations: [-3.13] },
+    ],
+  } satisfies HorizonPlanPayload;
+
+  assert.equal(executor.offer(legacy, [surface], now), "accepted");
+  const midpoint = executor.sample(now + 50)?.point;
+  assert.ok(midpoint?.bone_rotations);
+  assert.ok(Math.abs(Math.abs(midpoint.bone_rotations[0]!) - Math.PI) < 1e-12,
+    "the midpoint stays near pi instead of rotating through zero");
+});
+
+test("a pose encoding transition copies exactly one atomic branch", () => {
+  const now = 1_800_000_000_000;
+  const executor = new SafePlanExecutor();
+  executor.rememberWorldState(10, { x: 280, y: 400 });
+  const changingEncoding = {
+    ...plan(now),
+    points: [
+      { ...planPointBase(plan(now).points[0]!), bone_rotations: [0.25] },
+      {
+        ...planPointBase(plan(now).points[1]!),
+        root_translation: [1, 2, 3] as [number, number, number],
+        root_rotation: [0, 0, 0, 1] as [number, number, number, number],
+        local_rotation_deltas: [[0, 0, 0, 1] as [number, number, number, number]],
+      },
+    ],
+  } satisfies HorizonPlanPayload;
+
+  assert.equal(executor.offer(changingEncoding, [surface], now), "accepted");
+  const before = executor.sample(now + 49)?.point;
+  assert.deepEqual(before?.bone_rotations, [0.25]);
+  assert.equal(before?.root_translation, undefined);
+  const after = executor.sample(now + 50)?.point;
+  assert.equal(after?.bone_rotations, undefined);
+  assert.deepEqual(after?.root_translation, [1, 2, 3]);
+  assert.deepEqual(after?.local_rotation_deltas, [[0, 0, 0, 1]]);
 });
 
 test("horizontal walking on a top edge is not classified as a landing", () => {

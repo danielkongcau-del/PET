@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pet.local/schemas/v1/character-animation.schema.json",
+  "title": "PET Character Animation v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "characterId",
+    "rigId",
+    "rigFingerprint",
+    "clipFingerprint",
+    "clipId",
+    "name",
+    "durationMs",
+    "sampleRateHz",
+    "playbackMode",
+    "jointOrder",
+    "frames",
+    "source"
+  ],
+  "properties": {
+    "schema": { "const": "pet-character-animation-v1" },
+    "characterId": { "$ref": "#/$defs/characterId" },
+    "rigId": { "$ref": "#/$defs/id" },
+    "rigFingerprint": { "$ref": "#/$defs/fingerprint" },
+    "clipFingerprint": { "$ref": "#/$defs/fingerprintRecord" },
+    "clipId": { "$ref": "#/$defs/id" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "durationMs": { "type": "number", "exclusiveMinimum": 0 },
+    "sampleRateHz": { "type": "number", "exclusiveMinimum": 0, "maximum": 1000 },
+    "playbackMode": { "enum": ["loop", "once"] },
+    "jointOrder": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 128,
+      "items": { "$ref": "#/$defs/jointId" }
+    },
+    "frames": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/frame" }
+    },
+    "source": { "$ref": "#/$defs/source" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "characterId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|$))[a-z0-9](?:[a-z0-9._-]*[a-z0-9_-])?$"
+    },
+    "jointId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "fingerprintRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "canonicalization", "value"],
+      "properties": {
+        "algorithm": { "const": "pet-canonical-json-f64-v1+sha256" },
+        "canonicalization": { "const": "pet-canonical-json-f64-v1" },
+        "value": { "$ref": "#/$defs/fingerprint" }
+      }
+    },
+    "vec3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "quat": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number", "minimum": -1, "maximum": 1 }
+    },
+    "frame": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timeMs", "localRotations", "localTranslations"],
+      "properties": {
+        "timeMs": { "type": "number", "minimum": 0 },
+        "localRotations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/quat" }
+        },
+        "localTranslations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/vec3" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["uri", "sha256", "animationIndex", "animationName"],
+      "properties": {
+        "uri": { "type": "string", "minLength": 1, "maxLength": 1024 },
+        "sha256": { "$ref": "#/$defs/fingerprint" },
+        "animationIndex": { "type": "integer", "minimum": 0 },
+        "animationName": { "type": "string", "minLength": 1, "maxLength": 256 }
+      }
+    }
+  }
+}

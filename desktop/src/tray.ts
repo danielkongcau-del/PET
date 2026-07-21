@@ -56,8 +56,9 @@ export class PetTray {
     recordingsDirectory: string,
     actions: TrayActions,
     state: TrayState,
+    characterIconPath?: string | null,
   ): Promise<PetTray> {
-    const icon = await loadTrayIcon(projectRoot);
+    const icon = await loadTrayIcon(projectRoot, characterIconPath);
     return new PetTray(new Tray(icon), actions, logsDirectory, recordingsDirectory, state);
   }
 
@@ -130,9 +131,9 @@ function formatBytes(bytes: number): string {
   return `${(safe / 1_073_741_824).toFixed(2)} GiB`;
 }
 
-async function loadTrayIcon(projectRoot: string): Promise<NativeImage> {
+async function loadTrayIcon(projectRoot: string, characterIconPath?: string | null): Promise<NativeImage> {
   try {
-    const bytes = await readFile(join(projectRoot, "assets", "pet", "runtime", "cat-48.png"));
+    const bytes = await readFile(characterIconPath ?? join(projectRoot, "assets", "pet", "runtime", "cat-48.png"));
     const icon = nativeImage.createFromBuffer(bytes).resize({ width: 16, height: 16, quality: "best" });
     if (!icon.isEmpty()) return icon;
   } catch {

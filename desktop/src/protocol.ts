@@ -22,6 +22,7 @@ import {
   type MetricsPayload,
   type PetState,
   type PlanPoint,
+  type PlanPointBase,
   type PlanTarget,
   type Quat,
   type ReadyPayload,
@@ -46,6 +47,7 @@ export type {
   MetricsPayload,
   PetState,
   PlanPoint,
+  PlanPointBase,
   PlanTarget,
   Quat,
   ReadyPayload,
@@ -160,7 +162,7 @@ function isPlanPoint(value: unknown): value is PlanPoint {
   if (value.root_translation !== undefined && !isVec3(value.root_translation)) return false;
   if (value.root_rotation !== undefined && !isQuat(value.root_rotation)) return false;
   if (value.local_rotation_deltas !== undefined && !isQuatArray(value.local_rotation_deltas)) return false;
-  if (value.bone_rotations !== undefined && (value.root_translation !== undefined || value.local_rotation_deltas !== undefined)) {
+  if (value.bone_rotations !== undefined && (value.root_translation !== undefined || value.root_rotation !== undefined || value.local_rotation_deltas !== undefined)) {
     return false; // mutual exclusion
   }
   // 3D pose fields must be all-or-none
@@ -211,11 +213,19 @@ function isQuatArray(value: unknown): value is Quat[] {
 function isFacialParams(value: unknown): boolean {
   if (!isRecord(value)) return false;
   if (!hasOnlyKeys(value, ["eye_scale", "eye_squint", "mouth_open", "ear_angle", "brow_tilt"])) return false;
-  return isFiniteNumber(value.eye_scale) && value.eye_scale >= 0.5 && value.eye_scale <= 1.5 &&
-    isFiniteNumber(value.eye_squint) && value.eye_squint >= 0 && value.eye_squint <= 1 &&
-    isFiniteNumber(value.mouth_open) && value.mouth_open >= 0 && value.mouth_open <= 1 &&
-    isFiniteNumber(value.ear_angle) && value.ear_angle >= -0.5 && value.ear_angle <= 0.5 &&
-    isFiniteNumber(value.brow_tilt) && value.brow_tilt >= -1 && value.brow_tilt <= 1;
+  const ranges = {
+    eye_scale: [0.5, 1.5],
+    eye_squint: [0, 1],
+    mouth_open: [0, 1],
+    ear_angle: [-0.5, 0.5],
+    brow_tilt: [-1, 1],
+  } as const;
+  for (const key of Object.keys(value) as Array<keyof typeof ranges>) {
+    const channel = value[key];
+    const [minimum, maximum] = ranges[key];
+    if (!isFiniteNumber(channel) || channel < minimum || channel > maximum) return false;
+  }
+  return true;
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

@@ -1,17 +1,80 @@
 import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
-import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
-import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
-import { join, resolve } from "node:path";
+import { resolve } from "node:path";
 
 import { CAP_SKELETAL_MOTION, CAP_SKELETAL_MOTION_3D, createEnvelope, decodeEnvelope, encodeEnvelope, parseHorizonPlan, parseMetrics, parsePong, parseReady, type Envelope, type HelloPayload, type HorizonPlanPayload, type MessageType, type MetricsPayload, type WorldStatePayload } from "./protocol.js";
+import { loadCharacterRigConfig, type CharacterRigConfig } from "./character-rig.js";
 import { debug, info, logError, warn } from "./logger.js";
 
 export type GeneratorStatus = "disabled" | "starting" | "ready" | "degraded" | "stopped";
-export type SkeletalMode = "full" | "host_only" | "generator_only" | "none";
+/** The negotiated pose encoding is part of the state; 2D and 3D must never share cached rig state. */
+export type SkeletalMode = "full_3d" | "full_2d" | "host_only" | "generator_only" | "none";
 
-/** Parsed from cat-skeleton.json — the single source of truth for bone structure. */
+export interface SkeletalNegotiationToken {
+  readonly generation: number;
+  readonly serial: number;
+}
+
+/**
+ * Invalidates async capability negotiations when another ready message or
+ * child generation supersedes them. Exported so the race contract can be
+ * tested without spawning an Electron process.
+ */
+export class SkeletalNegotiationGate {
+  #serial = 0;
+
+  begin(generation: number): SkeletalNegotiationToken {
+    return { generation, serial: ++this.#serial };
+  }
+
+  invalidate(): void {
+    this.#serial += 1;
+  }
+
+  isCurrent(token: SkeletalNegotiationToken, generation: number): boolean {
+    return token.generation === generation && token.serial === this.#serial;
+  }
+}
+
+export function modeUsesQuaternionRig(mode: SkeletalMode): boolean {
+  return mode === "full_3d";
+}
+
+export function modeUsesCharacterRig(mode: SkeletalMode): boolean {
+  return mode === "full_3d" || mode === "full_2d";
+}
+
+export interface SkeletalCapabilityState {
+  readonly host3D: boolean;
+  readonly generator3D: boolean;
+  readonly host2D: boolean;
+  readonly generator2D: boolean;
+  readonly generatorSkeletonHash: string | null;
+  readonly hostSkeletonHash: string | null;
+}
+
+/** Pure compatibility decision shared by production negotiation and tests. */
+export function selectSkeletalMode(state: SkeletalCapabilityState): SkeletalMode {
+  if (state.host3D && state.generator3D) {
+    if (!state.generatorSkeletonHash) return "host_only";
+    if (!state.hostSkeletonHash) return "generator_only";
+    return state.generatorSkeletonHash === state.hostSkeletonHash ? "full_3d" : "none";
+  }
+  if (state.host2D && state.generator2D) {
+    // The planar array is indexed by the selected character's driven-joint
+    // order, so matching lengths are insufficient: it needs the same exact
+    // rig fingerprint as the quaternion encoding.
+    if (!state.generatorSkeletonHash) return "host_only";
+    if (!state.hostSkeletonHash) return "generator_only";
+    return state.generatorSkeletonHash === state.hostSkeletonHash ? "full_2d" : "none";
+  }
+  if ((state.host3D || state.host2D) && !state.generator3D && !state.generator2D) return "host_only";
+  if (!state.host3D && !state.host2D && (state.generator3D || state.generator2D)) return "generator_only";
+  return "none";
+}
+
+/** Parsed from the selected character manifest (or a legacy rig fallback). */
 export interface SkeletalConfig {
   /** Full skeleton JSON as loaded from disk (null if unavailable). */
   readonly raw: Record<string, unknown> | null;
@@ -21,6 +84,9 @@ export interface SkeletalConfig {
   readonly modelDrivenBoneIds: readonly string[];
   /** Convenience: modelDrivenBoneIds.length. */
   readonly modelDrivenCount: number;
+  readonly characterId: string | null;
+  readonly rigId: string | null;
+  readonly source: "character_manifest" | "legacy_rig" | null;
 }
 
 export interface GeneratorBridgeOptions {
@@ -28,6 +94,8 @@ export interface GeneratorBridgeOptions {
   readonly sessionId: string;
   readonly petWidthPhysical: number;
   readonly petHeightPhysical: number;
+  /** Prevalidated single source of truth shared with the renderer and trace metadata. */
+  readonly characterRig?: CharacterRigConfig;
   readonly onStatus: (status: GeneratorStatus) => void;
   readonly onPlan: (plan: HorizonPlanPayload) => void;
   readonly onMetrics?: (metrics: MetricsPayload) => void;
@@ -51,6 +119,29 @@ const HOST_CAPABILITIES = [
   CAP_SKELETAL_MOTION,
   CAP_SKELETAL_MOTION_3D,
 ] as const;
+const MAX_LEGACY_BONE_ROTATIONS = 32;
+
+/** Advertise 2D only when the selected character fits the v1 planar ABI. */
+export function advertisedHostCapabilities(modelDrivenCount: number | null): string[] {
+  return HOST_CAPABILITIES.filter((capability) => (
+    capability !== CAP_SKELETAL_MOTION
+    || (
+      modelDrivenCount !== null
+      && modelDrivenCount > 0
+      && modelDrivenCount <= MAX_LEGACY_BONE_ROTATIONS
+    )
+  ));
+}
+
+/** Shared stale-child guard for callbacks that may fire after a restart. */
+export function isCurrentChildEvent(
+  eventGeneration: number,
+  currentGeneration: number,
+  disposed: boolean,
+  childMatches: boolean,
+): boolean {
+  return !disposed && childMatches && eventGeneration === currentGeneration;
+}
 
 export class GeneratorBridge {
   readonly #options: GeneratorBridgeOptions;
@@ -71,17 +162,34 @@ export class GeneratorBridge {
   #generation = 0;
   #disposed = false;
   #restartCount = 0;
+  readonly #skeletalNegotiation = new SkeletalNegotiationGate();
   #skeletalMode: SkeletalMode = "none";
   #skeletalConfig: SkeletalConfig = {
     raw: null,
     sha256: null,
     modelDrivenBoneIds: [],
     modelDrivenCount: 0,
+    characterId: null,
+    rigId: null,
+    source: null,
   };
   #skeletalConfigLoaded = false;
 
   constructor(options: GeneratorBridgeOptions) {
     this.#options = options;
+    if (options.characterRig) {
+      const selected = options.characterRig;
+      this.#skeletalConfig = {
+        raw: selected.raw,
+        sha256: selected.sha256,
+        modelDrivenBoneIds: selected.modelDrivenBoneIds,
+        modelDrivenCount: selected.modelDrivenCount,
+        characterId: selected.characterId,
+        rigId: selected.rigId,
+        source: selected.source,
+      };
+      this.#skeletalConfigLoaded = true;
+    }
   }
 
   get status(): GeneratorStatus {
@@ -147,6 +255,8 @@ export class GeneratorBridge {
   dispose(): void {
     if (this.#disposed) return;
     this.#disposed = true;
+    this.#skeletalNegotiation.invalidate();
+    this.#setSkeletalMode("none");
     this.#clearTimers();
     this.sendCancel("shutdown");
     const child = this.#child;
@@ -163,6 +273,8 @@ export class GeneratorBridge {
 
   #spawnChild(): void {
     const generation = ++this.#generation;
+    this.#skeletalNegotiation.invalidate();
+    this.#setSkeletalMode("none");
     if (this.#restartAttempt > 0) this.#restartCount += 1;
     const defaultPython = "D:\\Anaconda\\envs\\pet-core\\python.exe";
     const python = process.env.PET_PYTHON || (existsSync(defaultPython) ? defaultPython : "python");
@@ -201,7 +313,9 @@ export class GeneratorBridge {
         session_id: this.#options.sessionId,
         host: { name: "pet-electron-host", version: "0.1.0", pid: process.pid },
         requested_version: 1,
-        capabilities: [...HOST_CAPABILITIES],
+        capabilities: advertisedHostCapabilities(
+          this.#skeletalConfigLoaded ? this.#skeletalConfig.modelDrivenCount : null,
+        ),
         config: {
           world_state_hz: 20,
           plan_horizon_ms: 400,
@@ -223,6 +337,7 @@ export class GeneratorBridge {
     child.stderr.setEncoding("utf8");
     child.stderr.on("data", (chunk: string) => this.#handleStderr(chunk));
     child.stdin.on("drain", () => {
+      if (!isCurrentChildEvent(generation, this.#generation, this.#disposed, child === this.#child)) return;
       this.#stdinBlocked = false;
       this.#flushWorldState();
     });
@@ -234,6 +349,8 @@ export class GeneratorBridge {
     child.once("exit", (code, signal) => {
       if (generation !== this.#generation) return;
       this.#child = null;
+      this.#skeletalNegotiation.invalidate();
+      this.#setSkeletalMode("none");
       this.#options.onProcessChanged?.(null);
       this.#clearChildTimers();
       if (this.#disposed) return;
@@ -270,11 +387,12 @@ export class GeneratorBridge {
       }
       this.#lastChildSeq = envelope.seq;
       this.#options.onEnvelopeReceived?.(envelope);
-      this.#handleEnvelope(envelope);
+      this.#handleEnvelope(generation, envelope);
     }
   }
 
-  #handleEnvelope(envelope: Envelope): void {
+  #handleEnvelope(generation: number, envelope: Envelope): void {
+    if (generation !== this.#generation || !this.#child || this.#disposed) return;
     if (envelope.type === "ready") {
       const ready = parseReady(envelope);
       if (!ready || ready.session_id !== this.#options.sessionId) {
@@ -283,15 +401,15 @@ export class GeneratorBridge {
       }
       if (this.#readyTimer) clearTimeout(this.#readyTimer);
       this.#readyTimer = null;
-      this.#restartAttempt = 0;
-      this.#lastPongAt = Date.now();
-      this.#setStatus("ready");
-      info("generator", "sidecar ready", { pid: ready.generator.pid, capabilities: ready.capabilities.length });
-      this.#startHeartbeat();
-      // Await negotiation so skeletal config is loaded before the first world
-      // state is flushed — otherwise bone_rotations in early plans may be
-      // length-checked against a zero count.
-      void this.#negotiateSkeletalMode(ready).then(() => this.#flushWorldState());
+      if (this.#heartbeatTimer) clearInterval(this.#heartbeatTimer);
+      this.#heartbeatTimer = null;
+      this.#pendingPings.clear();
+      // A repeated ready message is a fresh handshake. Stop accepting plans
+      // and clear the previous encoding before any asynchronous rig load.
+      this.#setStatus("starting");
+      this.#setSkeletalMode("none");
+      const token = this.#skeletalNegotiation.begin(generation);
+      void this.#completeReadyHandshake(generation, token, ready);
       return;
     }
     if (envelope.type === "pong") {
@@ -394,6 +512,8 @@ export class GeneratorBridge {
     this.#child = null;
     this.#options.onProcessChanged?.(null);
     this.#generation += 1;
+    this.#skeletalNegotiation.invalidate();
+    this.#setSkeletalMode("none");
     this.#clearChildTimers();
     if (!child || child.killed) return;
     debug("generator", "stopping sidecar", { reason });
@@ -420,111 +540,117 @@ export class GeneratorBridge {
     this.#pendingPings.clear();
   }
 
-  async #negotiateSkeletalMode(ready: ReturnType<typeof parseReady>): Promise<void> {
-    if (!ready) return;
-    const host3D = (HOST_CAPABILITIES as readonly string[]).includes(CAP_SKELETAL_MOTION_3D);
+  async #completeReadyHandshake(
+    generation: number,
+    token: SkeletalNegotiationToken,
+    ready: NonNullable<ReturnType<typeof parseReady>>,
+  ): Promise<void> {
+    const mode = await this.#negotiateSkeletalMode(generation, token, ready);
+    if (mode === null || !this.#isCurrentNegotiation(generation, token)) return;
+    this.#setSkeletalMode(mode);
+    this.#restartAttempt = 0;
+    this.#lastPongAt = Date.now();
+    this.#setStatus("ready");
+    info("generator", "sidecar ready", {
+      pid: ready.generator.pid,
+      capabilities: ready.capabilities.length,
+      skeletalMode: mode,
+    });
+    this.#startHeartbeat();
+    this.#flushWorldState();
+  }
+
+  async #negotiateSkeletalMode(
+    generation: number,
+    token: SkeletalNegotiationToken,
+    ready: NonNullable<ReturnType<typeof parseReady>>,
+  ): Promise<SkeletalMode | null> {
+    const advertised = advertisedHostCapabilities(
+      this.#skeletalConfigLoaded ? this.#skeletalConfig.modelDrivenCount : null,
+    );
+    const host3D = advertised.includes(CAP_SKELETAL_MOTION_3D);
     const gen3D = ready.capabilities.includes(CAP_SKELETAL_MOTION_3D);
-    const host2D = (HOST_CAPABILITIES as readonly string[]).includes(CAP_SKELETAL_MOTION);
+    const host2D = advertised.includes(CAP_SKELETAL_MOTION);
     const gen2D = ready.capabilities.includes(CAP_SKELETAL_MOTION);
     const genSkeletonHash = ready.generator.skeleton_sha256 ?? null;
 
     const config = await this.#loadSkeletalConfig();
+    if (!this.#isCurrentNegotiation(generation, token)) return null;
 
-    let mode: SkeletalMode;
-    // Prefer 3D over 2D when both are available.
+    const mode = selectSkeletalMode({
+      host3D,
+      generator3D: gen3D,
+      host2D,
+      generator2D: gen2D,
+      generatorSkeletonHash: genSkeletonHash,
+      hostSkeletonHash: config.sha256,
+    });
+    // Prefer 3D over 2D when both are available, and explain any fail-closed result.
     if (host3D && gen3D) {
       if (!genSkeletonHash) {
         warn("skeleton", "Generator advertises skeletal_motion_3d but did not provide a skeleton_sha256; FK disabled.");
-        mode = "host_only";
       } else if (!config.sha256) {
-        warn("skeleton", "Generator expects 3D skeleton but host has no cat-skeleton-3d.json.");
-        mode = "generator_only";
+        warn("skeleton", "Generator expects a 3D character rig but the host could not load the selected manifest.");
       } else if (genSkeletonHash !== config.sha256) {
         warn("skeleton", `3D skeleton hash mismatch: gen=${genSkeletonHash.slice(0, 12)}..., host=${config.sha256.slice(0, 12)}...`);
-        mode = "none";
       } else {
         info("skeleton", "3D skeletal mode fully negotiated", {
           modelDrivenCount: config.modelDrivenCount,
           jointIds: [...config.modelDrivenBoneIds],
         });
-        mode = "full";
       }
     } else if (host2D && gen2D) {
-      warn("skeleton", "Using legacy planar skeletal_motion; upgrade generator for 3D quaternion output.");
-      mode = "full";
+      if (!genSkeletonHash) {
+        warn("skeleton", "Generator advertises planar skeletal_motion without a skeleton_sha256; planar FK disabled.");
+      } else if (!config.sha256) {
+        warn("skeleton", "Generator expects a planar character rig but the host could not load the selected manifest.");
+      } else if (genSkeletonHash !== config.sha256) {
+        warn("skeleton", `2D skeleton hash mismatch: gen=${genSkeletonHash.slice(0, 12)}..., host=${config.sha256.slice(0, 12)}...`);
+      } else {
+        warn("skeleton", "Using legacy planar skeletal_motion; upgrade generator for 3D quaternion output.");
+      }
     } else if ((host3D || host2D) && !gen3D && !gen2D) {
       warn("skeleton", "Host supports skeletal motion but generator does not; falling back to whole-sprite deformation.");
-      mode = "host_only";
     } else if (!host3D && !host2D && (gen3D || gen2D)) {
       warn("skeleton", "Generator outputs skeletal data but host renderer will ignore them.");
-      mode = "generator_only";
-    } else {
-      mode = "none";
     }
 
-    if (mode !== this.#skeletalMode) {
-      this.#skeletalMode = mode;
-      this.#options.onSkeletalMode?.(mode);
-      debug("skeleton", "skeletal mode negotiated", { mode, host3D, gen3D, host2D, gen2D });
-    }
+    debug("skeleton", "skeletal mode selected", { mode, host3D, gen3D, host2D, gen2D });
+    return mode;
   }
 
-  /** Loads and parses the 3D skeleton once, computing SHA-256 and model_driven joint metadata. */
+  #isCurrentNegotiation(generation: number, token: SkeletalNegotiationToken): boolean {
+    return !this.#disposed && this.#child !== null && generation === this.#generation &&
+      this.#skeletalNegotiation.isCurrent(token, this.#generation);
+  }
+
+  #setSkeletalMode(mode: SkeletalMode): void {
+    if (mode === this.#skeletalMode) return;
+    this.#skeletalMode = mode;
+    this.#options.onSkeletalMode?.(mode);
+    debug("skeleton", "skeletal mode changed", { mode });
+  }
+
+  /** Loads and validates the selected character rig once. */
   async #loadSkeletalConfig(): Promise<SkeletalConfig> {
     if (this.#skeletalConfigLoaded) return this.#skeletalConfig;
     try {
-      const name = process.env.PET_SKELETON_3D ?? "cat-skeleton-3d.json";
-      const path = join(this.#options.projectRoot, "assets", "pet", "runtime", name);
-      const raw = await readFile(path);
-      const sha256 = createHash("sha256").update(raw).digest("hex");
-      const parsed = JSON.parse(raw.toString("utf8")) as Record<string, unknown>;
-
-      if (parsed.schema !== "pet-rig-v2") throw new Error(`Unsupported skeleton schema: ${String(parsed.schema)}`);
-      const motionRoot = typeof parsed.motionRoot === "string" ? parsed.motionRoot : null;
-      if (!motionRoot) throw new Error("Skeleton missing motionRoot");
-
-      const joints = Array.isArray(parsed.joints) ? parsed.joints as Record<string, unknown>[] : [];
-      if (joints.length < 2) throw new Error("Skeleton must have at least 2 joints");
-
-      const rootJoint = joints.find((j) => j.id === motionRoot);
-      if (!rootJoint) throw new Error(`motionRoot "${motionRoot}" not found`);
-      if (rootJoint.parent !== null) throw new Error("motionRoot parent must be null");
-      if (rootJoint.deform !== false) throw new Error("motionRoot deform must be false");
-
-      const ids = new Set<string>();
-      for (const j of joints) {
-        const id = typeof j.id === "string" ? j.id : "";
-        if (!id || ids.has(id)) throw new Error(`Duplicate or empty joint id: "${id}"`);
-        ids.add(id);
-      }
-      for (const j of joints) {
-        if (j.parent !== null && typeof j.parent === "string" && !ids.has(j.parent)) {
-          throw new Error(`Joint "${String(j.id)}" references missing parent "${j.parent}"`);
-        }
-      }
-
-      const drawOrder = Array.isArray(parsed.drawOrder) ? parsed.drawOrder as string[] : [];
-      for (const entry of drawOrder) {
-        if (!ids.has(entry)) throw new Error(`drawOrder entry "${entry}" is not a joint id`);
-      }
-
-      const modelDrivenJointIds = joints
-        .filter((j) => {
-          if (j.id === motionRoot) return false;
-          const physics = j.physics as Record<string, unknown> | undefined;
-          const poseDofs = j.poseDofs as Record<string, unknown> | undefined;
-          if (physics?.mode === "secondary" || physics?.mode === "static") return false;
-          return poseDofs?.rotation === true;
-        })
-        .map((j) => typeof j.id === "string" ? j.id : "")
-        .filter((id) => id.length > 0);
-
+      const selected = await loadCharacterRigConfig(this.#options.projectRoot);
       this.#skeletalConfig = {
-        raw: parsed,
-        sha256,
-        modelDrivenBoneIds: modelDrivenJointIds,
-        modelDrivenCount: modelDrivenJointIds.length,
+        raw: selected.raw,
+        sha256: selected.sha256,
+        modelDrivenBoneIds: selected.modelDrivenBoneIds,
+        modelDrivenCount: selected.modelDrivenCount,
+        characterId: selected.characterId,
+        rigId: selected.rigId,
+        source: selected.source,
       };
+      info("skeleton", "selected character rig loaded", {
+        characterId: selected.characterId,
+        rigId: selected.rigId,
+        modelDrivenCount: selected.modelDrivenCount,
+        source: selected.source,
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : "unknown";
       warn("skeleton", `Rig validation failed: ${message}; 3D skeletal motion disabled`);

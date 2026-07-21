@@ -28,7 +28,30 @@ class MotionPoint:
     root_rotation: tuple[float, float, float, float] | None = None
     local_rotation_deltas: tuple[tuple[float, float, float, float], ...] | None = None
 
+    def __post_init__(self) -> None:
+        self._validate_pose_encoding()
+
+    def _validate_pose_encoding(self) -> None:
+        present_3d = (
+            self.root_translation is not None,
+            self.root_rotation is not None,
+            self.local_rotation_deltas is not None,
+        )
+        has_3d = any(present_3d)
+        if has_3d and not all(present_3d):
+            raise ValueError(
+                "3D skeletal fields (root_translation, root_rotation, "
+                "local_rotation_deltas) must be all-or-none"
+            )
+        if self.bone_rotations is not None and has_3d:
+            raise ValueError(
+                "bone_rotations and 3D skeletal fields are mutually exclusive"
+            )
+
     def to_payload(self) -> dict[str, Any]:
+        # Frozen dataclasses can still be corrupted through low-level mutation;
+        # never serialize a partial or mixed pose even in that case.
+        self._validate_pose_encoding()
         payload: dict[str, Any] = {
             "t_ms": self.t_ms,
             "dx": round(self.dx, 4),

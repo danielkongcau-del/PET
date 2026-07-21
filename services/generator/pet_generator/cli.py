@@ -14,6 +14,10 @@ from .planner import AutoregressiveMotionBackend, PlannerConfig
 from .service import GeneratorService
 
 
+PROCEDURAL_BACKEND = "procedural"
+NEURAL_BACKEND = "neural"
+
+
 def _non_negative_int(value: str) -> int:
     try:
         parsed = int(value, 0)
@@ -35,6 +39,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--horizon-steps", type=int, default=12)
     parser.add_argument("--dt-ms", type=int, default=33)
+    parser.add_argument(
+        "--backend",
+        choices=(PROCEDURAL_BACKEND, NEURAL_BACKEND),
+        default=os.environ.get("PET_GENERATOR_BACKEND", PROCEDURAL_BACKEND),
+        help="runtime backend (also PET_GENERATOR_BACKEND)",
+    )
     parser.add_argument(
         "--metrics-interval-ms",
         type=_non_negative_int,
@@ -58,6 +68,22 @@ def _resolve_seed(cli_seed: int | None) -> int:
     return secrets.randbits(64)
 
 
+def _build_backend(kind: str, config: PlannerConfig):
+    checkpoint = os.environ.get("PET_GENERATOR_CHECKPOINT")
+    if kind == PROCEDURAL_BACKEND:
+        if checkpoint:
+            raise ValueError(
+                "PET_GENERATOR_CHECKPOINT is set but the procedural backend cannot "
+                "load checkpoints; refusing to silently ignore it"
+            )
+        return AutoregressiveMotionBackend(config)
+    if kind == NEURAL_BACKEND:
+        raise ValueError(
+            "the neural backend is not implemented yet; no checkpoint was loaded"
+        )
+    raise ValueError(f"unsupported generator backend: {kind!r}")
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     logging.basicConfig(
@@ -68,6 +94,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         config = PlannerConfig(horizon_steps=args.horizon_steps, dt_ms=args.dt_ms)
         seed = _resolve_seed(args.seed)
+        backend = _build_backend(args.backend, config)
     except (ValueError, argparse.ArgumentTypeError) as exc:
         print(f"configuration error: {exc}", file=sys.stderr)
         return 2
@@ -79,7 +106,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             reconfigure(encoding="utf-8", errors="strict", newline="\n")
 
     service = GeneratorService(
-        AutoregressiveMotionBackend(config),
+        backend,
         session_seed=seed,
         metrics_interval_ms=args.metrics_interval_ms,
     )

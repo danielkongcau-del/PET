@@ -5,9 +5,10 @@
  */
 import electron, { type BrowserWindow as ElectronBrowserWindow, type IpcMainEvent, type Point } from "electron";
 import { readFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 
 import { coordinateFrameForDisplay, lockedDipBoundsForPhysicalFoot, nearestDisplayForPhysicalPoint } from "./coordinates.js";
+import type { CharacterRigConfig } from "./character-rig.js";
 import type { Behavior, FacialParams, Quat, Vec3 } from "./protocol.js";
 import type { GeneratorStatus } from "./generator-bridge.js";
 import { debug, logError } from "./logger.js";
@@ -40,7 +41,7 @@ export interface PetVisualState {
   readonly behavior: Behavior;
   readonly generatorStatus: GeneratorStatus;
   readonly debug: boolean;
-  /** Per-bone rotation angles (radians). Present only when skeletal_motion mode is "full" (legacy 2D). */
+  /** Per-bone rotation angles (radians). Present only in negotiated legacy full_2d mode. */
   readonly boneRotations?: readonly number[];
   /** Continuous facial parameters. Takes precedence over expression string. */
   readonly facialParams?: FacialParams;
@@ -55,6 +56,7 @@ export interface PetVisualState {
 export interface PetWindowOptions {
   readonly initialFootDip: Point;
   readonly projectRoot: string;
+  readonly characterRig: CharacterRigConfig;
   readonly onClick: (button: "left" | "right" | "middle") => void;
   readonly onPointerOpaque: (opaque: boolean) => void;
 }
@@ -125,7 +127,7 @@ export class PetWindow {
   }
 
   async load(): Promise<void> {
-    const asset = await readPetAsset(this.#options.projectRoot);
+    const asset = await readPetAsset(this.#options.characterRig);
     const currentFoot = this.getFootDip();
     this.#assetDataUrl = asset.dataUrl;
     this.#assetParts = asset.parts;
@@ -201,7 +203,7 @@ export class PetWindow {
   /** Send the skeleton definition to the renderer for FK rendering. Safe to call multiple times. */
   sendSkeletalConfig(config: Record<string, unknown> | null): void {
     this.#lastSkeletalConfig = config;
-    if (!this.#rendererReady || this.#window.isDestroyed() || this.#window.webContents.isDestroyed() || !config) return;
+    if (!this.#rendererReady || this.#window.isDestroyed() || this.#window.webContents.isDestroyed()) return;
     this.#window.webContents.send("pet:skeletal-config", config);
   }
 
@@ -330,42 +332,61 @@ export class PetWindow {
   }
 }
 
-async function readPetAsset(projectRoot: string): Promise<{ readonly dataUrl: string | null; readonly parts: unknown; readonly footAnchorDip: Readonly<Point> }> {
-  const configured = process.env.PET_CAT_ASSET;
-  const path = resolve(configured || join(projectRoot, "assets", "pet", "runtime", "cat-48.png"));
+async function readPetAsset(character: CharacterRigConfig): Promise<{ readonly dataUrl: string | null; readonly parts: unknown; readonly footAnchorDip: Readonly<Point> }> {
+  const render = character.render;
+  const footAnchorDip = {
+    x: render.footAnchor[0] * PET_WINDOW_DIP / render.canvas[0],
+    y: render.footAnchor[1] * PET_WINDOW_DIP / render.canvas[1],
+  };
+  const path = render.spriteImagePath;
+  if (!path) {
+    debug("pet.window", "selected character has no sprite asset; using skeletal renderer fallback", {
+      characterId: character.characterId,
+      mode: render.mode,
+    });
+    return { dataUrl: null, parts: characterSpriteMetadata(character, null), footAnchorDip };
+  }
   try {
     const bytes = await readFile(path);
     let parts: unknown = null;
-    try {
-      const metadataPath = resolve(process.env.PET_CAT_PARTS || join(projectRoot, "assets", "pet", "runtime", "cat-parts.json"));
-      const metadata = await readFile(metadataPath, "utf8");
-      if (metadata.length <= 64 * 1024) parts = JSON.parse(metadata) as unknown;
-    } catch {
-      // The single-sprite path remains valid when metadata is unavailable.
+    if (render.spriteMetadataPath) {
+      try {
+        const metadata = await readFile(render.spriteMetadataPath, "utf8");
+        if (metadata.length <= 64 * 1024) parts = JSON.parse(metadata) as unknown;
+      } catch {
+        // The manifest still supplies canvas, facing and foot anchor metadata.
+      }
     }
     return {
-      dataUrl: `data:image/png;base64,${bytes.toString("base64")}`,
-      parts,
-      footAnchorDip: footAnchorDipFromMetadata(parts),
+      dataUrl: `data:${imageMimeType(path)};base64,${bytes.toString("base64")}`,
+      parts: characterSpriteMetadata(character, parts),
+      footAnchorDip,
     };
   } catch {
-    debug("pet.window", "runtime cat asset unavailable; using canvas fallback");
-    return { dataUrl: null, parts: null, footAnchorDip: PET_FOOT_ANCHOR_DIP };
+    debug("pet.window", "selected character sprite unavailable; using skeletal renderer fallback", {
+      characterId: character.characterId,
+    });
+    return { dataUrl: null, parts: characterSpriteMetadata(character, null), footAnchorDip };
   }
 }
 
-function footAnchorDipFromMetadata(metadata: unknown): Readonly<Point> {
-  if (typeof metadata !== "object" || metadata === null) return PET_FOOT_ANCHOR_DIP;
-  const record = metadata as Record<string, unknown>;
-  if (!Array.isArray(record.canvas) || !Array.isArray(record.footAnchor)) return PET_FOOT_ANCHOR_DIP;
-  const [canvasWidth, canvasHeight] = record.canvas;
-  const [anchorX, anchorY] = record.footAnchor;
-  if (![canvasWidth, canvasHeight, anchorX, anchorY].every((value) => typeof value === "number" && Number.isFinite(value)) ||
-    canvasWidth !== PET_CANVAS_PIXELS || canvasHeight !== PET_CANVAS_PIXELS ||
-    (anchorX as number) < 0 || (anchorX as number) > (canvasWidth as number) ||
-    (anchorY as number) < 0 || (anchorY as number) > (canvasHeight as number)) return PET_FOOT_ANCHOR_DIP;
+function characterSpriteMetadata(character: CharacterRigConfig, source: unknown): Record<string, unknown> {
+  const sourceRecord = typeof source === "object" && source !== null && !Array.isArray(source)
+    ? source as Record<string, unknown>
+    : {};
   return {
-    x: (anchorX as number) * PET_WINDOW_DIP / (canvasWidth as number),
-    y: (anchorY as number) * PET_WINDOW_DIP / (canvasHeight as number),
+    ...sourceRecord,
+    canvas: [...character.render.canvas],
+    footAnchor: [...character.render.footAnchor],
+    sourceFacing: character.render.sourceFacing,
+    characterId: character.characterId,
+    rigFingerprint: character.sha256,
   };
+}
+
+function imageMimeType(path: string): string {
+  const lower = path.toLowerCase();
+  if (lower.endsWith(".webp")) return "image/webp";
+  if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) return "image/jpeg";
+  return "image/png";
 }

@@ -42,6 +42,7 @@ sequenceDiagram
 - 窗口移动、最小化、关闭、DPI/显示器变化会使旧目标失效并取消 plan；
 - 当前活动窗口真正覆盖显示器时隐藏桌宠，任务栏、开始菜单和系统安全表面不作为落脚点；
 - 生成器退出、心跳超时或协议错误时，宿主立即停止旧 plan，并以指数退避重启新会话。
+- `ready` 只有在骨骼 encoding 与 rig fingerprint 协商完成后才真正进入可规划状态；每次重新握手先清除上一会话的 renderer/controller rig，异步结果必须匹配当前 child generation 才能提交。
 
 冲突优先级固定为：用户拖拽预留入口 > 窗口拓扑变化 > 宿主安全层 > 生成 plan > fallback。
 
@@ -54,8 +55,11 @@ sequenceDiagram
 - `facing`：朝向；
 - `lean/squash/bob`：身体倾斜、压缩和起伏；
 - `expression`：离散表情提示。
+- 在 3D 骨骼 capability 协商成功时，还原子地包含 `root_translation`、`root_rotation` 和 N 个 `local_rotation_deltas`；N 与顺序来自当前角色 manifest。
 
-渲染器读取 `cat-parts.json` 的脚底锚点，并对完整的 `cat-48.png` 做整体镜像、倾斜和压缩。当前素材是单张扁平图，不能再按互不重叠的矩形部件分别变形，否则接缝会露出透明条纹；未来只有在提供带接头重叠的独立 RGBA 语义层后，才恢复摆腿、甩尾等局部动作。生成器不输出完整图像帧，因此 60 FPS 渲染不依赖 GPU 推理频率，也不会出现逐像素生成中的闪烁和身份漂移。
+角色由 `pet-character-rig-manifest-v1` 描述：完整层级、rest TRS、精确 driven joint order、坐标系、源 skin/IBM、训练动画和 checkpoint 身份都归属于具体角色。宿主与生成器计算同一 rig fingerprint；不匹配时禁止 3D 姿态进入执行链。渲染器已经能对任意拓扑做四元数 FK 和正交侧视投影；单张 sprite 的正常路径通过自动 2D joint warp 消费姿态，identity 逐像素保持、非 identity 会改变最终 raster。该自动绑定没有角色真实 skin weight、分层或自遮挡信息，不能冒充真正的 mesh skinning；高质量角色仍需专属 2D 权重/分层资产或完整 glTF 蒙皮。
+
+生成器不输出完整图像帧，因此 60 FPS 渲染不依赖 GPU 推理频率，也不会出现逐像素生成中的闪烁和身份漂移。未来无论使用 3D mesh skinning、Live2D 类 2D 变形器还是分层 RGBA rig，都必须消费相同的 FK 姿态，而不能改变宿主的安全与窗口位置权责。
 
 ## 当前基线
 
@@ -67,7 +71,7 @@ sequenceDiagram
 - 点击 id 只消费一次，并优先生成压缩、回弹、后退或转身反应；
 - 随机种子写入每个 plan，可重放问题会话。
 
-它的作用是验证协议、交互和延迟预算，并提供收集模拟数据时的教师/扰动策略。
+它的作用是验证协议、交互和延迟预算，并提供模拟数据中的桌面行为/根轨迹教师。它本身只输出 identity 局部骨骼姿态；离线数据生成已由角色动画 teacher 注入非 identity rest-local quaternion delta，并逐样本记录 clip fingerprint、phase 和 pose source，禁止把 procedural identity 输出直接当作姿态训练集。
 
 ## 条件生成模型路线
 
@@ -75,14 +79,16 @@ sequenceDiagram
 
 构建不操作真实窗口的二维场景模拟器，随机产生：显示器工作区、窗口矩形/Z 序、移动/最小化事件、起点、候选目标和点击。用确定性动力学与规则策略产生合法轨迹，再加入风格参数、时序扰动和人工筛选样本。
 
-一个训练样本可表示为：
+一个训练样本绑定到一个具体角色的 rig fingerprint，可表示为：
 
 ```text
 过去 K 帧状态 + 候选表面集合 + 事件/目标
-    -> 未来 H 帧 [dx, dy, vx, vy, lean, squash, bob, expression]
+    -> 未来 H 帧 [dx, dy, vx, vy,
+                  root_translation, root_rotation,
+                  local_rotation_deltas(N×4), facial]
 ```
 
-表面集合采用相对坐标和 mask，窗口标题、应用名、截图和按键不进入模型或数据集。
+表面集合采用相对坐标和 mask，窗口标题、应用名、截图和按键不进入模型或数据集。数据目录必须带版本化 manifest，明确 condition/target 顺序、K/H/dt、`characterId`、`rigFingerprint`、`drivenJointOrder`、动画 clip fingerprint 和 teacher provenance；不同 ABI 不允许混写。
 
 ### 模型次序
 
@@ -91,6 +97,8 @@ sequenceDiagram
 3. 以 classifier-free guidance 或显式风格 embedding 控制活泼、谨慎、困倦等动作风格；
 4. 使用 DDIM/DPM-Solver、consistency/rectified-flow 蒸馏或少步学生网络压到 1～4 步；
 5. 只在 Python 后端加载 PyTorch，完成权重加载和 warmup 后才发送 `ready`。
+
+模型代码可以复用，但每个具体角色独立训练与分发 checkpoint。checkpoint bundle 必须精确绑定 `characterId + rigFingerprint + drivenJointOrder + dataset schema + normalization`；不得为适配另一个角色而截断输出或补 identity joint。
 
 像素级生成可以作为更晚的外观层研究：例如低频生成表情/部件变体，再由稳定的程序化骨架驱动；不建议让它成为桌宠位置控制闭环的一部分。
 

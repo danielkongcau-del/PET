@@ -1,6 +1,6 @@
 # 神经动作模型设计
 
-状态：草案。不涉及代码变更。
+状态：通用角色方案草案。模型尚未实现；数据与运行时契约以角色 manifest 为准。
 
 ---
 
@@ -9,11 +9,19 @@
 模型替代 `AutoregressiveMotionBackend`，实现相同的 `MotionBackend.generate(world, seed, generated_at_ms) → MotionPlan` 接口。宿主零改动。
 
 ```
-输入: WorldState (宿主采集的窗口几何 + 猫状态 + 鼠标)
+输入: WorldState (宿主采集的窗口几何 + 当前角色状态 + 鼠标)
 输出: MotionPlan (local_rotation_deltas × H 帧 + root_translation + facial_params)
 ```
 
 模型不直接控制窗口位置——`dx/dy` 继续由宿主从 plan point 中提取并做碰撞/限速处理。模型只负责**骨骼姿态和运动意图**。
+
+### 1.1 通用角色与 checkpoint 边界
+
+- 每个具体角色单独训练并分发 checkpoint；不要求同一 checkpoint 跨物种或跨拓扑工作。
+- 训练、推理、FK 和渲染代码不得写死角色名称、关节数量或关节索引。
+- 每个 checkpoint 必须绑定 `characterId`、`rigFingerprint`、`drivenJointOrder`、特征/目标归一化统计和训练数据 schema 版本。
+- 模型实例的 N 由当前角色 manifest 的 `drivenJointOrder.length` 决定。同一份模型代码可实例化不同 N 的角色模型。
+- checkpoint 与当前 manifest 的 fingerprint 或 joint order 不一致时必须拒绝加载，不能截断、补 identity 或静默降级。
 
 ---
 
@@ -37,7 +45,12 @@ Causal Transformer
   - 因果 mask: 帧 t 只看到 ≤t 的帧
   │
   ▼
-Decoder: d_model → (11 四元数 + 4 motion + 5 面部) = 53 dims
+Rig-conditioned decoder:
+  - 每个 driven joint 使用共享 quaternion head，输出 N×4
+  - 全局 head 输出 root_rotation(4) + root_translation(3)
+  - motion head 输出 dx/dy/vx/vy(4)
+  - facial head 输出 5 维
+  - 每帧有效输出为 4N+16 维；N 从当前角色 manifest 读取
   │
   ▼
 宿主安全层 FK → 渲染
@@ -114,11 +127,15 @@ CausalMotionTransformer
 │   ├── Causal Self-Attention (n_heads=8, d_head=32)
 │   ├── MLP (dim_feedforward=1024, GELU)
 │   └── Pre-LayerNorm
-├── Output Head: Linear(256, 53)
-│   ├── quat_head: 44 dim → 11×4 (root + 10 local), normalize each
+├── Joint Decoder（对 N 个 driven joint 共享参数）
+│   ├── 输入: temporal feature + joint/rest/parent/semantic/DOF embedding
+│   └── quat_head: Linear(256, 4)，逐 joint normalize
+├── Global Head
+│   ├── root_rotation_head: 4 dim，normalize
+│   ├── root_translation_head: 3 dim
 │   ├── motion_head: 4 dim (dx, dy, vx, vy)
 │   └── facial_head: 5 dim
-└── Total params: ~2.1M
+└── 参数量由实现计算并记录到 checkpoint metadata，不手写估算值
 ```
 
 **序列设计:**
@@ -158,18 +175,18 @@ def fk_position_loss(pred_quats, pred_root, target_joints_3d, skeleton):
 
 **为什么比直接 quaternion L2 好：** FK 把旋转差异转化为关节位置的欧氏距离，对末端（手脚尾巴）的小旋转差异给出更大惩罚，对根关节的差异给出较小惩罚——符合视觉敏感度。
 
-### 5.2 骨长一致性损失
+### 5.2 四元数测地线与 DOF mask 损失
+
+刚性 FK 的骨长由 rest offset 决定，额外的 bone-length loss 通常恒为零，不能提供有效梯度。改为直接约束可驱动关节的旋转误差，并按 manifest 的 DOF/mask 忽略静态、secondary 或缺少监督的关节：
 
 ```python
-def bone_length_loss(pred_joints, skeleton):
-    loss = 0
-    for j, joint in enumerate(skeleton.joints):
-        parent_idx = skeleton.parent_index[j]
-        if parent_idx < 0: continue
-        pred_len = torch.norm(pred_joints[j] - pred_joints[parent_idx])
-        rest_len = skeleton.rest_length[j]
-        loss += (pred_len - rest_len) ** 2
-    return loss / skeleton.num_joints
+def quaternion_geodesic_loss(pred, target, driven_mask):
+    pred = F.normalize(pred, dim=-1)
+    target = F.normalize(target, dim=-1)
+    # q 与 -q 表示同一旋转。
+    cosine = (pred * target).sum(dim=-1).abs().clamp(max=1.0)
+    angle = 2.0 * torch.acos(cosine)
+    return masked_mean(angle, driven_mask)
 ```
 
 ### 5.3 速度平滑损失
@@ -185,9 +202,9 @@ def quat_angular_velocity(q_prev, q_curr, dt):
     return angle / max(dt, 0.001)
 
 def velocity_smoothness_loss(poses, dt):
-    # poses: [B, H, 10, 4] — quaternion deltas
-    vel = quat_angular_velocity(poses[:, :-1], poses[:, 1:], dt)  # [B, H-1, 10, 1]
-    acc = vel[:, 1:] - vel[:, :-1]                                 # [B, H-2, 10, 1]
+    # poses: [B, H, N, 4] — N comes from this character's manifest
+    vel = quat_angular_velocity(poses[:, :-1], poses[:, 1:], dt)
+    acc = vel[:, 1:] - vel[:, :-1]
     return acc.pow(2).mean()  # minimize angular jerk
 ```
 
@@ -195,9 +212,13 @@ def velocity_smoothness_loss(poses, dt):
 
 ```python
 loss = (
-    1.0  * fk_position_loss
-    + 0.3 * bone_length_loss
+    1.0  * quaternion_geodesic_loss
+    + 0.8 * fk_position_loss
+    + 0.2 * contact_and_foot_sliding_loss
     + 0.1 * velocity_smoothness_loss
+    + 0.5 * root_translation_loss
+    + 0.5 * plan_motion_loss
+    + 0.1 * facial_loss
 )
 ```
 
@@ -214,7 +235,7 @@ loss = (
 | 梯度裁剪 | 1.0 |
 | 混合精度 | FP16 |
 | 单次推理延迟 | < 10ms (GPU, batch=1) |
-| 模型大小 | ~2.1M params, ~4.2MB FP16 |
+| 模型大小 | 由实际构造后的 `sum(p.numel())` 记录；不得从层数手工估算 |
 
 ---
 
@@ -224,12 +245,21 @@ loss = (
 class NeuralMotionBackend(TorchMotionBackend):
     name = "causal-transformer-v0"
 
-    def __init__(self, checkpoint_path: str):
-        self.model = CausalMotionTransformer(config)
+    def __init__(self, character_manifest_path: str, checkpoint_bundle: str):
+        self.rig = CharacterRig.load(character_manifest_path)
+        metadata, state_dict = load_checkpoint_bundle(checkpoint_bundle)
+        require_exact_rig_match(
+            metadata,
+            character_id=self.rig.character_id,
+            rig_fingerprint=self.rig.fingerprint,
+            driven_joint_order=self.rig.driven_joint_order,
+        )
+        self.model = CausalMotionTransformer(config, rig=self.rig)
         self.encoder = WorldStateEncoder()
+        self.state_dict = state_dict
 
     def prepare(self):
-        self.model.load_state_dict(torch.load(self.checkpoint_path))
+        self.model.load_state_dict(self.state_dict, strict=True)
         self.model.cuda().eval()
         # Warmup
         dummy = torch.randn(1, 8, 48, device="cuda", dtype=torch.float16)
@@ -241,25 +271,29 @@ class NeuralMotionBackend(TorchMotionBackend):
         context = self.encoder.encode(world)  # [1, 8, 48]
         # 2. Autoregressive decode
         with torch.no_grad():
-            poses = self.model.generate(context)  # [1, 12, 53]
-        # 3. Convert to MotionPlan — dx/dy/vx/vy from motion head
+            output = self.model.generate(context, rig=self.rig)
+        # output.local_quaternions: [1, H, N, 4]
+        # output.root_rotation:     [1, H, 4]
+        # output.root_translation:  [1, H, 3]
+        # output.motion:            [1, H, 4]
+        # output.facial:            [1, H, 5]
+        # N and its exact joint order come from the character manifest.
+        # 3. Convert to MotionPlan — dx/dy remain relative to one plan origin
         points = []
-        for i in range(12):
-            quats_flat = poses[0, i, :44]
-            quats = quats_flat.reshape(11, 4)
-            quats = F.normalize(quats, dim=-1)
-            motion = poses[0, i, 44:48]  # dx, dy, vx, vy
-            facial = poses[0, i, 48:53]
-            root = quats[0].tolist()  # first quaternion is root_rotation
-            locals = tuple(tuple(q.tolist()) for q in quats[1:])
+        for i in range(self.horizon_steps):
+            locals = F.normalize(output.local_quaternions[0, i], dim=-1)
+            root_rotation = F.normalize(output.root_rotation[0, i], dim=-1)
+            root_translation = output.root_translation[0, i]
+            motion = output.motion[0, i]
+            facial = output.facial[0, i]
             points.append(MotionPoint(
-                t_ms=i * 33,
+                t_ms=i * self.dt_ms,
                 dx=motion[0].item(), dy=motion[1].item(),
                 vx=motion[2].item(), vy=motion[3].item(),
                 facing=1, lean=0, squash=1, bob=0, expression="neutral",
-                root_translation=(0.0, 0.0, 0.0),
-                root_rotation=tuple(root),
-                local_rotation_deltas=locals,
+                root_translation=tuple(root_translation.tolist()),
+                root_rotation=tuple(root_rotation.tolist()),
+                local_rotation_deltas=tuple(tuple(q.tolist()) for q in locals),
                 facial_params={...},
             ))
         return MotionPlan(...)
@@ -283,7 +317,7 @@ class NeuralMotionBackend(TorchMotionBackend):
 | 问题 | 当前假设 |
 |---|---|
 | 模型文件放在哪里？ | `services/generator/pet_generator/neural_motion/` |
-| PyTorch checkpoint 格式？ | `model.pt` (state_dict only, no optimizer) |
+| PyTorch checkpoint 格式？ | 每个具体角色一个 `pet-character-motion-checkpoint-v1` bundle，规范路径为 `checkpoints/characters/<characterId>/<rigFingerprint>/motion.pt`；配套 `pet-character-motion-checkpoint-metadata-v1` 必须绑定角色身份、精确关节顺序、数据集 manifest、归一化统计和模型配置。即使骨架相同也不跨角色复用；optimizer 仅保存在可恢复训练 checkpoint 中。 |
 | 是否需要 behavior 分类头？ | 是，作为辅助任务 |
 | 训练是否需要 wandb？ | 可选 |
 | 推理用 GPU 还是 CPU？ | GPU 优先 (CUDA), CPU fallback |

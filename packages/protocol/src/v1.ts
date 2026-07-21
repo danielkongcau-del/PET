@@ -194,7 +194,7 @@ export interface PlanTarget {
   foot_y: number;
 }
 
-export interface PlanPoint {
+export interface PlanPointBase {
   /** Offset from the start of this horizon. */
   t_ms: number;
   /** Position offset from the based_on_seq foot anchor, not an absolute root position. */
@@ -207,28 +207,51 @@ export interface PlanPoint {
   squash: number;
   bob: number;
   expression: string;
-  /** Optional: per-bone rotation angles in radians (v1 planar, legacy).
-   *  Mutually exclusive with root_translation / root_rotation / local_rotation_deltas. */
-  bone_rotations?: number[];
   /** Optional: continuous facial parameters. */
   facial_params?: FacialParams;
-
-  // ── 3D skeletal pose (v2) ──
-  /** Root translation in plan-frame coordinates (replaces dx/dy for 3D). */
-  root_translation?: Vec3;
-  /** Root orientation as normalized quaternion [x,y,z,w]. */
-  root_rotation?: Quat;
-  /** Per-joint local rotation deltas (quaternions), in skeleton joint order.
-   *  Excludes __motion_root__. Mutually exclusive with bone_rotations. */
-  local_rotation_deltas?: Quat[];
 }
 
+/** A point may omit skeletal pose data entirely. */
+export interface PlanPointWithoutSkeletalPose extends PlanPointBase {
+  bone_rotations?: never;
+  root_translation?: never;
+  root_rotation?: never;
+  local_rotation_deltas?: never;
+}
+
+/** Legacy planar pose, mutually exclusive with quaternion pose data. */
+export interface PlanPointLegacyPose extends PlanPointBase {
+  bone_rotations: number[];
+  root_translation?: never;
+  root_rotation?: never;
+  local_rotation_deltas?: never;
+}
+
+/** Complete 3D pose. Its three fields form one atomic wire-level group. */
+export interface PlanPoint3DPose extends PlanPointBase {
+  bone_rotations?: never;
+  /** Root translation in plan-frame coordinates (replaces dx/dy for 3D). */
+  root_translation: Vec3;
+  /** Root orientation as normalized quaternion [x,y,z,w]. */
+  root_rotation: Quat;
+  /** Per-joint local rotation deltas (quaternions), in skeleton joint order.
+   *  Excludes __motion_root__. Mutually exclusive with bone_rotations. */
+  local_rotation_deltas: Quat[];
+}
+
+/** Runtime pose alternatives mirrored by JSON Schema and the Python codec. */
+export type PlanPoint =
+  | PlanPointWithoutSkeletalPose
+  | PlanPointLegacyPose
+  | PlanPoint3DPose;
+
 export interface FacialParams {
-  eye_scale: number;    // [0.5, 1.5] — surprised=large, sleepy=small
-  eye_squint: number;   // [0, 1]    — annoyed/curious squint
-  mouth_open: number;   // [0, 1]    — surprised/happy open mouth
-  ear_angle: number;    // [-0.5, 0.5] — scared=flat, curious=perked
-  brow_tilt: number;    // [-1, 1]   — annoyed=down, sad=up
+  /** Sparse overrides: omitted channels use neutral values; an absent object may use expression defaults. */
+  eye_scale?: number;    // [0.5, 1.5] — surprised=large, sleepy=small
+  eye_squint?: number;   // [0, 1]    — annoyed/curious squint
+  mouth_open?: number;   // [0, 1]    — surprised/happy open mouth
+  ear_angle?: number;    // [-0.5, 0.5] — scared=flat, curious=perked
+  brow_tilt?: number;    // [-1, 1]   — annoyed=down, sad=up
 }
 
 /** Per-bone rotation angles. Index mapping is defined by the active skeleton. */

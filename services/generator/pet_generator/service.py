@@ -9,7 +9,6 @@ import json
 import logging
 import math
 import os
-from pathlib import Path
 import platform
 import threading
 import time
@@ -27,6 +26,18 @@ from .state import parse_world_state
 
 
 LOGGER = logging.getLogger("pet.generator")
+CAP_SKELETAL_2D = "skeletal_motion"
+CAP_SKELETAL_3D = "skeletal_motion_3d_local_quat"
+MAX_LEGACY_BONE_ROTATIONS = 32
+
+
+def _skeletal_capabilities_for_joint_count(joint_count: int) -> tuple[str, ...]:
+    if joint_count < 1:
+        return ()
+    capabilities = [CAP_SKELETAL_3D]
+    if joint_count <= MAX_LEGACY_BONE_ROTATIONS:
+        capabilities.append(CAP_SKELETAL_2D)
+    return tuple(capabilities)
 
 
 @dataclass(slots=True)
@@ -57,6 +68,18 @@ class ServiceMetrics:
             self.last_world_seq = seq
             self.last_plan_latency_ms = latency_ms
             self.max_plan_latency_ms = max(self.max_plan_latency_ms, latency_ms)
+
+    def reset_session(self) -> None:
+        """Clear gauges whose ordering domain is the current hello session.
+
+        Counters and process-wide maxima deliberately remain cumulative across
+        sessions.  ``world_state.seq`` restarts in a fresh session, so retaining
+        the previous session's sequence would reject otherwise valid states.
+        """
+
+        with self._lock:
+            self.last_world_seq = -1
+            self.last_plan_latency_ms = 0.0
 
     def snapshot(self) -> tuple[dict[str, float], dict[str, float]]:
         with self._lock:
@@ -104,14 +127,17 @@ class _LatestStateInbox:
         with self._condition:
             if isinstance(item, Envelope) and item.type == "world_state":
                 new_session = item.payload.get("session_id")
-                # Search backwards so a hello or a different-session world
-                # state is a hard ordering barrier.  Non-session controls such
-                # as ping retain the existing latest-state behavior.
+                # Search backwards so a hello, cancel, or different-session
+                # world state is a hard ordering barrier.  A cancel is causal:
+                # moving a later state ahead of it would cancel the newly
+                # generated plan instead of the plan/state that preceded it.
+                # Non-stateful controls such as ping retain latest-state
+                # coalescing across them.
                 for index in range(len(self._items) - 1, -1, -1):
                     existing = self._items[index]
                     if not isinstance(existing, Envelope):
                         continue
-                    if existing.type == "hello":
+                    if existing.type in {"hello", "cancel"}:
                         break
                     if existing.type != "world_state":
                         continue
@@ -287,23 +313,32 @@ class GeneratorService:
             return
         if self._session_id is not None and session_id != self._session_id:
             self.backend.cancel()
+            self.metrics.reset_session()
         self._session_id = session_id
         self._ready = True
 
-        # Detect skeletal capability from host hello (prefer 3D over 2D)
+        # Detect the intersection of host support and this selected character's
+        # encodable pose modes (prefer 3D over legacy 2D).
         host_caps = envelope.payload.get("capabilities", [])
         if not isinstance(host_caps, list):
             host_caps = []
-        skeletal_enabled = "skeletal_motion_3d_local_quat" in host_caps or "skeletal_motion" in host_caps
-        skeletal_3d = "skeletal_motion_3d_local_quat" in host_caps
-        # set 3D flag first: _load_skeletal_metadata reads _skeletal_3d to pick cat-skeleton-3d.json
+        skeleton_sha256, joint_count = self._load_skeletal_contract()
+        generator_skeletal_caps = _skeletal_capabilities_for_joint_count(joint_count)
+        skeletal_3d = CAP_SKELETAL_3D in host_caps and CAP_SKELETAL_3D in generator_skeletal_caps
+        skeletal_2d = (
+            not skeletal_3d
+            and CAP_SKELETAL_2D in host_caps
+            and CAP_SKELETAL_2D in generator_skeletal_caps
+        )
+        skeletal_enabled = skeletal_3d or skeletal_2d
+        # Set the 3D flag first: the backend then loads the selected character
+        # manifest and its exact driven-joint ABI rather than a fixed cat rig.
         self.backend.set_skeletal_3d(skeletal_3d)
         self.backend.set_skeletal_enabled(skeletal_enabled)
         if not skeletal_enabled:
             LOGGER.info("Host does not advertise skeletal_motion; bone rotations will not be generated.")
 
         ready_at = unix_time_ms()
-        skeleton_sha256 = self._compute_skeleton_sha256()
 
         writer.send(
             "ready",
@@ -326,8 +361,7 @@ class GeneratorService:
                     "latest_state",
                     "metrics",
                     "metrics_v1",
-                    "skeletal_motion",
-                    "skeletal_motion_3d_local_quat",
+                    *generator_skeletal_caps,
                     "window_top_locomotion",
                     "world_state_v1",
                 ],
@@ -469,19 +503,16 @@ class GeneratorService:
         self._last_metrics_monotonic = now
 
     @staticmethod
-    def _compute_skeleton_sha256() -> str | None:
-        """Compute SHA-256 of the canonical 3D skeleton definition for capability negotiation."""
+    def _load_skeletal_contract() -> tuple[str | None, int]:
+        """Return selected rig identity and driven-joint width for negotiation."""
         try:
-            # Prefer 3D skeleton; fall back to legacy 2D.
-            for name in ("cat-skeleton-3d.json", "cat-skeleton.json"):
-                skeleton_path = Path(__file__).resolve().parents[3] / "assets" / "pet" / "runtime" / name
-                if skeleton_path.is_file():
-                    raw = skeleton_path.read_bytes()
-                    return hashlib.sha256(raw).hexdigest()
-            return None
+            from .character_rig import load_selected_character_rig
+
+            rig = load_selected_character_rig()
+            return rig.fingerprint, len(rig.driven_joint_order)
         except Exception:
-            LOGGER.warning("Failed to compute skeleton SHA-256", exc_info=True)
-            return None
+            LOGGER.warning("Failed to load selected character rig contract", exc_info=True)
+            return None, 0
 
     @staticmethod
     def _send_error(writer: ProtocolWriter, error: ProtocolError) -> None:

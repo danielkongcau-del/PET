@@ -4,8 +4,10 @@ import { mkdir, readdir, stat } from "node:fs/promises";
 import { join, resolve } from "node:path";
 
 import { dipPointToPhysical } from "./coordinates.js";
+import { loadCharacterRigConfig } from "./character-rig.js";
+import { releaseSentClicks } from "./click-handoff.js";
 import { DebugOverlay } from "./debug-overlay.js";
-import { GeneratorBridge, type GeneratorStatus } from "./generator-bridge.js";
+import { GeneratorBridge, modeUsesCharacterRig, type GeneratorStatus } from "./generator-bridge.js";
 import { info, initializeLogger, logError, warn } from "./logger.js";
 import { MotionController } from "./motion-controller.js";
 import { PetWindow, PET_WINDOW_DIP } from "./pet-window.js";
@@ -84,10 +86,17 @@ async function bootstrap(): Promise<void> {
   }
 
   const projectRoot = resolve(process.env.PET_PROJECT_ROOT || resolve(app.getAppPath(), ".."));
+  const characterRig = await loadCharacterRigConfig(projectRoot);
   const logsDirectory = join(app.getPath("userData"), "logs");
   const recordingsDirectory = join(projectRoot, "data", "recordings");
   initializeLogger(join(logsDirectory, "pet-host.log"));
-  info("app", "startup begin", { platform: process.platform, electron: process.versions.electron });
+  info("app", "startup begin", {
+    platform: process.platform,
+    electron: process.versions.electron,
+    characterId: characterRig.characterId,
+    rigId: characterRig.rigId,
+    drivenJointCount: characterRig.modelDrivenCount,
+  });
   await mkdir(recordingsDirectory, { recursive: true });
 
   let recordingStatus: TraceRecordingStatus = {
@@ -159,19 +168,23 @@ async function bootstrap(): Promise<void> {
       clicks: [...clicks],
       scene,
     };
+    const sentClicks = payload.clicks;
     const envelope = bridge.sendWorldState(payload);
+    // GeneratorBridge now owns this batch, including across degraded/restart
+    // coalescing. Keeping a second copy here would replay it after ready.
+    clicks = releaseSentClicks(clicks, sentClicks);
     motion.rememberWorldState(envelope.seq);
     recorder.record("world_state", {
       seq: envelope.seq,
       timestamp_ms: envelope.timestamp_ms,
       state: envelope.payload,
     });
-    if (generatorStatus === "ready") clicks = [];
   };
 
   const petWindow = new PetWindow({
     initialFootDip,
     projectRoot,
+    characterRig,
     onPointerOpaque: (opaque) => {
       pointerOpaque = opaque;
       motion?.setPointerOpaque(opaque);
@@ -225,6 +238,7 @@ async function bootstrap(): Promise<void> {
   bridge = new GeneratorBridge({
     projectRoot,
     sessionId,
+    characterRig,
     petWidthPhysical: PET_WINDOW_DIP * primary.scaleFactor,
     petHeightPhysical: PET_WINDOW_DIP * primary.scaleFactor,
     onStatus: (status) => {
@@ -268,13 +282,29 @@ async function bootstrap(): Promise<void> {
       recorder.record("marker", { name: "protocol_error", reason });
     },
     onSkeletalMode: (mode) => {
-      if (mode === "full") {
+      if (modeUsesCharacterRig(mode)) {
         const config = bridge?.skeletalConfig;
         if (config && config.modelDrivenCount > 0) {
-          motion?.setSkeletalConfig(config);
-          petWindow.sendSkeletalConfig(config.raw);
-          info("skeleton", "3D skeletal negotiation complete; renderer FK not yet implemented", { modelDrivenCount: config.modelDrivenCount });
+          const accepted = motion?.setSkeletalConfig(config, mode) ?? false;
+          petWindow.sendSkeletalConfig(accepted ? config.raw : null);
+          if (!accepted) {
+            warn("skeleton", "negotiated skeletal mode rejected by motion controller", {
+              encoding: mode,
+              modelDrivenCount: config.modelDrivenCount,
+            });
+            return;
+          }
+          info("skeleton", "character rig negotiation complete", {
+            characterId: config.characterId,
+            rigId: config.rigId,
+            modelDrivenCount: config.modelDrivenCount,
+            encoding: mode,
+          });
         }
+      } else {
+        motion?.clearSkeletalConfig();
+        petWindow.sendSkeletalConfig(null);
+        info("skeleton", "3D character rig state cleared", { mode });
       }
     },
   });
@@ -308,6 +338,16 @@ async function bootstrap(): Promise<void> {
         appVersion: app.getVersion(),
         displays: snapshot.displays,
         ...(latestGeneratorMetadata ? { generator: latestGeneratorMetadata } : {}),
+        ...(bridge.skeletalConfig.characterId && bridge.skeletalConfig.rigId && bridge.skeletalConfig.sha256
+          ? {
+              character: {
+                characterId: bridge.skeletalConfig.characterId,
+                rigId: bridge.skeletalConfig.rigId,
+                rigFingerprint: bridge.skeletalConfig.sha256,
+                drivenJointOrder: bridge.skeletalConfig.modelDrivenBoneIds,
+              },
+            }
+          : {}),
       });
       const label = process.env.PET_RECORD_LABEL;
       const directory = await recorder.start({
@@ -377,7 +417,7 @@ async function bootstrap(): Promise<void> {
     toggleRecording,
     restartGenerator: () => bridge?.restart(),
     quit: () => app.quit(),
-  }, { paused, debug: debugEnabled, generatorStatus, recording: recordingIndicator() });
+  }, { paused, debug: debugEnabled, generatorStatus, recording: recordingIndicator() }, characterRig.render.spriteImagePath);
 
   motion.setGeneratorStatus(generatorStatus);
   motion.start();

@@ -12,6 +12,27 @@ from .backend import MotionBackend, MotionPlan, MotionPoint
 from .state import ClickState, SurfaceState, WorldState
 
 
+MAX_LEGACY_BONE_ROTATIONS = 32
+
+# Semantic defaults mirrored by the renderer's expression fallback. The
+# procedural teacher emits them explicitly for skeletal plans so recorded
+# facial targets remain informative instead of being forced to all-neutral.
+EXPRESSION_FACIAL_PARAMS: dict[str, dict[str, float]] = {
+    "neutral": {"eye_scale": 1.0, "eye_squint": 0.0, "mouth_open": 0.0, "ear_angle": 0.0, "brow_tilt": 0.0},
+    "surprised": {"eye_scale": 1.35, "eye_squint": 0.0, "mouth_open": 0.7, "ear_angle": -0.2, "brow_tilt": 0.3},
+    "happy": {"eye_scale": 1.15, "eye_squint": 0.3, "mouth_open": 0.4, "ear_angle": 0.0, "brow_tilt": 0.1},
+    "annoyed": {"eye_scale": 0.9, "eye_squint": 0.6, "mouth_open": 0.0, "ear_angle": 0.3, "brow_tilt": -0.5},
+    "curious": {"eye_scale": 1.1, "eye_squint": 0.0, "mouth_open": 0.1, "ear_angle": 0.0, "brow_tilt": 0.2},
+    "focused": {"eye_scale": 1.0, "eye_squint": 0.3, "mouth_open": 0.0, "ear_angle": 0.0, "brow_tilt": -0.15},
+    "sleepy": {"eye_scale": 0.65, "eye_squint": 0.8, "mouth_open": 0.0, "ear_angle": -0.4, "brow_tilt": 0.0},
+    "relieved": {"eye_scale": 1.05, "eye_squint": 0.0, "mouth_open": 0.2, "ear_angle": 0.0, "brow_tilt": 0.15},
+}
+
+
+def _facial_params_for_expression(expression: str) -> dict[str, float]:
+    return dict(EXPRESSION_FACIAL_PARAMS.get(expression, EXPRESSION_FACIAL_PARAMS["neutral"]))
+
+
 @dataclass(frozen=True, slots=True)
 class PlannerConfig:
     horizon_steps: int = 12
@@ -129,35 +150,19 @@ class AutoregressiveMotionBackend(MotionBackend):
             self._load_skeletal_metadata()  # reload with correct file
 
     def _load_skeletal_metadata(self) -> None:
-        """Read the skeleton definition matching the negotiated capability."""
+        """Read the selected character manifest for either skeletal encoding."""
         try:
-            import json
-            from pathlib import Path
-            if self._skeletal_3d:
-                name = "cat-skeleton-3d.json"
-                joints_key = "joints"
-            else:
-                name = "cat-skeleton.json"
-                joints_key = "bones"
-            skeleton_path = Path(__file__).resolve().parents[3] / "assets" / "pet" / "runtime" / name
-            if not skeleton_path.is_file():
+            from .character_rig import load_selected_character_rig
+
+            selected = load_selected_character_rig()
+            count = len(selected.driven_joint_order)
+            # The v1 legacy planar payload has a protocol ceiling of 32.  A
+            # larger character must negotiate quaternion poses; silently
+            # truncating would change the character-specific joint ABI.
+            if not self._skeletal_3d and count > MAX_LEGACY_BONE_ROTATIONS:
+                self._model_driven_count = 0
                 return
-            data = json.loads(skeleton_path.read_text(encoding="utf-8"))
-            entries = data.get(joints_key, [])
-            if self._skeletal_3d:
-                model_driven = [
-                    j for j in entries
-                    if isinstance(j, dict)
-                    and not (j.get("deform") is False and j.get("parent") is None)
-                    and j.get("poseDofs", {}).get("rotation") is True
-                    and j.get("physics", {}).get("mode") not in ("secondary", "static")
-                ]
-            else:
-                model_driven = [
-                    b for b in entries
-                    if isinstance(b, dict) and b.get("physics", {}).get("mode") == "model_driven"
-                ]
-            self._model_driven_count = len(model_driven)
+            self._model_driven_count = count
         except Exception:
             self._model_driven_count = 0
 
@@ -169,8 +174,6 @@ class AutoregressiveMotionBackend(MotionBackend):
         self._next_jump_due_ms = None
         self._walk_velocity = 0.0
         self._last_plan_id = None
-        self._skeletal_enabled = False
-        self._skeletal_3d = False
         if was_active:
             self._cancelled_count += 1
         return was_active
@@ -749,26 +752,24 @@ class AutoregressiveMotionBackend(MotionBackend):
         if self._skeletal_3d and self._model_driven_count > 0:
             identity_quat = (0.0, 0.0, 0.0, 1.0)
             zero_rotations = tuple(identity_quat for _ in range(self._model_driven_count))
-            default_facial = {"eye_scale": 1.0, "eye_squint": 0.0, "mouth_open": 0.0, "ear_angle": 0.0, "brow_tilt": 0.0}
             points = [
                 replace(
                     point,
                     root_translation=(0.0, 0.0, 0.0),
                     root_rotation=(0.0, 0.0, 0.0, 1.0),
                     local_rotation_deltas=zero_rotations,
-                    facial_params=dict(default_facial),
+                    facial_params=_facial_params_for_expression(point.expression),
                 )
                 for point in points
             ]
         elif self._skeletal_enabled and self._model_driven_count > 0:
             # Legacy 2D fallback: emit planar angle arrays.
             zero_rotations = tuple(0.0 for _ in range(self._model_driven_count))
-            default_facial = {"eye_scale": 1.0, "eye_squint": 0.0, "mouth_open": 0.0, "ear_angle": 0.0, "brow_tilt": 0.0}
             points = [
                 replace(
                     point,
                     bone_rotations=zero_rotations,
-                    facial_params=dict(default_facial),
+                    facial_params=_facial_params_for_expression(point.expression),
                 )
                 for point in points
             ]

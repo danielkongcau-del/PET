@@ -1,0 +1,5346 @@
+{
+  "schema": "pet-character-rig-manifest-v1",
+  "characterId": "cat",
+  "rigId": "cat-source-rig-v1",
+  "rigFingerprint": {
+    "algorithm": "pet-canonical-json-f64-v1+sha256",
+    "canonicalization": "pet-canonical-json-f64-v1",
+    "value": "518cf8f9fc29e5c8286f16cfe930ad022fbd2153dd8c3ef68121c8d7c58df0d7"
+  },
+  "rig": {
+    "coordinateSystem": {
+      "handedness": "right",
+      "up": "+Y",
+      "forward": "+Z",
+      "units": "meter"
+    },
+    "motionRoot": "__motion_root__",
+    "jointOrder": [
+      "__motion_root__",
+      "rootjoint",
+      "root_01",
+      "skn_back_1_02",
+      "skn_back_2_03",
+      "skn_back_3_04",
+      "skn_back_4_05",
+      "skn_neck_00",
+      "skn_head_06",
+      "hk_headtip_07",
+      "skn_l_eye_08",
+      "skn_l_eyepupil_09",
+      "skn_l_eyelidup_010",
+      "skn_l_eyeliddown_011",
+      "skn_jaw_012",
+      "skn_jaw_012_0",
+      "skn_lipdown_013",
+      "skn_lipup_014",
+      "skn_l_lipside_015",
+      "skn_l_eyebrowin_016",
+      "skn_l_eyebrowout_017",
+      "skn_teethup_018",
+      "skn_teethdown_019",
+      "skn_tongue_020",
+      "skn_r_eye_021",
+      "skn_r_eyepupil_022",
+      "skn_r_eyelidup_023",
+      "skn_r_eyeliddown_024",
+      "skn_r_eyebrowin_025",
+      "skn_r_eyebrowout_026",
+      "skn_r_lipside_027",
+      "skn_l_ear_028",
+      "skn_l_ear_028_0",
+      "skn_r_ear_029",
+      "skn_head_06_0",
+      "skn_l_shoulder_030",
+      "skn_l_armup_031",
+      "skn_l_armdown_032",
+      "skn_l_hand_033",
+      "skn_r_shoulder_034",
+      "skn_r_armup_035",
+      "skn_r_armdown_036",
+      "skn_r_hand_037",
+      "skn_back_4_05_0",
+      "skn_back_3_04_0",
+      "skn_l_legup_038",
+      "skn_l_legdown_039",
+      "skn_l_foot_040",
+      "skn_l_toes_041",
+      "skn_l_toes_041_0",
+      "skn_l_foot_040_0",
+      "skn_l_legdown_039_0",
+      "skn_l_legup_038_0",
+      "skn_r_legup_042",
+      "skn_r_legdown_043",
+      "skn_r_foot_044",
+      "skn_r_toes_045",
+      "skn_r_toes_045_0",
+      "skn_r_foot_044_0",
+      "skn_r_legdown_043_0",
+      "skn_r_legup_042_0",
+      "skn_tail_01_046",
+      "skn_tail_02_047",
+      "skn_tail_03_048",
+      "skn_tail_04_049",
+      "skn_tail_05_050",
+      "skn_tail_06_051",
+      "skn_tail_06_051_0",
+      "skn_tail_05_050_0",
+      "skn_tail_04_049_0",
+      "skn_tail_03_048_0",
+      "skn_tail_02_047_0",
+      "skn_tail_01_046_0",
+      "skn_back_1_02_0"
+    ],
+    "joints": [
+      {
+        "id": "__motion_root__",
+        "parentIndex": -1,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "motion_root",
+        "source": null
+      },
+      {
+        "id": "rootjoint",
+        "parentIndex": 0,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            1.1102230246251565e-16,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 0,
+          "nodeIndex": 5,
+          "sourceName": "_rootJoint"
+        }
+      },
+      {
+        "id": "root_01",
+        "parentIndex": 1,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 1,
+          "nodeIndex": 12,
+          "sourceName": "ROOT_01"
+        }
+      },
+      {
+        "id": "skn_back_1_02",
+        "parentIndex": 2,
+        "restLocal": {
+          "translation": [
+            0.9138302206993103,
+            10.425677299499512,
+            -12.788507461547852
+          ],
+          "rotation": [
+            0.6030065252176411,
+            0.36881341520377425,
+            0.6035811735821858,
+            0.3688489693734092
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "spine_base",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 2,
+          "nodeIndex": 13,
+          "sourceName": "SKN_back_1_02"
+        }
+      },
+      {
+        "id": "skn_back_2_03",
+        "parentIndex": 3,
+        "restLocal": {
+          "translation": [
+            6.550015449523926,
+            -1.0658141036401503e-14,
+            -8.326672684688674e-15
+          ],
+          "rotation": [
+            8.645491246515038e-07,
+            1.3039689331711e-05,
+            0.08534054483619107,
+            0.9963518410864112
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "spine_lower",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 3,
+          "nodeIndex": 14,
+          "sourceName": "SKN_back_2_03"
+        }
+      },
+      {
+        "id": "skn_back_3_04",
+        "parentIndex": 4,
+        "restLocal": {
+          "translation": [
+            6.550015449523926,
+            -3.552713678800501e-14,
+            -1.0483613976930428e-11
+          ],
+          "rotation": [
+            -3.6516549703729015e-07,
+            -5.5076446814003766e-06,
+            0.13314126143613503,
+            0.9910970711654471
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "spine_mid",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 4,
+          "nodeIndex": 15,
+          "sourceName": "SKN_back_3_04"
+        }
+      },
+      {
+        "id": "skn_back_4_05",
+        "parentIndex": 5,
+        "restLocal": {
+          "translation": [
+            6.550015449523926,
+            2.1316282072803006e-14,
+            8.319955835389692e-11
+          ],
+          "rotation": [
+            -2.15978021153356e-06,
+            -3.25751965071416e-05,
+            0.139204305812622,
+            0.9902636821460323
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "spine_upper",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 5,
+          "nodeIndex": 16,
+          "sourceName": "SKN_back_4_05"
+        }
+      },
+      {
+        "id": "skn_neck_00",
+        "parentIndex": 6,
+        "restLocal": {
+          "translation": [
+            6.550015449523926,
+            5.3290705182007514e-14,
+            1.4298784378752316e-11
+          ],
+          "rotation": [
+            -0.07669807868800167,
+            0.06810238205523768,
+            -0.34783571098509414,
+            0.9319279953126559
+          ],
+          "scale": [
+            0.9999999999999999,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "neck",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 6,
+          "nodeIndex": 17,
+          "sourceName": "SKN_neck_00"
+        }
+      },
+      {
+        "id": "skn_head_06",
+        "parentIndex": 7,
+        "restLocal": {
+          "translation": [
+            6.167791366577148,
+            -5.329070518200751e-15,
+            0.0
+          ],
+          "rotation": [
+            -0.05535999198750761,
+            0.06526492401381107,
+            0.13738226607048956,
+            0.9868140016993839
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "head",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 7,
+          "nodeIndex": 18,
+          "sourceName": "SKN_head_06"
+        }
+      },
+      {
+        "id": "hk_headtip_07",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            8.665257453918457,
+            0.0,
+            8.881784197001252e-16
+          ],
+          "rotation": [
+            1.3877787807814457e-17,
+            -5.551115123125783e-17,
+            1.1102230246251565e-16,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 8,
+          "nodeIndex": 19,
+          "sourceName": "HK_headTip_07"
+        }
+      },
+      {
+        "id": "skn_l_eye_08",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            2.6318912506103516,
+            2.153191566467285,
+            2.1997463703155518
+          ],
+          "rotation": [
+            0.930329413726781,
+            0.3506751921243581,
+            0.08438979036961952,
+            -0.06627559780718878
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 9,
+          "nodeIndex": 20,
+          "sourceName": "SKN_L_eye_08"
+        }
+      },
+      {
+        "id": "skn_l_eyepupil_09",
+        "parentIndex": 10,
+        "restLocal": {
+          "translation": [
+            3.595838785171509,
+            3.552713678800501e-14,
+            3.552713678800501e-15
+          ],
+          "rotation": [
+            -1.3877787807814457e-17,
+            1.3877787807814457e-17,
+            6.938893903907228e-18,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 10,
+          "nodeIndex": 21,
+          "sourceName": "SKN_L_eyePupil_09"
+        }
+      },
+      {
+        "id": "skn_l_eyelidup_010",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.717477798461914,
+            3.086946487426758,
+            2.4896411895751953
+          ],
+          "rotation": [
+            0.9707960446822931,
+            0.20200125790712609,
+            0.08717144245123508,
+            -0.09566436668961498
+          ],
+          "scale": [
+            1.0,
+            0.9999999999999998,
+            0.9999999999999998
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 11,
+          "nodeIndex": 22,
+          "sourceName": "SKN_L_eyeLidUp_010"
+        }
+      },
+      {
+        "id": "skn_l_eyeliddown_011",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.717477798461914,
+            3.086946487426758,
+            2.4896411895751953
+          ],
+          "rotation": [
+            0.8370267284402355,
+            0.5195003829627556,
+            0.13051568176932393,
+            -0.11167481717233782
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 12,
+          "nodeIndex": 23,
+          "sourceName": "SKN_L_eyeLidDown_011"
+        }
+      },
+      {
+        "id": "skn_jaw_012",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            2.307260036468506,
+            8.26599407196045,
+            -2.6645352591003757e-15
+          ],
+          "rotation": [
+            0.839811510558179,
+            0.5428780956476229,
+            9.93224307113184e-18,
+            6.649151778737336e-17
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999998,
+            0.9999999999999998
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 13,
+          "nodeIndex": 24,
+          "sourceName": "SKN_jaw_012"
+        }
+      },
+      {
+        "id": "skn_jaw_012_0",
+        "parentIndex": 14,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 14,
+          "nodeIndex": 25,
+          "sourceName": "SKN_jaw_012_0"
+        }
+      },
+      {
+        "id": "skn_lipdown_013",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.561260938644409,
+            10.101419448852539,
+            -1.6697754290362354e-13
+          ],
+          "rotation": [
+            0.8466837473887603,
+            0.5320964498168785,
+            9.08131657848253e-18,
+            6.661307363743802e-17
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 15,
+          "nodeIndex": 26,
+          "sourceName": "SKN_lipDown_013"
+        }
+      },
+      {
+        "id": "skn_lipup_014",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.98746919631958,
+            10.191728591918945,
+            -1.6964207816272392e-13
+          ],
+          "rotation": [
+            0.8680904526168359,
+            0.49640604959599055,
+            5.449045348508132e-17,
+            3.937717544720518e-17
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 16,
+          "nodeIndex": 27,
+          "sourceName": "SKN_lipUp_014"
+        }
+      },
+      {
+        "id": "skn_l_lipside_015",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            4.283227443695068,
+            10.0225830078125,
+            2.5144810676574707
+          ],
+          "rotation": [
+            0.8813538087083442,
+            0.3971614599015541,
+            0.19713339504353608,
+            -0.16314614063094152
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999998,
+            0.9999999999999998
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 17,
+          "nodeIndex": 28,
+          "sourceName": "SKN_L_lipSide_015"
+        }
+      },
+      {
+        "id": "skn_l_eyebrowin_016",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            7.501215934753418,
+            3.9044406414031982,
+            2.4819846153259277
+          ],
+          "rotation": [
+            0.9373342968142653,
+            0.34725087796871645,
+            0.02477284514856481,
+            0.014406592550207003
+          ],
+          "scale": [
+            1.0,
+            1.0000000000000004,
+            1.0000000000000004
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 18,
+          "nodeIndex": 29,
+          "sourceName": "SKN_L_eyeBrowIn_016"
+        }
+      },
+      {
+        "id": "skn_l_eyebrowout_017",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            6.3625807762146,
+            3.217150926589966,
+            5.13198709487915
+          ],
+          "rotation": [
+            0.9266916455011006,
+            0.35071700590243604,
+            0.1299772254377606,
+            -0.03668919182531438
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999999,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 19,
+          "nodeIndex": 30,
+          "sourceName": "SKN_L_eyeBrowOut_017"
+        }
+      },
+      {
+        "id": "skn_teethup_018",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.5074398517608643,
+            9.013236045837402,
+            -1.6431300764452317e-13
+          ],
+          "rotation": [
+            0.8570805792286421,
+            0.5151823761631363,
+            3.154581976837168e-17,
+            5.248104970713402e-17
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 20,
+          "nodeIndex": 31,
+          "sourceName": "SKN_teethUp_018"
+        }
+      },
+      {
+        "id": "skn_teethdown_019",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.078840494155884,
+            9.143731117248535,
+            -1.6431300764452317e-13
+          ],
+          "rotation": [
+            0.6940774844852104,
+            0.7199003024938123,
+            4.4081178991126093e-17,
+            4.249999017957988e-17
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 21,
+          "nodeIndex": 32,
+          "sourceName": "SKN_teethDown_019"
+        }
+      },
+      {
+        "id": "skn_tongue_020",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            -1.3982200622558594,
+            8.204672813415527,
+            -1.6253665080512292e-13
+          ],
+          "rotation": [
+            0.6940774844852104,
+            0.7199003024938123,
+            4.4081178991126093e-17,
+            4.249999017957988e-17
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 22,
+          "nodeIndex": 33,
+          "sourceName": "SKN_tongue_020"
+        }
+      },
+      {
+        "id": "skn_r_eye_021",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            2.631150960922241,
+            2.152606725692749,
+            -2.199553966522217
+          ],
+          "rotation": [
+            -0.3497204708239151,
+            0.930101673437449,
+            -0.08505330058833782,
+            -0.07329669443150952
+          ],
+          "scale": [
+            1.0000000000000002,
+            1.0,
+            1.0000000000000002
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 23,
+          "nodeIndex": 34,
+          "sourceName": "SKN_R_eye_021"
+        }
+      },
+      {
+        "id": "skn_r_eyepupil_022",
+        "parentIndex": 24,
+        "restLocal": {
+          "translation": [
+            -3.5968282222747803,
+            1.3261295862321276e-05,
+            -1.0194502465310507e-05
+          ],
+          "rotation": [
+            -5.204170427930421e-18,
+            5.551115123125783e-17,
+            -3.469446951953614e-18,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 24,
+          "nodeIndex": 35,
+          "sourceName": "SKN_R_eyePupil_022"
+        }
+      },
+      {
+        "id": "skn_r_eyelidup_023",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.717453718185425,
+            3.08697772026062,
+            -2.4896399974823
+          ],
+          "rotation": [
+            -0.20200125790712609,
+            0.9707960446822931,
+            -0.09566436668961496,
+            -0.0871714424512351
+          ],
+          "scale": [
+            0.9999999999999997,
+            1.0,
+            0.9999999999999998
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 25,
+          "nodeIndex": 36,
+          "sourceName": "SKN_R_eyeLidUp_023"
+        }
+      },
+      {
+        "id": "skn_r_eyeliddown_024",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            3.717453718185425,
+            3.08697772026062,
+            -2.4896399974823
+          ],
+          "rotation": [
+            -0.5195003829627556,
+            0.8370267284402355,
+            -0.11167481717233782,
+            -0.13051568176932393
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 26,
+          "nodeIndex": 37,
+          "sourceName": "SKN_R_eyeLidDown_024"
+        }
+      },
+      {
+        "id": "skn_r_eyebrowin_025",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            7.501218318939209,
+            3.9044196605682373,
+            -2.481980085372925
+          ],
+          "rotation": [
+            0.024772845148564808,
+            -0.014406592550207006,
+            0.9373342968142654,
+            -0.3472508779687164
+          ],
+          "scale": [
+            1.0,
+            0.9999999999999999,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 27,
+          "nodeIndex": 38,
+          "sourceName": "SKN_R_eyeBrowIn_025"
+        }
+      },
+      {
+        "id": "skn_r_eyebrowout_026",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            6.3626322746276855,
+            3.217148780822754,
+            -5.1319899559021
+          ],
+          "rotation": [
+            0.1299772254377606,
+            0.03668919182531438,
+            0.9266916455011006,
+            -0.35071700590243604
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999999,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 28,
+          "nodeIndex": 39,
+          "sourceName": "SKN_R_eyeBrowOut_026"
+        }
+      },
+      {
+        "id": "skn_r_lipside_027",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            4.2832441329956055,
+            10.02258586883545,
+            -2.5144801139831543
+          ],
+          "rotation": [
+            0.1971333950435361,
+            0.1631461406309415,
+            0.8813538087083441,
+            -0.3971614599015541
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999998,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 29,
+          "nodeIndex": 40,
+          "sourceName": "SKN_R_lipSide_027"
+        }
+      },
+      {
+        "id": "skn_l_ear_028",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            4.687679290771484,
+            -3.6965701580047607,
+            5.553707122802734
+          ],
+          "rotation": [
+            -0.6705577979242113,
+            -0.035728082112448795,
+            -0.2962900702467006,
+            0.6791818151752916
+          ],
+          "scale": [
+            1.0,
+            1.0000000000000002,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "ear_left",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 30,
+          "nodeIndex": 41,
+          "sourceName": "SKN_L_ear_028"
+        }
+      },
+      {
+        "id": "skn_l_ear_028_0",
+        "parentIndex": 31,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 31,
+          "nodeIndex": 42,
+          "sourceName": "SKN_L_ear_028_0"
+        }
+      },
+      {
+        "id": "skn_r_ear_029",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            4.68769645690918,
+            -3.696587085723877,
+            -5.553709983825684
+          ],
+          "rotation": [
+            0.035728082112448746,
+            -0.6705577979242112,
+            0.6791818151752917,
+            0.2962900702467005
+          ],
+          "scale": [
+            1.0000000000000002,
+            1.0000000000000002,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "ear_right",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 32,
+          "nodeIndex": 43,
+          "sourceName": "SKN_R_ear_029"
+        }
+      },
+      {
+        "id": "skn_head_06_0",
+        "parentIndex": 8,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 33,
+          "nodeIndex": 44,
+          "sourceName": "SKN_head_06_0"
+        }
+      },
+      {
+        "id": "skn_l_shoulder_030",
+        "parentIndex": 6,
+        "restLocal": {
+          "translation": [
+            2.2218382358551025,
+            4.099838733673096,
+            2.722181558609009
+          ],
+          "rotation": [
+            0.6984376155511602,
+            0.11038522176093016,
+            0.6984376155511602,
+            -0.11038522176093016
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_left_shoulder",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 34,
+          "nodeIndex": 45,
+          "sourceName": "SKN_L_shoulder_030"
+        }
+      },
+      {
+        "id": "skn_l_armup_031",
+        "parentIndex": 35,
+        "restLocal": {
+          "translation": [
+            4.386266708374023,
+            -2.9700686354772188e-12,
+            -9.084288876692881e-12
+          ],
+          "rotation": [
+            0.024518195695549968,
+            -0.10535450346675738,
+            -0.7892285039520165,
+            0.6044978537834272
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999998,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_left_upper",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 35,
+          "nodeIndex": 46,
+          "sourceName": "SKN_L_armUp_031"
+        }
+      },
+      {
+        "id": "skn_l_armdown_032",
+        "parentIndex": 36,
+        "restLocal": {
+          "translation": [
+            11.36064338684082,
+            -4.246381024586299e-12,
+            2.2159749590855427e-08
+          ],
+          "rotation": [
+            1.911980224799083e-22,
+            -1.836969203995267e-05,
+            1.0408340854104718e-17,
+            0.9999999998312772
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_left_lower",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 36,
+          "nodeIndex": 47,
+          "sourceName": "SKN_L_armDown_032"
+        }
+      },
+      {
+        "id": "skn_l_hand_033",
+        "parentIndex": 37,
+        "restLocal": {
+          "translation": [
+            11.289710998535156,
+            8.919669447493561e-10,
+            2.8100810567366352e-09
+          ],
+          "rotation": [
+            -0.11348520492598334,
+            0.0983257242872195,
+            0.12226018603995664,
+            0.9810737011640749
+          ],
+          "scale": [
+            1.0,
+            0.9999999999999999,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forepaw_left",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 37,
+          "nodeIndex": 48,
+          "sourceName": "SKN_L_hand_033"
+        }
+      },
+      {
+        "id": "skn_r_shoulder_034",
+        "parentIndex": 6,
+        "restLocal": {
+          "translation": [
+            2.221884250640869,
+            4.0998406410217285,
+            -2.722179889678955
+          ],
+          "rotation": [
+            0.11038522176093016,
+            -0.6984376155511602,
+            0.11038522176093016,
+            0.6984376155511602
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_right_shoulder",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 38,
+          "nodeIndex": 49,
+          "sourceName": "SKN_R_shoulder_034"
+        }
+      },
+      {
+        "id": "skn_r_armup_035",
+        "parentIndex": 39,
+        "restLocal": {
+          "translation": [
+            -4.386270046234131,
+            -2.9451996397256153e-12,
+            -9.131362332936988e-12
+          ],
+          "rotation": [
+            0.04263802997530343,
+            -0.11964369585488394,
+            -0.7508664143866821,
+            0.6481257688042472
+          ],
+          "scale": [
+            0.9999999999999999,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_right_upper",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 39,
+          "nodeIndex": 50,
+          "sourceName": "SKN_R_armUp_035"
+        }
+      },
+      {
+        "id": "skn_r_armdown_036",
+        "parentIndex": 40,
+        "restLocal": {
+          "translation": [
+            -11.080693244934082,
+            2.283113417433924e-06,
+            5.085058364784345e-05
+          ],
+          "rotation": [
+            1.1109951178648793e-08,
+            -2.165615296181968e-05,
+            3.1089495415230166e-08,
+            0.999999999765505
+          ],
+          "scale": [
+            1.0,
+            0.9999999999999999,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forelimb_right_lower",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 40,
+          "nodeIndex": 51,
+          "sourceName": "SKN_R_armDown_036"
+        }
+      },
+      {
+        "id": "skn_r_hand_037",
+        "parentIndex": 41,
+        "restLocal": {
+          "translation": [
+            -11.011439323425293,
+            -4.915173121844418e-07,
+            -2.17501656152308e-05
+          ],
+          "rotation": [
+            -0.13315974460360402,
+            0.09668081460278079,
+            0.06357579814095504,
+            0.9843167276825008
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "forepaw_right",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 41,
+          "nodeIndex": 52,
+          "sourceName": "SKN_R_hand_037"
+        }
+      },
+      {
+        "id": "skn_back_4_05_0",
+        "parentIndex": 6,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 42,
+          "nodeIndex": 53,
+          "sourceName": "SKN_back_4_05_0"
+        }
+      },
+      {
+        "id": "skn_back_3_04_0",
+        "parentIndex": 5,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 43,
+          "nodeIndex": 54,
+          "sourceName": "SKN_back_3_04_0"
+        }
+      },
+      {
+        "id": "skn_l_legup_038",
+        "parentIndex": 3,
+        "restLocal": {
+          "translation": [
+            0.03103565238416195,
+            0.15930841863155365,
+            6.12670373916626
+          ],
+          "rotation": [
+            0.5119715808088916,
+            0.42165498929542683,
+            0.4681455382383847,
+            0.5838937621466864
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999999,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindlimb_left_upper",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 44,
+          "nodeIndex": 55,
+          "sourceName": "SKN_L_legUp_038"
+        }
+      },
+      {
+        "id": "skn_l_legdown_039",
+        "parentIndex": 45,
+        "restLocal": {
+          "translation": [
+            10.13025188446045,
+            2.6645352591003757e-15,
+            1.1106632058499599e-07
+          ],
+          "rotation": [
+            2.364408645458107e-17,
+            0.8733071836971582,
+            2.3644086454581075e-17,
+            0.4871699527915674
+          ],
+          "scale": [
+            1.0000000000000002,
+            1.0,
+            1.0000000000000002
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindlimb_left_lower",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 45,
+          "nodeIndex": 56,
+          "sourceName": "SKN_L_legDown_039"
+        }
+      },
+      {
+        "id": "skn_l_foot_040",
+        "parentIndex": 46,
+        "restLocal": {
+          "translation": [
+            8.19564437866211,
+            -5.10461433123055e-08,
+            -4.710948644515156e-07
+          ],
+          "rotation": [
+            -0.02665549846601025,
+            0.9003810142605978,
+            -0.05410301598855573,
+            -0.43090181854052056
+          ],
+          "scale": [
+            1.0000000000000004,
+            0.9999999999999999,
+            1.0000000000000004
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindpaw_left",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 46,
+          "nodeIndex": 57,
+          "sourceName": "SKN_L_foot_040"
+        }
+      },
+      {
+        "id": "skn_l_toes_041",
+        "parentIndex": 47,
+        "restLocal": {
+          "translation": [
+            5.696351528167725,
+            -2.0608581507985946e-10,
+            -6.966315595491324e-07
+          ],
+          "rotation": [
+            0.0040458021855578445,
+            -0.06369048383787233,
+            0.00025816995293410786,
+            0.9979614657397592
+          ],
+          "scale": [
+            0.9999999999999999,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "toes_left",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 47,
+          "nodeIndex": 58,
+          "sourceName": "SKN_L_toes_041"
+        }
+      },
+      {
+        "id": "skn_l_toes_041_0",
+        "parentIndex": 48,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 48,
+          "nodeIndex": 59,
+          "sourceName": "SKN_L_toes_041_0"
+        }
+      },
+      {
+        "id": "skn_l_foot_040_0",
+        "parentIndex": 47,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 49,
+          "nodeIndex": 60,
+          "sourceName": "SKN_L_foot_040_0"
+        }
+      },
+      {
+        "id": "skn_l_legdown_039_0",
+        "parentIndex": 46,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 50,
+          "nodeIndex": 61,
+          "sourceName": "SKN_L_legDown_039_0"
+        }
+      },
+      {
+        "id": "skn_l_legup_038_0",
+        "parentIndex": 45,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 51,
+          "nodeIndex": 62,
+          "sourceName": "SKN_L_legUp_038_0"
+        }
+      },
+      {
+        "id": "skn_r_legup_042",
+        "parentIndex": 3,
+        "restLocal": {
+          "translation": [
+            0.031039325520396233,
+            0.15930627286434174,
+            -6.126699924468994
+          ],
+          "rotation": [
+            -0.4678770239601641,
+            0.584155491929048,
+            0.512202434672398,
+            -0.42131000179793965
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999998,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindlimb_right_upper",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 52,
+          "nodeIndex": 63,
+          "sourceName": "SKN_R_legUp_042"
+        }
+      },
+      {
+        "id": "skn_r_legdown_043",
+        "parentIndex": 53,
+        "restLocal": {
+          "translation": [
+            -10.130249977111816,
+            3.375077994860476e-14,
+            8.681451618031133e-06
+          ],
+          "rotation": [
+            8.330432688923389e-17,
+            0.8733251065508516,
+            -8.330432688923389e-17,
+            0.4871378226620715
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindlimb_right_lower",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 53,
+          "nodeIndex": 64,
+          "sourceName": "SKN_R_legDown_043"
+        }
+      },
+      {
+        "id": "skn_r_foot_044",
+        "parentIndex": 54,
+        "restLocal": {
+          "translation": [
+            -8.195636749267578,
+            -2.4764382544617547e-08,
+            -1.5361030818894506e-05
+          ],
+          "rotation": [
+            0.02670480916192641,
+            0.9001539506236107,
+            0.054131881344780565,
+            -0.4313692823630422
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999999,
+            0.9999999999999997
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "hindpaw_right",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 54,
+          "nodeIndex": 65,
+          "sourceName": "SKN_R_foot_044"
+        }
+      },
+      {
+        "id": "skn_r_toes_045",
+        "parentIndex": 55,
+        "restLocal": {
+          "translation": [
+            -5.696336269378662,
+            -7.377281008302816e-10,
+            3.105589348706417e-05
+          ],
+          "rotation": [
+            -0.004045458046393497,
+            -0.06369056555067898,
+            -0.0002581574955073141,
+            0.9979614619231231
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "toes_right",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 55,
+          "nodeIndex": 66,
+          "sourceName": "SKN_R_toes_045"
+        }
+      },
+      {
+        "id": "skn_r_toes_045_0",
+        "parentIndex": 56,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 56,
+          "nodeIndex": 67,
+          "sourceName": "SKN_R_toes_045_0"
+        }
+      },
+      {
+        "id": "skn_r_foot_044_0",
+        "parentIndex": 55,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 57,
+          "nodeIndex": 68,
+          "sourceName": "SKN_R_foot_044_0"
+        }
+      },
+      {
+        "id": "skn_r_legdown_043_0",
+        "parentIndex": 54,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 58,
+          "nodeIndex": 69,
+          "sourceName": "SKN_R_legDown_043_0"
+        }
+      },
+      {
+        "id": "skn_r_legup_042_0",
+        "parentIndex": 53,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 59,
+          "nodeIndex": 70,
+          "sourceName": "SKN_R_legUp_042_0"
+        }
+      },
+      {
+        "id": "skn_tail_01_046",
+        "parentIndex": 3,
+        "restLocal": {
+          "translation": [
+            -7.661677837371826,
+            -2.569009304046631,
+            1.7430501486614958e-14
+          ],
+          "rotation": [
+            -0.239850743975977,
+            -0.21833458485558369,
+            0.8938176012437737,
+            -0.30966389098010205
+          ],
+          "scale": [
+            1.0000000000000002,
+            1.0000000000000002,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_1",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 60,
+          "nodeIndex": 71,
+          "sourceName": "SKN_tail_01_046"
+        }
+      },
+      {
+        "id": "skn_tail_02_047",
+        "parentIndex": 61,
+        "restLocal": {
+          "translation": [
+            5.286673069000244,
+            -1.0658141036401503e-14,
+            3.552713678800501e-15
+          ],
+          "rotation": [
+            0.05936788401907661,
+            0.1879100950743623,
+            0.22954259839357516,
+            0.9531397830533397
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_2",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 61,
+          "nodeIndex": 72,
+          "sourceName": "SKN_tail_02_047"
+        }
+      },
+      {
+        "id": "skn_tail_03_048",
+        "parentIndex": 62,
+        "restLocal": {
+          "translation": [
+            6.142693042755127,
+            2.220446049250313e-14,
+            3.552713678800501e-15
+          ],
+          "rotation": [
+            -0.013504890368602676,
+            0.20020348904858387,
+            0.06593401101357714,
+            0.9774399659828562
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_3",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 62,
+          "nodeIndex": 73,
+          "sourceName": "SKN_tail_03_048"
+        }
+      },
+      {
+        "id": "skn_tail_04_049",
+        "parentIndex": 63,
+        "restLocal": {
+          "translation": [
+            7.070479393005371,
+            2.220446049250313e-15,
+            0.0
+          ],
+          "rotation": [
+            -0.033986892870016244,
+            0.18223947457565493,
+            -0.16038113982928012,
+            0.9694903583875871
+          ],
+          "scale": [
+            1.0,
+            0.9999999999999999,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_4",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 63,
+          "nodeIndex": 74,
+          "sourceName": "SKN_tail_04_049"
+        }
+      },
+      {
+        "id": "skn_tail_05_050",
+        "parentIndex": 64,
+        "restLocal": {
+          "translation": [
+            7.86387825012207,
+            -1.1546319456101628e-14,
+            7.105427357601002e-15
+          ],
+          "rotation": [
+            -0.05682362559186397,
+            0.17645795466709752,
+            -0.03613796048948127,
+            0.9820018908438828
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            0.9999999999999999
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_5",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 64,
+          "nodeIndex": 75,
+          "sourceName": "SKN_tail_05_050"
+        }
+      },
+      {
+        "id": "skn_tail_06_051",
+        "parentIndex": 65,
+        "restLocal": {
+          "translation": [
+            6.596816539764404,
+            -7.549516567451064e-15,
+            7.105427357601002e-15
+          ],
+          "rotation": [
+            -0.06394418342143642,
+            0.1740042421818006,
+            0.0037792641747191264,
+            0.9826593419245556
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            true,
+            true,
+            true
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "tail_6",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 65,
+          "nodeIndex": 76,
+          "sourceName": "SKN_tail_06_051"
+        }
+      },
+      {
+        "id": "skn_tail_06_051_0",
+        "parentIndex": 66,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 66,
+          "nodeIndex": 77,
+          "sourceName": "SKN_tail_06_051_0"
+        }
+      },
+      {
+        "id": "skn_tail_05_050_0",
+        "parentIndex": 65,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 67,
+          "nodeIndex": 78,
+          "sourceName": "SKN_tail_05_050_0"
+        }
+      },
+      {
+        "id": "skn_tail_04_049_0",
+        "parentIndex": 64,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 68,
+          "nodeIndex": 79,
+          "sourceName": "SKN_tail_04_049_0"
+        }
+      },
+      {
+        "id": "skn_tail_03_048_0",
+        "parentIndex": 63,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 69,
+          "nodeIndex": 80,
+          "sourceName": "SKN_tail_03_048_0"
+        }
+      },
+      {
+        "id": "skn_tail_02_047_0",
+        "parentIndex": 62,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 70,
+          "nodeIndex": 81,
+          "sourceName": "SKN_tail_02_047_0"
+        }
+      },
+      {
+        "id": "skn_tail_01_046_0",
+        "parentIndex": 61,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 71,
+          "nodeIndex": 82,
+          "sourceName": "SKN_tail_01_046_0"
+        }
+      },
+      {
+        "id": "skn_back_1_02_0",
+        "parentIndex": 3,
+        "restLocal": {
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "dofMask": {
+          "translation": [
+            false,
+            false,
+            false
+          ],
+          "rotation": [
+            false,
+            false,
+            false
+          ],
+          "scale": [
+            false,
+            false,
+            false
+          ]
+        },
+        "semanticRole": "joint",
+        "source": {
+          "skinIndex": 0,
+          "skinJointIndex": 72,
+          "nodeIndex": 83,
+          "sourceName": "SKN_back_1_02_0"
+        }
+      }
+    ],
+    "drivenJointOrder": [
+      "skn_back_1_02",
+      "skn_back_2_03",
+      "skn_back_3_04",
+      "skn_back_4_05",
+      "skn_neck_00",
+      "skn_head_06",
+      "skn_l_ear_028",
+      "skn_r_ear_029",
+      "skn_l_shoulder_030",
+      "skn_l_armup_031",
+      "skn_l_armdown_032",
+      "skn_l_hand_033",
+      "skn_r_shoulder_034",
+      "skn_r_armup_035",
+      "skn_r_armdown_036",
+      "skn_r_hand_037",
+      "skn_l_legup_038",
+      "skn_l_legdown_039",
+      "skn_l_foot_040",
+      "skn_l_toes_041",
+      "skn_r_legup_042",
+      "skn_r_legdown_043",
+      "skn_r_foot_044",
+      "skn_r_toes_045",
+      "skn_tail_01_046",
+      "skn_tail_02_047",
+      "skn_tail_03_048",
+      "skn_tail_04_049",
+      "skn_tail_05_050",
+      "skn_tail_06_051"
+    ],
+    "drivenJointIndices": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      31,
+      33,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      45,
+      46,
+      47,
+      48,
+      53,
+      54,
+      55,
+      56,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66
+    ],
+    "drivenParentIndices": [
+      -1,
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      5,
+      3,
+      8,
+      9,
+      10,
+      3,
+      12,
+      13,
+      14,
+      0,
+      16,
+      17,
+      18,
+      0,
+      20,
+      21,
+      22,
+      0,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "maskGroups": {
+      "all": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "body": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "forelimbs": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "hindlimbs": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "tail": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "render": {
+    "canvas": [
+      48,
+      48
+    ],
+    "displayScale": 2,
+    "footAnchor": [
+      24,
+      46
+    ],
+    "sourceFacing": -1,
+    "mode": "sprite",
+    "fallbackModes": [
+      "skinned_mesh",
+      "debug_skeleton"
+    ],
+    "sprite": {
+      "image": "cat-48.png",
+      "metadata": "cat-parts.json"
+    },
+    "mesh": {
+      "source": "source",
+      "skinIndex": 0
+    }
+  },
+  "checkpoint": {
+    "format": "pet-character-motion-checkpoint-v1",
+    "metadataSchema": "pet-character-motion-checkpoint-metadata-v1",
+    "path": "checkpoints/characters/cat/518cf8f9fc29e5c8286f16cfe930ad022fbd2153dd8c3ef68121c8d7c58df0d7/motion.pt",
+    "characterId": "cat",
+    "rigFingerprint": "518cf8f9fc29e5c8286f16cfe930ad022fbd2153dd8c3ef68121c8d7c58df0d7",
+    "drivenJointOrder": [
+      "skn_back_1_02",
+      "skn_back_2_03",
+      "skn_back_3_04",
+      "skn_back_4_05",
+      "skn_neck_00",
+      "skn_head_06",
+      "skn_l_ear_028",
+      "skn_r_ear_029",
+      "skn_l_shoulder_030",
+      "skn_l_armup_031",
+      "skn_l_armdown_032",
+      "skn_l_hand_033",
+      "skn_r_shoulder_034",
+      "skn_r_armup_035",
+      "skn_r_armdown_036",
+      "skn_r_hand_037",
+      "skn_l_legup_038",
+      "skn_l_legdown_039",
+      "skn_l_foot_040",
+      "skn_l_toes_041",
+      "skn_r_legup_042",
+      "skn_r_legdown_043",
+      "skn_r_foot_044",
+      "skn_r_toes_045",
+      "skn_tail_01_046",
+      "skn_tail_02_047",
+      "skn_tail_03_048",
+      "skn_tail_04_049",
+      "skn_tail_05_050",
+      "skn_tail_06_051"
+    ]
+  },
+  "source": {
+    "format": "gltf-2.0",
+    "uri": "assets/Cat/scene.gltf",
+    "requiredAtBuild": true,
+    "availableInCleanClone": false,
+    "sha256": "dad7fe5857e4968f7f3ddc65be7c9c4c373368e8a49037d93501ef17ddf777f8",
+    "selectedSkinIndex": 0,
+    "buffers": [
+      {
+        "index": 0,
+        "uri": "scene.bin",
+        "byteLength": 533772,
+        "sha256": "1587e653e81f5fa08bc2ba6689104a89f1eb050eb8ca92f53faf2d748c9d7c89"
+      }
+    ],
+    "skins": [
+      {
+        "skinIndex": 0,
+        "name": null,
+        "skeletonNodeIndex": 5,
+        "jointNodeIndices": [
+          5,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51,
+          52,
+          53,
+          54,
+          55,
+          56,
+          57,
+          58,
+          59,
+          60,
+          61,
+          62,
+          63,
+          64,
+          65,
+          66,
+          67,
+          68,
+          69,
+          70,
+          71,
+          72,
+          73,
+          74,
+          75,
+          76,
+          77,
+          78,
+          79,
+          80,
+          81,
+          82,
+          83
+        ],
+        "inverseBindMatricesAccessor": 24,
+        "inverseBindMatrices": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            -4.575318344812252e-16,
+            -3.6240003951578965e-15,
+            1.0,
+            0.0,
+            -0.12320684641599655,
+            -0.9923810362815857,
+            -3.652760128332495e-15,
+            0.0,
+            0.9923810362815857,
+            -0.12320684641599655,
+            7.544243701327623e-18,
+            0.0,
+            14.482791900634766,
+            20.644729614257812,
+            9.618193286091425e-14,
+            1.0
+          ],
+          [
+            -6.853009395267073e-17,
+            7.648792217001057e-15,
+            1.0,
+            0.0,
+            0.00888808909803629,
+            -0.9999604821205139,
+            7.649098842927964e-15,
+            0.0,
+            0.9999604821205139,
+            0.00888808909803629,
+            5.442385209455892e-19,
+            0.0,
+            5.137772560119629,
+            21.511323928833008,
+            -1.469139751259646e-13,
+            1.0
+          ],
+          [
+            3.213229014529845e-16,
+            -2.3201718968117718e-15,
+            1.0,
+            0.0,
+            0.14082743227481842,
+            -0.9900341629981995,
+            -2.3423004208005535e-15,
+            0.0,
+            0.9900341629981995,
+            0.14082743227481842,
+            8.623192449742803e-18,
+            0.0,
+            -4.239856719970703,
+            21.13658332824707,
+            6.727929845184999e-14,
+            1.0
+          ],
+          [
+            6.767597372192807e-16,
+            -2.471756066019454e-15,
+            1.0,
+            0.0,
+            0.27030137181282043,
+            -0.9627757668495178,
+            -2.5626759473030203e-15,
+            0.0,
+            0.9627757668495178,
+            0.27030137181282043,
+            1.6551184262387864e-17,
+            0.0,
+            -13.485926628112793,
+            19.52706527709961,
+            7.095275837134749e-14,
+            1.0
+          ],
+          [
+            1.2888602614978388e-15,
+            -2.4630333207286293e-15,
+            1.0,
+            0.0,
+            0.4728430509567261,
+            -0.8811466693878174,
+            -2.779722210806304e-15,
+            0.0,
+            0.8811466693878174,
+            0.4728430509567261,
+            2.8953286820491395e-17,
+            0.0,
+            -23.79689598083496,
+            14.712340354919434,
+            7.569179929101805e-14,
+            1.0
+          ],
+          [
+            2.1762230943488765e-15,
+            -1.702531353541697e-15,
+            1.0,
+            0.0,
+            0.7983890771865845,
+            -0.6021419167518616,
+            -2.762638191534895e-15,
+            0.0,
+            0.6021419167518616,
+            0.7983890771865845,
+            4.888723116099854e-17,
+            0.0,
+            -33.37179946899414,
+            0.8115130066871643,
+            7.332050683825711e-14,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.19842615723609924,
+            -0.09265753626823425,
+            -0.9757261872291565,
+            0.0,
+            0.20840077102184296,
+            0.9767454266548157,
+            -0.050373416393995285,
+            0.0,
+            0.9577035903930664,
+            -0.19334669411182404,
+            0.21312174201011658,
+            0.0,
+            -28.046842575073242,
+            -22.684846878051758,
+            -1.2949929237365723,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.2079000324010849,
+            -0.15052369236946106,
+            -0.9664989113807678,
+            0.0,
+            0.4949798583984375,
+            0.8684278130531311,
+            -0.028776677325367928,
+            0.0,
+            0.843666136264801,
+            -0.47241485118865967,
+            0.2550523579120636,
+            0.0,
+            -34.87086486816406,
+            -12.742314338684082,
+            -2.940502166748047,
+            1.0
+          ],
+          [
+            0.3345204293727875,
+            -0.05134372413158417,
+            -0.9409887790679932,
+            0.0,
+            -0.16586336493492126,
+            0.9797197580337524,
+            -0.11242126673460007,
+            0.0,
+            0.9276774525642395,
+            0.19368277490139008,
+            0.31922024488449097,
+            0.0,
+            -18.551721572875977,
+            -32.218345642089844,
+            -2.1913957595825195,
+            1.0
+          ],
+          [
+            -7.233935596468398e-16,
+            3.2496359729104925e-15,
+            -1.0,
+            0.0,
+            -0.22125938534736633,
+            0.9752150177955627,
+            3.3291514025922267e-15,
+            0.0,
+            0.9752150177955627,
+            0.22125938534736633,
+            1.3548229952786592e-17,
+            0.0,
+            -21.445859909057617,
+            -29.472692489624023,
+            -8.866432571865215e-14,
+            1.0
+          ],
+          [
+            -7.233935596468398e-16,
+            3.2496359729104925e-15,
+            -1.0,
+            0.0,
+            -0.22125938534736633,
+            0.9752150177955627,
+            3.3291514025922267e-15,
+            0.0,
+            0.9752150177955627,
+            0.22125938534736633,
+            1.3548229952786592e-17,
+            0.0,
+            -21.445859909057617,
+            -29.472692489624023,
+            -8.866432571865215e-14,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.19842615723609924,
+            -0.09265753626823425,
+            -0.9757261872291565,
+            0.0,
+            -0.20840077102184296,
+            -0.9767454266548157,
+            0.050373416393995285,
+            0.0,
+            -0.9577035903930664,
+            0.19334669411182404,
+            -0.21312174201011658,
+            0.0,
+            28.045879364013672,
+            22.68480682373047,
+            1.2949981689453125,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.2079000324010849,
+            -0.15052369236946106,
+            -0.9664989113807678,
+            0.0,
+            -0.4949798583984375,
+            -0.8684278130531311,
+            0.028776677325367928,
+            0.0,
+            -0.843666136264801,
+            0.47241485118865967,
+            -0.2550523579120636,
+            0.0,
+            34.870853424072266,
+            12.742277145385742,
+            2.940507173538208,
+            1.0
+          ],
+          [
+            0.3345204293727875,
+            -0.05134372413158417,
+            -0.9409887790679932,
+            0.0,
+            0.16586336493492126,
+            -0.9797197580337524,
+            0.11242126673460007,
+            0.0,
+            -0.9276774525642395,
+            -0.19368277490139008,
+            -0.31922024488449097,
+            0.0,
+            18.55173683166504,
+            32.21830749511719,
+            2.1914045810699463,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.44589096307754517,
+            -0.889689564704895,
+            0.09815149009227753,
+            0.0,
+            0.8696650862693787,
+            0.40466561913490295,
+            -0.28271615505218506,
+            0.0,
+            0.21181108057498932,
+            0.2114194929599762,
+            0.9541686773300171,
+            0.0,
+            -35.35470199584961,
+            -12.537872314453125,
+            -9.619613647460938,
+            1.0
+          ],
+          [
+            0.44589096307754517,
+            -0.889689564704895,
+            0.09815149009227753,
+            0.0,
+            0.8696650862693787,
+            0.40466561913490295,
+            -0.28271615505218506,
+            0.0,
+            0.21181108057498932,
+            0.2114194929599762,
+            0.9541686773300171,
+            0.0,
+            -35.35470199584961,
+            -12.537872314453125,
+            -9.619613647460938,
+            1.0
+          ],
+          [
+            0.44589096307754517,
+            -0.889689564704895,
+            0.09815149009227753,
+            0.0,
+            -0.8696650862693787,
+            -0.40466561913490295,
+            0.28271615505218506,
+            0.0,
+            -0.21181108057498932,
+            -0.2114194929599762,
+            -0.9541686773300171,
+            0.0,
+            35.3547248840332,
+            12.53787899017334,
+            9.61960506439209,
+            1.0
+          ],
+          [
+            2.1762230943488765e-15,
+            -1.702531353541697e-15,
+            1.0,
+            0.0,
+            0.7983890771865845,
+            -0.6021419167518616,
+            -2.762638191534895e-15,
+            0.0,
+            0.6021419167518616,
+            0.7983890771865845,
+            4.888723116099854e-17,
+            0.0,
+            -33.37179946899414,
+            0.8115130066871643,
+            7.332096084791684e-14,
+            1.0
+          ],
+          [
+            1.0,
+            1.630496495333639e-15,
+            -3.809015684244285e-15,
+            0.0,
+            -1.7807368467705025e-15,
+            0.999208390712738,
+            -0.03978225216269493,
+            0.0,
+            3.741135310884273e-15,
+            0.03978225216269493,
+            0.999208390712738,
+            0.0,
+            -2.722181558609009,
+            -19.519407272338867,
+            -10.184591293334961,
+            1.0
+          ],
+          [
+            -0.012336578220129013,
+            0.9994670152664185,
+            0.03022386133670807,
+            0.0,
+            -0.9983068704605103,
+            -0.010592715814709663,
+            -0.05719393119215965,
+            0.0,
+            -0.05684329569339752,
+            -0.03087826631963253,
+            0.9979054927825928,
+            0.0,
+            19.77675437927246,
+            -6.564140319824219,
+            -10.052623748779297,
+            1.0
+          ],
+          [
+            -0.010198216885328293,
+            0.9994670152664185,
+            0.031010793522000313,
+            0.0,
+            -0.9998646974563599,
+            -0.010592715814709663,
+            0.012583757750689983,
+            0.0,
+            0.012905539944767952,
+            -0.03087826631963253,
+            0.9994398355484009,
+            0.0,
+            9.95173454284668,
+            -6.564140319824219,
+            -10.773064613342285,
+            1.0
+          ],
+          [
+            -0.011274266056716442,
+            0.9994670152664185,
+            0.03063599020242691,
+            0.0,
+            -0.9996947646141052,
+            -0.010592715814709663,
+            -0.022318683564662933,
+            0.0,
+            -0.02198226936161518,
+            -0.03087826631963253,
+            0.9992814064025879,
+            0.0,
+            1.28618586063385,
+            -6.564140319824219,
+            -10.734716415405273,
+            1.0
+          ],
+          [
+            1.0,
+            -1.0484499705730845e-15,
+            5.6044045069363925e-15,
+            0.0,
+            -1.2705757847819338e-15,
+            -0.999208390712738,
+            0.03978225216269493,
+            0.0,
+            5.558258151969978e-15,
+            -0.03978225216269493,
+            -0.999208390712738,
+            0.0,
+            2.722179889678955,
+            19.519420623779297,
+            10.184636116027832,
+            1.0
+          ],
+          [
+            -0.012336578220129013,
+            0.9994670152664185,
+            0.03022386133670807,
+            0.0,
+            0.9983068704605103,
+            0.010592715814709663,
+            0.05719393119215965,
+            0.0,
+            0.05684329569339752,
+            0.03087826631963253,
+            -0.9979054927825928,
+            0.0,
+            -19.77676773071289,
+            6.564140319824219,
+            10.052667617797852,
+            1.0
+          ],
+          [
+            -0.010198216885328293,
+            0.9994670152664185,
+            0.031010793522000313,
+            0.0,
+            0.9998646974563599,
+            0.010592715814709663,
+            -0.012583757750689983,
+            0.0,
+            -0.012905539944767952,
+            0.03087826631963253,
+            -0.9994398355484009,
+            0.0,
+            -9.951712608337402,
+            6.564137935638428,
+            10.773056030273438,
+            1.0
+          ],
+          [
+            -0.011274266988039017,
+            0.9994670152664185,
+            0.03063599020242691,
+            0.0,
+            0.9996947646141052,
+            0.010592715814709663,
+            0.022318683564662933,
+            0.0,
+            0.02198226936161518,
+            0.03087826631963253,
+            -0.9992814064025879,
+            0.0,
+            -1.286186695098877,
+            6.564138412475586,
+            10.734729766845703,
+            1.0
+          ],
+          [
+            6.767597372192807e-16,
+            -2.471756066019454e-15,
+            1.0,
+            0.0,
+            0.27030137181282043,
+            -0.9627757668495178,
+            -2.5626759473030203e-15,
+            0.0,
+            0.9627757668495178,
+            0.27030137181282043,
+            1.6551184262387864e-17,
+            0.0,
+            -13.485926628112793,
+            19.52706527709961,
+            7.095275837134749e-14,
+            1.0
+          ],
+          [
+            3.213229014529845e-16,
+            -2.3201718968117718e-15,
+            1.0,
+            0.0,
+            0.14082743227481842,
+            -0.9900341629981995,
+            -2.3423004208005535e-15,
+            0.0,
+            0.9900341629981995,
+            0.14082743227481842,
+            8.623192449742803e-18,
+            0.0,
+            -4.239856719970703,
+            21.13658332824707,
+            6.727929845184999e-14,
+            1.0
+          ],
+          [
+            -3.1179581367544703e-15,
+            1.0,
+            1.099172103399685e-15,
+            0.0,
+            -0.9536682963371277,
+            -3.3041948473507997e-15,
+            0.30086007714271545,
+            0.0,
+            0.30086007714271545,
+            -1.1017642756811893e-16,
+            0.9536682963371277,
+            0.0,
+            24.64098358154297,
+            -6.12670373916626,
+            4.618183612823486,
+            1.0
+          ],
+          [
+            -1.86411517020819e-15,
+            1.0,
+            -1.663347080006121e-15,
+            0.0,
+            -0.7160577178001404,
+            -2.4958986225985698e-15,
+            -0.6980410814285278,
+            0.0,
+            -0.6980410814285278,
+            -1.1017642756811893e-16,
+            0.7160577178001404,
+            0.0,
+            2.792440414428711,
+            -6.12670373916626,
+            14.969677925109863,
+            1.0
+          ],
+          [
+            -2.9893990759102384e-15,
+            1.0,
+            1.444396792316528e-15,
+            0.0,
+            -0.9143468141555786,
+            -3.3182299715285666e-15,
+            0.4049319624900818,
+            0.0,
+            0.4049319624900818,
+            -1.1017642756811893e-16,
+            0.9143468141555786,
+            0.0,
+            11.884600639343262,
+            -6.12670373916626,
+            10.584996223449707,
+            1.0
+          ],
+          [
+            -1.0576314106746271e-16,
+            1.0,
+            1.5288292482570735e-14,
+            0.0,
+            -0.01412381511181593,
+            -1.5288261989384634e-14,
+            0.9999002814292908,
+            0.0,
+            0.9999002814292908,
+            -1.1017642756811893e-16,
+            0.01412381511181593,
+            0.0,
+            12.202340126037598,
+            -6.12670373916626,
+            -1.1997791528701782,
+            1.0
+          ],
+          [
+            -1.0576314106746271e-16,
+            1.0,
+            1.5288292482570735e-14,
+            0.0,
+            -0.01412381511181593,
+            -1.5288261989384634e-14,
+            0.9999002814292908,
+            0.0,
+            0.9999002814292908,
+            -1.1017642756811893e-16,
+            0.01412381511181593,
+            0.0,
+            12.202340126037598,
+            -6.12670373916626,
+            -1.1997791528701782,
+            1.0
+          ],
+          [
+            -2.9893990759102384e-15,
+            1.0,
+            1.444396792316528e-15,
+            0.0,
+            -0.9143468141555786,
+            -3.3182299715285666e-15,
+            0.4049319624900818,
+            0.0,
+            0.4049319624900818,
+            -1.1017642756811893e-16,
+            0.9143468141555786,
+            0.0,
+            11.884600639343262,
+            -6.12670373916626,
+            10.584996223449707,
+            1.0
+          ],
+          [
+            -1.86411517020819e-15,
+            1.0,
+            -1.663347080006121e-15,
+            0.0,
+            -0.7160577178001404,
+            -2.4958986225985698e-15,
+            -0.6980410814285278,
+            0.0,
+            -0.6980410814285278,
+            -1.1017642756811893e-16,
+            0.7160577178001404,
+            0.0,
+            2.792440414428711,
+            -6.12670373916626,
+            14.969677925109863,
+            1.0
+          ],
+          [
+            -3.1179581367544703e-15,
+            1.0,
+            1.099172103399685e-15,
+            0.0,
+            -0.9536682963371277,
+            -3.3041948473507997e-15,
+            0.30086007714271545,
+            0.0,
+            0.30086007714271545,
+            -1.1017642756811893e-16,
+            0.9536682963371277,
+            0.0,
+            24.64098358154297,
+            -6.12670373916626,
+            4.618183612823486,
+            1.0
+          ],
+          [
+            2.811235012817716e-15,
+            1.0,
+            1.011942532909069e-15,
+            0.0,
+            0.9536682963371277,
+            -2.3765326220891256e-15,
+            -0.30086007714271545,
+            0.0,
+            -0.30086007714271545,
+            1.8108459034300774e-15,
+            -0.9536682963371277,
+            0.0,
+            -24.6409854888916,
+            6.126699924468994,
+            -4.6181793212890625,
+            1.0
+          ],
+          [
+            3.6183939899591387e-16,
+            1.0,
+            2.695645932220079e-15,
+            0.0,
+            0.7160577178001404,
+            -2.1407694715503637e-15,
+            0.6980410814285278,
+            0.0,
+            0.6980410814285278,
+            1.6776592898367585e-15,
+            -0.7160577178001404,
+            0.0,
+            -2.792438268661499,
+            6.126699924468994,
+            -14.969682693481445,
+            1.0
+          ],
+          [
+            2.8983485397945583e-15,
+            1.0,
+            6.152451870347988e-16,
+            0.0,
+            0.9143468141555786,
+            -2.4009633816285446e-15,
+            -0.4049319624900818,
+            0.0,
+            -0.4049319624900818,
+            1.7361814314372686e-15,
+            -0.9143468141555786,
+            0.0,
+            -11.884592056274414,
+            6.126699924468994,
+            -10.584986686706543,
+            1.0
+          ],
+          [
+            1.8386294311329657e-15,
+            1.0,
+            -2.107342389479072e-08,
+            0.0,
+            0.01412381511181593,
+            -2.107132246464971e-08,
+            -0.9999002814292908,
+            0.0,
+            -0.9999002814292908,
+            -2.9763530529081095e-10,
+            -0.01412381511181593,
+            0.0,
+            -12.202363014221191,
+            6.126699924468994,
+            1.1997755765914917,
+            1.0
+          ],
+          [
+            1.8386294311329657e-15,
+            1.0,
+            -2.107342389479072e-08,
+            0.0,
+            0.01412381511181593,
+            -2.107132246464971e-08,
+            -0.9999002814292908,
+            0.0,
+            -0.9999002814292908,
+            -2.9763530529081095e-10,
+            -0.01412381511181593,
+            0.0,
+            -12.202362060546875,
+            6.126699924468994,
+            1.1997755765914917,
+            1.0
+          ],
+          [
+            2.8983485397945583e-15,
+            1.0,
+            6.152451870347988e-16,
+            0.0,
+            0.9143468141555786,
+            -2.4009633816285446e-15,
+            -0.4049319624900818,
+            0.0,
+            -0.4049319624900818,
+            1.7361814314372686e-15,
+            -0.9143468141555786,
+            0.0,
+            -11.884592056274414,
+            6.126699924468994,
+            -10.584986686706543,
+            1.0
+          ],
+          [
+            3.6183939899591387e-16,
+            1.0,
+            2.695645932220079e-15,
+            0.0,
+            0.7160577178001404,
+            -2.1407694715503637e-15,
+            0.6980410814285278,
+            0.0,
+            0.6980410814285278,
+            1.6776592898367585e-15,
+            -0.7160577178001404,
+            0.0,
+            -2.792438507080078,
+            6.126699924468994,
+            -14.969681739807129,
+            1.0
+          ],
+          [
+            2.811235012817716e-15,
+            1.0,
+            1.011942532909069e-15,
+            0.0,
+            0.9536682963371277,
+            -2.3765326220891256e-15,
+            -0.30086007714271545,
+            0.0,
+            -0.30086007714271545,
+            1.8108459034300774e-15,
+            -0.9536682963371277,
+            0.0,
+            -24.6409854888916,
+            6.126699924468994,
+            -4.6181793212890625,
+            1.0
+          ],
+          [
+            1.619546476908009e-15,
+            2.4018279905094544e-15,
+            1.0,
+            0.0,
+            0.5494062900543213,
+            0.835555374622345,
+            -2.8966491799441293e-15,
+            0.0,
+            -0.835555374622345,
+            0.5494062900543213,
+            3.3641432203809185e-17,
+            0.0,
+            -30.12776756286621,
+            -11.026008605957031,
+            7.527589256138903e-14,
+            1.0
+          ],
+          [
+            1.6552007406359028e-15,
+            2.3780109063403212e-15,
+            1.0,
+            0.0,
+            0.5615014433860779,
+            0.8274757862091064,
+            -2.897143847185326e-15,
+            0.0,
+            -0.8274757862091064,
+            0.5615014433860779,
+            3.4382046710897314e-17,
+            0.0,
+            -35.571067810058594,
+            -10.509733200073242,
+            8.138964084939901e-14,
+            1.0
+          ],
+          [
+            1.9677972969080366e-15,
+            2.133618607651406e-15,
+            1.0,
+            0.0,
+            0.6675450205802917,
+            0.7445694208145142,
+            -2.9022205391546945e-15,
+            0.0,
+            -0.7445694208145142,
+            0.6675450205802917,
+            4.0875341727544676e-17,
+            0.0,
+            -42.7473258972168,
+            -4.812341690063477,
+            8.738971053962388e-14,
+            1.0
+          ],
+          [
+            1.8826774737307943e-15,
+            2.207053823079512e-15,
+            1.0,
+            0.0,
+            0.6386694312095642,
+            0.7694812417030334,
+            -2.9006950328166895e-15,
+            0.0,
+            -0.7694812417030334,
+            0.6386694312095642,
+            3.910722331587788e-17,
+            0.0,
+            -49.59808349609375,
+            -6.708376407623291,
+            9.405788593732506e-14,
+            1.0
+          ],
+          [
+            2.3254052898763825e-15,
+            1.7504206905553238e-15,
+            1.0,
+            0.0,
+            0.7888580560684204,
+            0.6145754456520081,
+            -2.91018031951828e-15,
+            0.0,
+            -0.6145754456520081,
+            0.7888580560684204,
+            4.830362546034033e-17,
+            0.0,
+            -57.563419342041016,
+            5.773412227630615,
+            1.042632370414423e-13,
+            1.0
+          ],
+          [
+            2.754244306785842e-15,
+            9.893556582167042e-16,
+            1.0,
+            0.0,
+            0.9343350529670715,
+            0.3563958406448364,
+            -2.9259893424458342e-15,
+            0.0,
+            -0.3563958406448364,
+            0.9343350529670715,
+            5.721152355075653e-17,
+            0.0,
+            -59.650917053222656,
+            24.323575973510742,
+            1.1782775818404423e-13,
+            1.0
+          ],
+          [
+            2.754244306785842e-15,
+            9.893556582167042e-16,
+            1.0,
+            0.0,
+            0.9343350529670715,
+            0.3563958406448364,
+            -2.9259893424458342e-15,
+            0.0,
+            -0.3563958406448364,
+            0.9343350529670715,
+            5.721152355075653e-17,
+            0.0,
+            -59.650917053222656,
+            24.323575973510742,
+            1.1782775818404423e-13,
+            1.0
+          ],
+          [
+            2.3254052898763825e-15,
+            1.7504206905553238e-15,
+            1.0,
+            0.0,
+            0.7888580560684204,
+            0.6145754456520081,
+            -2.91018031951828e-15,
+            0.0,
+            -0.6145754456520081,
+            0.7888580560684204,
+            4.830362546034033e-17,
+            0.0,
+            -57.563419342041016,
+            5.773412227630615,
+            1.042632370414423e-13,
+            1.0
+          ],
+          [
+            1.8826774737307943e-15,
+            2.207053823079512e-15,
+            1.0,
+            0.0,
+            0.6386694312095642,
+            0.7694812417030334,
+            -2.9006950328166895e-15,
+            0.0,
+            -0.7694812417030334,
+            0.6386694312095642,
+            3.910722331587788e-17,
+            0.0,
+            -49.59808349609375,
+            -6.708376407623291,
+            9.405788593732506e-14,
+            1.0
+          ],
+          [
+            1.9677972969080366e-15,
+            2.133618607651406e-15,
+            1.0,
+            0.0,
+            0.6675450205802917,
+            0.7445694208145142,
+            -2.9022205391546945e-15,
+            0.0,
+            -0.7445694208145142,
+            0.6675450205802917,
+            4.0875341727544676e-17,
+            0.0,
+            -42.7473258972168,
+            -4.812341690063477,
+            8.738971053962388e-14,
+            1.0
+          ],
+          [
+            1.6552007406359028e-15,
+            2.3780109063403212e-15,
+            1.0,
+            0.0,
+            0.5615014433860779,
+            0.8274757862091064,
+            -2.897143847185326e-15,
+            0.0,
+            -0.8274757862091064,
+            0.5615014433860779,
+            3.4382046710897314e-17,
+            0.0,
+            -35.571067810058594,
+            -10.509733200073242,
+            8.138964084939901e-14,
+            1.0
+          ],
+          [
+            1.619546476908009e-15,
+            2.4018279905094544e-15,
+            1.0,
+            0.0,
+            0.5494062900543213,
+            0.835555374622345,
+            -2.8966491799441293e-15,
+            0.0,
+            -0.835555374622345,
+            0.5494062900543213,
+            3.3641432203809185e-17,
+            0.0,
+            -30.12776756286621,
+            -11.026008605957031,
+            7.527589256138903e-14,
+            1.0
+          ],
+          [
+            -4.575318344812252e-16,
+            -3.6240003951578965e-15,
+            1.0,
+            0.0,
+            -0.12320684641599655,
+            -0.9923810362815857,
+            -3.652760128332495e-15,
+            0.0,
+            0.9923810362815857,
+            -0.12320684641599655,
+            7.544243701327623e-18,
+            0.0,
+            14.482791900634766,
+            20.644729614257812,
+            9.618193286091425e-14,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "meshSkinReferences": [
+      {
+        "nodeIndex": 7,
+        "nodeName": "Object_7",
+        "meshIndex": 0,
+        "skinIndex": 0,
+        "primitives": [
+          {
+            "primitiveIndex": 0,
+            "mode": 4,
+            "indicesAccessor": 4,
+            "materialIndex": 0,
+            "attributes": {
+              "JOINTS_0": 25,
+              "NORMAL": 1,
+              "POSITION": 0,
+              "TEXCOORD_0": 2,
+              "TEXCOORD_1": 3,
+              "WEIGHTS_0": 26
+            }
+          }
+        ]
+      },
+      {
+        "nodeIndex": 8,
+        "nodeName": "Object_8",
+        "meshIndex": 1,
+        "skinIndex": 0,
+        "primitives": [
+          {
+            "primitiveIndex": 0,
+            "mode": 4,
+            "indicesAccessor": 9,
+            "materialIndex": 1,
+            "attributes": {
+              "JOINTS_0": 27,
+              "NORMAL": 6,
+              "POSITION": 5,
+              "TEXCOORD_0": 7,
+              "TEXCOORD_1": 8,
+              "WEIGHTS_0": 28
+            }
+          }
+        ]
+      },
+      {
+        "nodeIndex": 9,
+        "nodeName": "Object_9",
+        "meshIndex": 2,
+        "skinIndex": 0,
+        "primitives": [
+          {
+            "primitiveIndex": 0,
+            "mode": 4,
+            "indicesAccessor": 14,
+            "materialIndex": 2,
+            "attributes": {
+              "JOINTS_0": 29,
+              "NORMAL": 11,
+              "POSITION": 10,
+              "TEXCOORD_0": 12,
+              "TEXCOORD_1": 12,
+              "TEXCOORD_2": 13,
+              "WEIGHTS_0": 30
+            }
+          }
+        ]
+      },
+      {
+        "nodeIndex": 11,
+        "nodeName": "Object_11",
+        "meshIndex": 3,
+        "skinIndex": 0,
+        "primitives": [
+          {
+            "primitiveIndex": 0,
+            "mode": 4,
+            "indicesAccessor": 19,
+            "materialIndex": 3,
+            "attributes": {
+              "JOINTS_0": 31,
+              "NORMAL": 16,
+              "POSITION": 15,
+              "TEXCOORD_0": 17,
+              "TEXCOORD_1": 18,
+              "WEIGHTS_0": 32
+            }
+          }
+        ]
+      }
+    ],
+    "animations": [
+      {
+        "animationIndex": 0,
+        "name": "BeingCute",
+        "channelCount": 80,
+        "durationMs": 5000.0
+      }
+    ]
+  },
+  "trainingClips": [
+    {
+      "clipId": "being-cute",
+      "path": "assets/pet/runtime/cat-being-cute.animation.json",
+      "fingerprint": "ca95578105deccb5c06d0b631b8b9921b8bb82f03392b0ff3d533f85725dd6de",
+      "playbackMode": "loop"
+    }
+  ],
+  "provenance": {
+    "generator": "tools/rig/extract_gltf_skeleton.py",
+    "generatorVersion": 2,
+    "profile": "tools/rig/profiles/cat-rig-profile.json",
+    "f64Accumulation": "pet-left-to-right-f64-sum-v1"
+  }
+}

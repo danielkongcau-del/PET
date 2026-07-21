@@ -1,0 +1,147 @@
+{
+  "schema": "pet-character-rig-profile-v1",
+  "characterId": "cat",
+  "rigId": "cat-source-rig-v1",
+  "skinIndex": 0,
+  "motionRoot": "__motion_root__",
+  "coordinateSystem": {
+    "handedness": "right",
+    "up": "+Y",
+    "forward": "+Z",
+    "units": "meter"
+  },
+  "sourceRequiredAtBuild": true,
+  "sourceAvailableInCleanClone": false,
+  "render": {
+    "canvas": [48, 48],
+    "displayScale": 2,
+    "footAnchor": [24, 46],
+    "sourceFacing": -1,
+    "mode": "sprite",
+    "fallbackModes": ["skinned_mesh", "debug_skeleton"],
+    "sprite": {
+      "image": "cat-48.png",
+      "metadata": "cat-parts.json"
+    },
+    "mesh": {
+      "source": "source",
+      "skinIndex": 0
+    }
+  },
+  "drivenDofMask": {
+    "translation": [false, false, false],
+    "rotation": [true, true, true],
+    "scale": [false, false, false]
+  },
+  "staticDofMask": {
+    "translation": [false, false, false],
+    "rotation": [false, false, false],
+    "scale": [false, false, false]
+  },
+  "drivenSourceNames": [
+    "SKN_back_1_02",
+    "SKN_back_2_03",
+    "SKN_back_3_04",
+    "SKN_back_4_05",
+    "SKN_neck_00",
+    "SKN_head_06",
+    "SKN_L_ear_028",
+    "SKN_R_ear_029",
+    "SKN_L_shoulder_030",
+    "SKN_L_armUp_031",
+    "SKN_L_armDown_032",
+    "SKN_L_hand_033",
+    "SKN_R_shoulder_034",
+    "SKN_R_armUp_035",
+    "SKN_R_armDown_036",
+    "SKN_R_hand_037",
+    "SKN_L_legUp_038",
+    "SKN_L_legDown_039",
+    "SKN_L_foot_040",
+    "SKN_L_toes_041",
+    "SKN_R_legUp_042",
+    "SKN_R_legDown_043",
+    "SKN_R_foot_044",
+    "SKN_R_toes_045",
+    "SKN_tail_01_046",
+    "SKN_tail_02_047",
+    "SKN_tail_03_048",
+    "SKN_tail_04_049",
+    "SKN_tail_05_050",
+    "SKN_tail_06_051"
+  ],
+  "semanticRoles": {
+    "SKN_back_1_02": "spine_base",
+    "SKN_back_2_03": "spine_lower",
+    "SKN_back_3_04": "spine_mid",
+    "SKN_back_4_05": "spine_upper",
+    "SKN_neck_00": "neck",
+    "SKN_head_06": "head",
+    "SKN_L_ear_028": "ear_left",
+    "SKN_R_ear_029": "ear_right",
+    "SKN_L_shoulder_030": "forelimb_left_shoulder",
+    "SKN_L_armUp_031": "forelimb_left_upper",
+    "SKN_L_armDown_032": "forelimb_left_lower",
+    "SKN_L_hand_033": "forepaw_left",
+    "SKN_R_shoulder_034": "forelimb_right_shoulder",
+    "SKN_R_armUp_035": "forelimb_right_upper",
+    "SKN_R_armDown_036": "forelimb_right_lower",
+    "SKN_R_hand_037": "forepaw_right",
+    "SKN_L_legUp_038": "hindlimb_left_upper",
+    "SKN_L_legDown_039": "hindlimb_left_lower",
+    "SKN_L_foot_040": "hindpaw_left",
+    "SKN_L_toes_041": "toes_left",
+    "SKN_R_legUp_042": "hindlimb_right_upper",
+    "SKN_R_legDown_043": "hindlimb_right_lower",
+    "SKN_R_foot_044": "hindpaw_right",
+    "SKN_R_toes_045": "toes_right",
+    "SKN_tail_01_046": "tail_1",
+    "SKN_tail_02_047": "tail_2",
+    "SKN_tail_03_048": "tail_3",
+    "SKN_tail_04_049": "tail_4",
+    "SKN_tail_05_050": "tail_5",
+    "SKN_tail_06_051": "tail_6"
+  },
+  "maskGroups": {
+    "all": [
+      "SKN_back_1_02", "SKN_back_2_03", "SKN_back_3_04", "SKN_back_4_05",
+      "SKN_neck_00", "SKN_head_06", "SKN_L_ear_028", "SKN_R_ear_029",
+      "SKN_L_shoulder_030", "SKN_L_armUp_031", "SKN_L_armDown_032", "SKN_L_hand_033",
+      "SKN_R_shoulder_034", "SKN_R_armUp_035", "SKN_R_armDown_036", "SKN_R_hand_037",
+      "SKN_L_legUp_038", "SKN_L_legDown_039", "SKN_L_foot_040", "SKN_L_toes_041",
+      "SKN_R_legUp_042", "SKN_R_legDown_043", "SKN_R_foot_044", "SKN_R_toes_045",
+      "SKN_tail_01_046", "SKN_tail_02_047", "SKN_tail_03_048", "SKN_tail_04_049",
+      "SKN_tail_05_050", "SKN_tail_06_051"
+    ],
+    "body": [
+      "SKN_back_1_02", "SKN_back_2_03", "SKN_back_3_04", "SKN_back_4_05",
+      "SKN_neck_00", "SKN_head_06", "SKN_L_ear_028", "SKN_R_ear_029"
+    ],
+    "forelimbs": [
+      "SKN_L_shoulder_030", "SKN_L_armUp_031", "SKN_L_armDown_032", "SKN_L_hand_033",
+      "SKN_R_shoulder_034", "SKN_R_armUp_035", "SKN_R_armDown_036", "SKN_R_hand_037"
+    ],
+    "hindlimbs": [
+      "SKN_L_legUp_038", "SKN_L_legDown_039", "SKN_L_foot_040", "SKN_L_toes_041",
+      "SKN_R_legUp_042", "SKN_R_legDown_043", "SKN_R_foot_044", "SKN_R_toes_045"
+    ],
+    "tail": [
+      "SKN_tail_01_046", "SKN_tail_02_047", "SKN_tail_03_048",
+      "SKN_tail_04_049", "SKN_tail_05_050", "SKN_tail_06_051"
+    ]
+  },
+  "sampleRateHz": 30,
+  "trainingClips": [
+    {
+      "clipId": "being-cute",
+      "animationIndex": 0,
+      "sampleRateHz": 30,
+      "playbackMode": "loop",
+      "path": "assets/pet/runtime/cat-being-cute.animation.json"
+    }
+  ],
+  "checkpoint": {
+    "format": "pet-character-motion-checkpoint-v1",
+    "metadataSchema": "pet-character-motion-checkpoint-metadata-v1"
+  }
+}

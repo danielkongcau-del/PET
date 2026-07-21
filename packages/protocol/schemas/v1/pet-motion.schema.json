@@ -392,13 +392,32 @@
       },
       "allOf": [
         {
-          "not": {
-            "required": ["bone_rotations", "root_translation"]
+          "if": {
+            "anyOf": [
+              { "required": ["root_translation"] },
+              { "required": ["root_rotation"] },
+              { "required": ["local_rotation_deltas"] }
+            ]
+          },
+          "then": {
+            "required": [
+              "root_translation",
+              "root_rotation",
+              "local_rotation_deltas"
+            ],
+            "not": { "required": ["bone_rotations"] }
           }
         },
         {
-          "not": {
-            "required": ["bone_rotations", "local_rotation_deltas"]
+          "if": { "required": ["bone_rotations"] },
+          "then": {
+            "not": {
+              "anyOf": [
+                { "required": ["root_translation"] },
+                { "required": ["root_rotation"] },
+                { "required": ["local_rotation_deltas"] }
+              ]
+            }
           }
         }
       ]

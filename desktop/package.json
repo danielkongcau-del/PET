@@ -15,7 +15,7 @@
     "build": "pnpm build:deps && tsc -p tsconfig.json",
     "typecheck": "pnpm build:deps && tsc -p tsconfig.json --noEmit",
     "test:build": "pnpm build:deps && tsc -p tsconfig.tests.json",
-    "test": "pnpm test:build && node --test .test-dist/tests/protocol.test.js .test-dist/tests/motion-safety.test.js .test-dist/tests/surfaces.test.js .test-dist/tests/renderer.test.js",
+    "test": "pnpm test:build && node --test .test-dist/tests/protocol.test.js .test-dist/tests/motion-safety.test.js .test-dist/tests/surfaces.test.js .test-dist/tests/renderer.test.js .test-dist/tests/character-rig.test.js .test-dist/tests/generator-bridge.test.js .test-dist/tests/trace-analysis.test.js .test-dist/tests/trace-execution-replay.test.js .test-dist/tests/trace-recorder.test.js",
     "check": "pnpm typecheck && pnpm test",
     "dev": "pnpm build && electron ."
   },

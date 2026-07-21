@@ -1,15 +1,24 @@
 # 骨骼动画 & 端到端动作模型：设计文档
 
-状态：已评审 v1，已更新至 v2。预备代码阶段，不涉及核心逻辑变更。
+状态：已评审 v2，并于 2026-07-21 更新为通用角色架构。猫是首个验证资产，不是协议特例。
 
-**评审决议 (2026-07-20)：**
+**通用角色决议 (2026-07-21，覆盖本文中更早的猫专用示例)：**
+
+- 每个具体角色拥有独立的 character rig manifest、归一化统计和 checkpoint。
+- 同一套数据、FK、渲染、训练与推理代码必须支持不同物种、拓扑和 driven joint 数量。
+- checkpoint 不跨角色复用；加载时必须精确匹配 `characterId`、`rigFingerprint` 和 `drivenJointOrder`。
+- `cat-skeleton*.json` 仅作为旧格式兼容输入。当前权威入口是所选角色的 `character-rig-manifest-v1`。
+- 模型输出采用 manifest 驱动的 N 个 local quaternion，不允许在代码、文档或 checkpoint 中写死 10、20 或 73。
+- 通用性指角色物种、拓扑和 driven joint 数量可变；首版运行时输出画布统一归一化为 48×48，并固定 2 倍显示为 96 DIP，不把角色素材原始分辨率暴露为物理碰撞尺寸。
+
+**历史评审记录 (2026-07-20)：** 下列条目描述最初的 2D 猫方案；凡与 2026-07-21 通用角色决议冲突之处，均以后者为准。
 - 分层精灵：优先搜索现有免费 CC0 资产，搜索期间先写不依赖精灵的预备代码（协议层、Schema、能力协商）
 - 能力协商：通过 `hello/ready` 的 `capabilities` 字段宣告 `"skeletal_motion"`
 - 骨骼版本：生成器在 `ready` 中发送完整骨骼定义的 SHA-256，宿主对比本地 `cat-skeleton.json`，不匹配时拒绝 + 错误提示
 - 尾巴物理：模型输出 tail_base 角度，tail_tip 由渲染器施加惯性跟随 + 阻尼二级物理
 - 步态协调：模型从数据中自主学习（数据驱动），渲染器不做约束
 - 表情系统：用连续面部参数（eye_scale, mouth_open, ear_angle 等），不再仅依赖离散 expression 字段
-- **骨骼为唯一真相源 (2026-07-20)**：任何代码不得硬编码骨骼数量。`cat-skeleton.json` 是骨骼层级、父子关系、可驱动骨骼列表的唯一权威来源。所有模块——宿主协商、协议校验、渲染器 FK、生成器后端——必须在运行时从此文件动态读取骨骼结构。
+- **角色 manifest 为唯一真相源 (2026-07-21)**：任何代码不得硬编码角色名、骨骼数量或索引。当前选择的 character rig manifest 定义骨骼层级、rest transform、DOF/mask、精确 driven joint order、源资产映射和 checkpoint 身份；所有模块必须从同一 manifest 读取。
 
 ---
 
@@ -27,6 +36,8 @@
 ---
 
 ## 1. 骨骼层级定义
+
+> §1.1-§1.3 是早期 2D 猫原型的兼容格式说明，不是新角色或神经模型的实现规范。当前规范从 §1.4 开始，以 character rig manifest 为准。
 
 ### 1.1 骨骼树（10 根）
 
@@ -48,7 +59,9 @@ root (pelvis, anchor at foot_x/foot_y)
 - `ear_left/right` 不挂独立 sprite，仅影响 head sprite 的局部变形（stretch）
 - `tail` 为 2 段链：`tail_base → tail_tip`，每段独立旋转
 
-### 1.2 骨骼定义文件：`assets/pet/runtime/cat-skeleton.json`
+### 1.2 角色骨骼入口：`character-rig-manifest-v1`
+
+下方 `cat-skeleton.json` 片段保留为 legacy 2D 格式说明。新角色必须通过 character rig manifest 声明可变长度 joint graph、精确 `drivenJointOrder`、DOF/mask、source mapping 和 checkpoint identity；Cat 默认 manifest 只是第一份实例。
 
 ```jsonc
 {
@@ -210,40 +223,46 @@ class BonePose:
 
 当前 `PlanPoint` 的 `lean/squash/bob/expression` 继续保留。新增 `bone_rotations` 数组（7 个值）和 `facial_params` 对象。
 
-### 1.4 骨骼为唯一真相源
+### 1.4 角色 manifest 为唯一真相源
 
-`cat-skeleton.json` 是骨骼层级、父子关系、可驱动骨骼列表的**唯一权威来源**。任何模块不得硬编码骨骼数量、骨骼名称或骨骼索引。
+所选角色的 character rig manifest 是骨骼层级、父子关系、可驱动关节顺序和 checkpoint 身份的**唯一权威来源**。任何模块不得硬编码角色名称、骨骼数量、骨骼名称或骨骼索引。旧 `cat-skeleton*.json` 只能由兼容适配器转换，不能再作为新训练数据的身份来源。
 
 **数据来源规则：**
 
 ```
-cat-skeleton.json
-  ├── bones[*].physics.mode === "model_driven"  → 可驱动骨骼列表
-  ├── bones[*].physics.mode === "secondary"      → 渲染器物理驱动骨骼
-  ├── bones[*].physics.mode === "static"         → 纯锚点骨骼（不移动）
-  ├── bones[*].parent                             → FK 父子拓扑
-  ├── drawOrder                                   → 渲染层级
+character-rig-manifest-v1
+  ├── rig.drivenJointOrder                         → 模型输出的精确关节顺序与 N
+  ├── rig.joints[*].parentIndex                    → FK 父子拓扑
+  ├── rig.joints[*].restLocal                      → authored rest transform
+  ├── rig.joints[*].dofMask / masks                → model/secondary/static 与监督 mask
+  ├── rig.joints[*].semanticRole                   → 可选语义，不决定数组长度
+  ├── source / trainingClips                       → mesh、skin、IBM、动画及 provenance
+  └── checkpoint                                   → characterId + rigFingerprint 绑定
   └── bones[*].limits                             → 运行时角度裁剪
 ```
 
 **各模块读取义务：**
 
-| 模块 | 从 skeleton 读取 | 当前状态 |
+| 模块 | 从 character manifest 读取 | 当前状态（2026-07-21） |
 |---|---|---|
-| `generator-bridge.ts` | 加载 skeleton JSON，计算 SHA-256，提取 model_driven 骨骼数量和名称列表 | ❌ 仅算 hash |
-| `protocol.ts` | `isBoneRotations` 接收期望长度参数，校验 `bone_rotations.length === modelDrivenCount` | ❌ 允许 1-32 |
-| `motion-controller.ts` | 校验 PlanPoint.bone_rotations 长度与 skeleton 一致 | ❌ 不做长度校验 |
-| `pet-window.ts` | 加载 skeleton 并传入 renderer | ❌ 不传 |
-| `renderer.js` | 根据 bones + drawOrder 递归 FK，无需硬编码 | ❌ 待实现 |
-| `backend.py` (生成器) | 读取同一个 `cat-skeleton.json`，model_driven 骨骼数 = 姿态输出维度 | ❌ 不自省 |
+| `character-rig.ts` / `character_rig.py` | 严格校验 rig fingerprint、层级、driven order、mask 与 checkpoint 身份 | ✅ 已实现，保留 legacy 适配器 |
+| `generator-bridge.ts` | 将同一 rig fingerprint 与生成器协商，并把精确 driven order 交给宿主安全层 | ✅ 已实现 |
+| `protocol.ts` / Python protocol | 验证 3D 原子字段组与最多 128 个 local quaternion | ✅ 已实现 |
+| `motion-controller.ts` | 按所选角色的 `drivenJointOrder.length` 校验每个 PlanPoint | ✅ 已实现 |
+| `pet-window.ts` | 将同一份已验证 manifest 和角色资源发送给 renderer | ✅ 已实现 |
+| `renderer.js` | 任意拓扑四元数 FK、正交侧视投影、pose-aware sprite/debug fallback | ✅ 自动 2D joint warp 已实现；真正的 skinned-mesh 绘制仍未实现 |
+| generator planner | 从所选 manifest 读取 N 并输出 N 个 local quaternion | ✅ 已实现；运行时 procedural backend 仍只是 identity 姿态基线 |
+| training data teacher | 将角色动画转换为 rest-local delta，并与程序化桌面行为轨迹合成 | ✅ 已实现；循环接缝、Schema、clip/order/fingerprint 与逐样本 provenance 均 fail closed |
+| neural checkpoint loader | 精确校验 `characterId + rigFingerprint + drivenJointOrder` 后推理 | ⏳ 尚未实现；当前只有 bundle/路径契约 |
 
 **关键不变量：**
 
-1. `modelDrivenBoneCount` = `count(bones where physics.mode === "model_driven")` — 所有模块各自从 skeleton 计算
-2. `bone_rotations[i]` 对应第 i 个 model_driven 骨骼，按 `bones` 数组出现顺序
+1. `modelDrivenBoneCount = drivenJointOrder.length`；所有模块读取同一 manifest，不得各自猜测或按 role 重新筛选。
+2. `local_rotation_deltas[i]` 精确对应 `drivenJointOrder[i]`；顺序是 checkpoint ABI 的一部分。
+3. 每个角色 checkpoint 必须精确匹配 `characterId + rigFingerprint + drivenJointOrder`，任何差异都拒绝加载。
 3. 宿主加载 skeleton 后立即计算 `modelDrivenBoneIds: string[]`，用于校验和日志
 
-**示例：当前 10 骨 skeleton 中 model_driven 骨骼共 7 个：**
+**Legacy 示例：早期 10 骨 skeleton 中 model_driven 骨骼共 7 个。** 新实现不得根据此表推导 N；例如当前 Cat 源资产是 74 个完整 joint、30 个 driven joint，其他角色可以不同。
 
 | 索引 | bone ID | sprite |
 |---|---|---|
@@ -382,11 +401,11 @@ function updateTailPhysics(baseAngle, dt) {
 ```typescript
 // 新增：PlanPoint 中的面部参数字段
 interface FacialParams {
-  eye_scale: number;      // 眼睛大小 [0.5, 1.5]  → surprised=大, sleepy=小
-  eye_squint: number;     // 眯眼程度 [0, 1]      → annoyed/ curious
-  mouth_open: number;     // 张嘴程度 [0, 1]      → surprised/ happy
-  ear_angle: number;      // 耳朵旋转角 [-0.5, 0.5] → scared=flat, curious=perked
-  brow_tilt: number;      // 眉毛倾斜 [-1, 1]     → annoyed=down, sad=up
+  eye_scale?: number;      // 眼睛大小 [0.5, 1.5]  → surprised=大, sleepy=小
+  eye_squint?: number;     // 眯眼程度 [0, 1]      → annoyed/ curious
+  mouth_open?: number;     // 张嘴程度 [0, 1]      → surprised/ happy
+  ear_angle?: number;      // 耳朵旋转角 [-0.5, 0.5] → scared=flat, curious=perked
+  brow_tilt?: number;      // 眉毛倾斜 [-1, 1]     → annoyed=down, sad=up
 }
 ```
 
@@ -406,7 +425,9 @@ const EXPRESSION_DEFAULTS = {
 };
 ```
 
-这样向后兼容：旧生成器只发 `expression` 字符串，渲染器查表转成默认参数；新生成器直接发 `facial_params`，渲染器原样使用。
+这样向后兼容：旧生成器只发 `expression` 字符串时，渲染器查表得到默认参数；一旦新生成器显式发送稀疏 `facial_params` 对象，未出现的通道一律取中性值，而不是继承上一帧或继续叠加 `expression`。下一条 visual state 未携带 `facialParams` 时，renderer 会清除旧覆盖并重新使用当前 `expression` 默认值。
+
+当前角色 manifest 还没有角色专属的眼、嘴、耳和眉形变绑定。因此 renderer 提供一个明确的 **generic facial fallback**：把五个连续通道确定性地映射为以脚底锚点为中心的细微整体缩放、旋转和垂直起伏，并把最终缩放限制在 `[0.95, 1.06]`、旋转限制在 `±0.035 rad`、垂直偏移限制在 `±0.75 px`。这层 fallback 包裹普通 sprite、骨骼驱动的 pose-aware sprite 和 debug skeleton 三条绘制路径，所以协议字段不会只停留在 IPC；它不冒充真正的角色面部绑定。角色以后提供专属 face rig/mesh controls 时，应由专属绑定替换这层整体变换，避免重复应用。
 
 ### 2.6 程序化几何原型（fallback，仅在无分层精灵时激活）
 
@@ -599,8 +620,17 @@ function verifySkeletonCompatibility(ready: ReadyPayload): SkeletonVerification 
 class DesktopSimulator:
     """Offline desktop environment for trajectory data generation."""
 
-    def __init__(self, seed: int):
+    def __init__(
+        self,
+        seed: int,
+        world_state_dt_ms: int = 50,
+        plan_dt_ms: int = 33,
+        motion_tick_ms: int = 16,
+    ):
         self.rng = random.Random(seed)
+        self.world_state_dt_ms = world_state_dt_ms
+        self.plan_dt_ms = plan_dt_ms
+        self.motion_tick_ms = motion_tick_ms
         self.displays: list[SimDisplay] = []
         self.windows: list[SimWindow] = []
         self.surfaces: list[SimSurface] = []
@@ -616,24 +646,27 @@ class DesktopSimulator:
         self.pet = self._random_pet_placement()
         return self._to_world_state()
 
-    def step(self, action: PoseDelta) -> WorldState:
-        """执行一步动作，返回下一帧 WorldState。
+    def advance_plan(self, plan: MotionPlan) -> WorldState:
+        """将计划执行到下一个 WorldState 采样点并返回该状态。
         物理模拟包括：
         - 重力 (980 px/s²)
         - 碰撞检测 (与 geometry.ts 的 findCrossedSurface 等价)
         - 表面支撑
         - 工作区边界限制
         """
-        dt = 33  # ms
-        # 应用动作到 pet 状态
-        self.pet.apply(action, dt)
-        # 重力 + 碰撞
-        self.pet = self._physics_step(self.pet, dt)
+        elapsed_ms = 0
+        while elapsed_ms < self.world_state_dt_ms:
+            dt_ms = min(self.motion_tick_ms, self.world_state_dt_ms - elapsed_ms)
+            elapsed_ms += dt_ms
+            # generated_at_ms 是计划时间原点；关键帧之间按墙钟时间线性插值。
+            action = sample_plan_linear(plan, elapsed_ms)
+            self.pet.apply(action, dt_ms)
+            self.pet = self._physics_step(self.pet, dt_ms)
         # 窗口可能移动
         self._maybe_move_windows()
         # 重新计算表面
         self.surfaces = self._compute_surfaces()
-        self.time_ms += dt
+        self.time_ms += self.world_state_dt_ms
         return self._to_world_state()
 
     def _physics_step(self, pet: SimPet, dt_ms: int) -> SimPet:
@@ -644,6 +677,11 @@ class DesktopSimulator:
         """镜像 surface-tracker.ts 的 buildSurfaceSnapshot 逻辑。"""
         ...
 ```
+
+模拟器明确区分三个时钟：`world_state_dt_ms=50` 是环境观测/重规划节拍，
+`plan_dt_ms=33` 是计划关键帧间隔，`motion_tick_ms=16` 是计划执行和物理推进的
+确定性子步长。数据集 manifest 必须分别记录 `worldStateDtMs`、`planDtMs`
+和 `executionClock`；修改任一时钟或采样语义都会改变数据集 ABI。
 
 ### 4.3 场景生成器（ScenarioConfig）
 
@@ -673,17 +711,15 @@ def generate_training_sample(sim: DesktopSimulator, backend: MotionBackend, seed
     # Warmup: 跑 K 帧收集条件
     for _ in range(K):
         plan = backend.generate(sim.to_world_state(), seed)
-        action = sample_plan(plan, sim.time_ms)
-        state = sim.step(action)
+        state = sim.advance_plan(plan)
         condition_frames.append(state)
 
     # 生成目标
     for _ in range(H):
         plan = backend.generate(sim.to_world_state(), seed)
-        action = sample_plan(plan, sim.time_ms)
-        state = sim.step(action)
-        # 将 action 映射为骨骼姿态
-        target_poses.append(action_to_bone_pose(action))
+        state = sim.advance_plan(plan)
+        # 监督目标保留 teacher 的完整原始 horizon，不是 50 ms 环境采样快照。
+        target_poses.append(plan_to_bone_poses(plan))
 
     return TrainingSample(
         condition=encode_condition(condition_frames),
@@ -922,76 +958,36 @@ def flow_matching_loss(model, x0, x1, context):
 
 ---
 
-## 7. 实施路线与里程碑
+## 7. 当前实施路线与里程碑
 
-### Milestone 2A：骨骼渲染管线（目标：Day 1-3）
-
-| 任务 | 产出 | 验证方式 |
+| 阶段 | 当前状态 | 完成定义 |
 |---|---|---|
-| 2A.1 骨骼 JSON Schema | `cat-skeleton.schema.json` | JSON Schema 校验通过 |
-| 2A.2 骨骼默认定义 | `cat-skeleton.json`（10 骨） | 加载到宿主不报错 |
-| 2A.3 程序化几何猫 | `renderer.js` 修改：`drawProceduralCat(ctx, skeleton, poses)` | 不依赖资产，看到可辨识的猫 |
-| 2A.4 FK 渲染器 | `renderer.js` 完整 FK 管线 | 手动设置一组关节角，验证视觉正确 |
-| 2A.5 `bone_rotations` 协议兼容 | `protocol.ts` 放行新字段 | TS 类型检查 + 协议测试通过 |
-| 2A.6 回退兼容 | 空 `bone_rotations` 时使用旧的整体变形 | 旧 plan 仍可渲染 |
+| 2A 通用角色契约 | ✅ 已完成首个可用版本 | manifest/schema/TS/Python 校验一致；任意 joint 名称与可变 N；Cat 只是 fixture |
+| 2B 源资产提取 | ✅ Cat 首个资产已提取 | rest TRS、skin/IBM、mesh 引用、30Hz 非 identity 动画和 provenance 可复现 |
+| 2C 宿主与 FK | ✅ FK 与自动 2D warp 完成；真蒙皮未完成 | capability 协商、精确 rig fingerprint、四元数 FK、侧视投影、正常 sprite 最终像素变化均有测试 |
+| 2D 模拟器与数据 ABI | ✅ 已完成首个版本 | 固定原点、K/H/dt、每角色 rig/order、动画 teacher、原子写入与 dataset manifest 全部通过反例测试 |
+| 2E 数据质量基线 | 🚧 已有非 identity 冒烟，完整统计待做 | 扩大数据；检查关节角速度/jerk、接触滑移、行为/clip 覆盖和确定性 |
+| 2F 每角色行为克隆模型 | ⏳ 未开始 | 共享代码按 manifest 实例化 N；每个角色单独训练 checkpoint；严格 bundle 校验和闭环 rollout |
+| 2G 真实角色蒙皮显示 | 🚧 通用自动 warp 已完成，高质量蒙皮待做 | 当前已证明模型骨姿态改变最终角色像素；正式角色仍需真实 2D 权重/分层或 mesh/skin/IBM/texture |
+| 2H Flow Matching/风格控制 | ⏳ 后续 | 在行为克隆基线稳定后再评估，不阻塞首个 checkpoint |
 
-**交付物：** 一只用程序化几何画的猫，能通过 FK 骨骼摆出不同姿势。分层精灵到后只需替换 `drawProceduralCat` → `drawSpriteCat`。
+当前阶段不承诺已经存在可训练或可推理的神经 checkpoint。manifest 中的 checkpoint 路径是每角色产物约定，不代表文件已经生成。自动 2D warp 已经证明非 identity 骨姿态会改变正常 sprite 的最终像素，但真正训练前仍需通过 2E 的数据质量门槛；正式角色发布前还应完成角色专属权重/分层或真实 mesh skinning，以解决复杂肢体交界和自遮挡质量。
 
-### Milestone 2B：桌面模拟器 + 训练数据（目标：Day 4-10）
+---
 
-| 任务 | 产出 | 验证方式 |
-|---|---|---|
-| 2B.1 模拟器核心 | `simulator.py`：场景生成 + 物理 + 碰撞 | 1000 episodes 中 0 crash，物理无穿模 |
-| 2B.2 场景随机化 | `ScenarioConfig` 完整参数空间 | 覆盖率：1-3 显示器、3-12 窗口、多 DPI |
-| 2B.3 Teacher 轨迹生成 | `generate_data.py` 用当前 planner 生成数据 | 10K samples 通过协议校验 |
-| 2B.4 姿态映射函数 | `action_to_bone_pose()` | 生成 100 个随机 pose 人工肉眼检查 |
-| 2B.5 数据 loader | PyTorch Dataset + DataLoader | 加载速度 > 10K samples/s |
-| 2B.6 数据质量报告 | 轨迹分布统计 | velocity jerk、position jump、fallback 率与真实宿主一致 |
+## 8. 已确定边界与剩余决策
 
-**交付物：** 10K-50K 训练样本（`.pt` 或 `.h5` 格式），`TrainingSample` 结构确定。
-
-### Milestone 2C：Causal Transformer 训练（目标：Day 11-21）
-
-| 任务 | 产出 | 验证方式 |
-|---|---|---|
-| 2C.1 模型定义 | `neural_motion/model.py` | 前向通过 + 参数统计（~2M） |
-| 2C.2 环境编码器 | `neural_motion/encoder.py` | 编码器输出维度正确 |
-| 2C.3 训练脚本 | `neural_motion/train.py` | 单 GPU 训练不 OOM |
-| 2C.4 验证指标 | 位置 L2、角度 MAE、jerk、落地成功率 | 对比 teacher 基线 |
-| 2C.5 闭环模拟测试 | 在模拟器中用模型 rollout 30s | 不掉落、不穿模、80% 落地率 |
-| 2C.6 真实宿主集成 | `NeuralMotionBackend` 替换 planner | `pnpm dev` 启动，猫正常运动 |
-| 2C.7 A/B 对比 | 模型 vs teacher 人工对比 | 运动自然度评分 |
-
-**交付物：** 一个 `.pt` checkpoint，加载后可通过 `pnpm dev` 在真实桌面上运行。
-
-### Milestone 2D：Flow Matching（目标：后续，不阻塞 2A-2C）
-
-| 任务 | 产出 |
+| 问题 | 决议/状态 |
 |---|---|
-| 2D.1 Flow Matching 模型 | `neural_motion/flow_model.py` |
-| 2D.2 训练 + 蒸馏 | 4 步 → 2 步采样 |
-| 2D.3 风格控制 | CFG / style embedding |
-| 2D.4 闭环评估 | 与 causal transformer 对比 |
+| 是否让一个 checkpoint 跨物种或跨骨架？ | 否。每个具体角色单独 checkpoint；代码与契约通用。 |
+| 模型关节数如何确定？ | `N = manifest.rig.drivenJointOrder.length`，上限受协议约束为 128。 |
+| 不同角色能否使用不同原始素材尺寸？ | 可以，但导入阶段必须归一化到 48×48 runtime canvas；首版 manifest 固定 `canvas=[48,48]`、`displayScale=2`。 |
+| 训练姿态是什么？ | `root_translation + root_rotation + N 个 rest-local quaternion delta`；不训练父关节相对位置数组。 |
+| 3D→2D 如何投影？ | 由 manifest 的 up/forward/handedness 决定的正交侧视，深度用于绘制排序。 |
+| 旧 `bone_rotations` 如何处理？ | 仅 legacy 2D capability 使用；3D 原子字段组出现时互斥。 |
+| checkpoint 身份如何绑定？ | bundle 必须精确包含并匹配 `characterId + rigFingerprint + drivenJointOrder + dataset schema + normalization`。 |
+| per-joint 动画 translation 怎么办？ | 当前 PlanPoint 不表达；训练 clip 可保留用于审计，但首版 teacher 只消费旋转。需要伸缩/平移骨骼的角色必须另起协议版本。 |
+| 真正蒙皮何时实现？ | 当前自动 2D joint warp 已贯通正常像素主路，可用于模型闭环验证；高质量桌面角色仍应补角色专属 2D 权重/分层或真实 mesh skinning。 |
+| 推理设备与训练日志？ | 尚未锁定；先以正确性、确定性和 checkpoint ABI 为门槛。 |
 
----
-
-## 8. 待确认项
-
-| 问题 | 优先级 | 状态 |
-|---|---|---|
-| 分层精灵何时到位？ | P0 | 🔴 搜索中（itch.io / OpenGameArt / craftpix），48h 评估 |
-| 骨骼层级 joint 位置是否合理？ | P0 | 🟡 待精灵到位后校准 |
-| ~~能力协商方案~~ | ~~P0~~ | 🟢 `capabilities` + 骨骼 SHA-256 |
-| ~~尾巴物理方案~~ | ~~P0~~ | 🟢 渲染器二级物理 |
-| ~~骨骼版本协商~~ | ~~P0~~ | 🟢 完整哈希校验，不匹配降级+WARN |
-| ~~步态协调~~ | ~~P0~~ | 🟢 数据驱动，模型自主学习 |
-| ~~表情系统~~ | ~~P0~~ | 🟢 连续面部参数 + expression 查表 fallback |
-| 训练数据量目标？ | P1 | 50K episodes |
-| 是否需要 behavior 分类头？ | P1 | 是 |
-| 姿态映射函数 `action_to_bone_pose()` 是否需要校准？ | P1 | 精灵到位后校准 |
-| 模型推理 GPU/CPU？ | P2 | GPU 优先，支持 CPU fallback |
-| 训练日志工具？ | P2 | TensorBoard（默认） |
-
----
-
-> **下一步：** 请评审本设计文档，尤其关注 §1（骨骼层级）、§2.3（程序化几何外观）、§5.1（模型架构）。确认后我开始实施 Milestone 2A。
+> **下一步：** 完成数据质量报告与首个 Cat 数据集，然后实现通用模型/训练器并只产出 Cat 自己的 checkpoint；其他每个具体角色重复数据准备与独立训练，不共享权重文件。

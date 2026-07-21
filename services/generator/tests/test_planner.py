@@ -1,8 +1,15 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import unittest
+from unittest.mock import patch
 
-from pet_generator.planner import AutoregressiveMotionBackend, PlannerConfig
+from pet_generator.character_rig import load_selected_character_rig
+from pet_generator.planner import (
+    EXPRESSION_FACIAL_PARAMS,
+    AutoregressiveMotionBackend,
+    PlannerConfig,
+)
 from pet_generator.protocol import decode_line, validate_shared_message
 from pet_generator.state import parse_world_state
 
@@ -37,6 +44,102 @@ def validate_plan(plan) -> None:
 
 
 class PlannerTests(unittest.TestCase):
+    def test_skeletal_plans_encode_expression_as_informative_facial_params(self) -> None:
+        config = PlannerConfig(
+            initial_jump_delay_min_ms=60_000,
+            initial_jump_delay_max_ms=60_000,
+        )
+        neutral = EXPRESSION_FACIAL_PARAMS["neutral"]
+
+        for mode in ("full_2d", "full_3d"):
+            with self.subTest(mode=mode):
+                backend = AutoregressiveMotionBackend(config)
+                if mode == "full_3d":
+                    backend.set_skeletal_3d(True)
+                backend.set_skeletal_enabled(True)
+
+                plan = backend.generate(
+                    parsed_world(click_id=f"click:facial:{mode}"),
+                    7,
+                    1_750_000_002_000,
+                )
+
+                self.assertEqual(plan.behavior, "click_reaction")
+                self.assertTrue(
+                    all(
+                        point.facial_params
+                        == EXPRESSION_FACIAL_PARAMS.get(point.expression, neutral)
+                        for point in plan.points
+                    )
+                )
+                self.assertTrue(
+                    any(point.facial_params != neutral for point in plan.points)
+                )
+                validate_plan(plan)
+
+    def test_cancel_preserves_negotiated_skeletal_encoding_in_same_session(self) -> None:
+        rig = load_selected_character_rig()
+        config = PlannerConfig(
+            initial_jump_delay_min_ms=60_000,
+            initial_jump_delay_max_ms=60_000,
+        )
+
+        for mode in ("full_2d", "full_3d"):
+            with self.subTest(mode=mode):
+                backend = AutoregressiveMotionBackend(config)
+                if mode == "full_3d":
+                    backend.set_skeletal_3d(True)
+                backend.set_skeletal_enabled(True)
+                first = backend.generate(parsed_world(), 91, 1_750_000_002_000)
+
+                self.assertTrue(backend.cancel(first.plan_id))
+                second = backend.generate(
+                    parsed_world(seq=2, timestamp_ms=1_750_000_001_100),
+                    92,
+                    1_750_000_002_050,
+                )
+
+                if mode == "full_2d":
+                    self.assertEqual(
+                        len(second.points[0].bone_rotations or ()),
+                        len(rig.driven_joint_order),
+                    )
+                    self.assertIsNone(second.points[0].root_rotation)
+                else:
+                    self.assertIsNone(second.points[0].bone_rotations)
+                    self.assertEqual(second.points[0].root_rotation, (0.0, 0.0, 0.0, 1.0))
+                    self.assertEqual(
+                        len(second.points[0].local_rotation_deltas or ()),
+                        len(rig.driven_joint_order),
+                    )
+
+    def test_legacy_pose_uses_selected_character_order_and_fails_closed_above_32(self) -> None:
+        rig = load_selected_character_rig()
+        backend = AutoregressiveMotionBackend(
+            PlannerConfig(initial_jump_delay_min_ms=60_000, initial_jump_delay_max_ms=60_000)
+        )
+        backend.set_skeletal_enabled(True)
+        plan = backend.generate(parsed_world(), 91, 1_750_000_002_000)
+        self.assertEqual(len(plan.points[0].bone_rotations or ()), len(rig.driven_joint_order))
+
+        large_rig = replace(
+            rig,
+            driven_joint_order=tuple(f"joint-{index}" for index in range(33)),
+        )
+        with patch(
+            "pet_generator.character_rig.load_selected_character_rig",
+            return_value=large_rig,
+        ):
+            oversized = AutoregressiveMotionBackend(
+                PlannerConfig(
+                    initial_jump_delay_min_ms=60_000,
+                    initial_jump_delay_max_ms=60_000,
+                )
+            )
+            oversized.set_skeletal_enabled(True)
+            oversized_plan = oversized.generate(parsed_world(), 92, 1_750_000_002_000)
+        self.assertTrue(all(point.bone_rotations is None for point in oversized_plan.points))
+
     def test_walk_is_deterministic_for_seed_and_starts_at_zero(self) -> None:
         config = PlannerConfig(initial_jump_delay_min_ms=60_000, initial_jump_delay_max_ms=60_000)
         first = AutoregressiveMotionBackend(config).generate(parsed_world(), 12345, 1_750_000_002_000)

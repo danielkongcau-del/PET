@@ -1,0 +1,445 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pet.local/schemas/v1/character-rig-manifest.schema.json",
+  "title": "PET Character Rig Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "characterId",
+    "rigId",
+    "rigFingerprint",
+    "rig",
+    "render",
+    "checkpoint",
+    "source",
+    "trainingClips",
+    "provenance"
+  ],
+  "properties": {
+    "schema": { "const": "pet-character-rig-manifest-v1" },
+    "characterId": { "$ref": "#/$defs/characterId" },
+    "rigId": { "$ref": "#/$defs/id" },
+    "rigFingerprint": { "$ref": "#/$defs/fingerprint" },
+    "rig": { "$ref": "#/$defs/rig" },
+    "render": { "$ref": "#/$defs/render" },
+    "checkpoint": { "$ref": "#/$defs/checkpoint" },
+    "source": { "$ref": "#/$defs/source" },
+    "trainingClips": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/trainingClip" }
+    },
+    "provenance": { "$ref": "#/$defs/provenance" }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "characterId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|$))[a-z0-9](?:[a-z0-9._-]*[a-z0-9_-])?$"
+    },
+    "jointId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z_][a-z0-9_]*$"
+    },
+    "vec3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "number" }
+    },
+    "quat": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "type": "number", "minimum": -1, "maximum": 1 }
+    },
+    "bool3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": { "type": "boolean" }
+    },
+    "fingerprint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "canonicalization", "value"],
+      "properties": {
+        "algorithm": { "const": "pet-canonical-json-f64-v1+sha256" },
+        "canonicalization": { "const": "pet-canonical-json-f64-v1" },
+        "value": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "restLocal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["translation", "rotation", "scale"],
+      "properties": {
+        "translation": { "$ref": "#/$defs/vec3" },
+        "rotation": { "$ref": "#/$defs/quat" },
+        "scale": { "$ref": "#/$defs/vec3" }
+      }
+    },
+    "dofMask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["translation", "rotation", "scale"],
+      "properties": {
+        "translation": { "$ref": "#/$defs/bool3" },
+        "rotation": { "$ref": "#/$defs/bool3" },
+        "scale": { "$ref": "#/$defs/bool3" }
+      }
+    },
+    "sourceMapping": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["skinIndex", "skinJointIndex", "nodeIndex", "sourceName"],
+          "properties": {
+            "skinIndex": { "type": "integer", "minimum": 0 },
+            "skinJointIndex": { "type": ["integer", "null"], "minimum": 0 },
+            "nodeIndex": { "type": "integer", "minimum": 0 },
+            "sourceName": { "type": "string", "minLength": 1, "maxLength": 256 }
+          }
+        }
+      ]
+    },
+    "joint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "parentIndex",
+        "restLocal",
+        "dofMask",
+        "semanticRole",
+        "source"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/jointId" },
+        "parentIndex": { "type": "integer", "minimum": -1 },
+        "restLocal": { "$ref": "#/$defs/restLocal" },
+        "dofMask": { "$ref": "#/$defs/dofMask" },
+        "semanticRole": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "source": { "$ref": "#/$defs/sourceMapping" }
+      }
+    },
+    "coordinateSystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["handedness", "up", "forward", "units"],
+      "properties": {
+        "handedness": { "enum": ["right", "left"] },
+        "up": { "enum": ["+X", "-X", "+Y", "-Y", "+Z", "-Z"] },
+        "forward": { "enum": ["+X", "-X", "+Y", "-Y", "+Z", "-Z"] },
+        "units": { "type": "string", "minLength": 1, "maxLength": 64 }
+      }
+    },
+    "renderMode": {
+      "enum": ["skinned_mesh", "sprite", "debug_skeleton"]
+    },
+    "render": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canvas",
+        "displayScale",
+        "footAnchor",
+        "sourceFacing",
+        "mode",
+        "fallbackModes",
+        "sprite",
+        "mesh"
+      ],
+      "properties": {
+        "canvas": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "const": 48 }
+        },
+        "displayScale": { "const": 2 },
+        "footAnchor": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number" }
+        },
+        "sourceFacing": { "enum": [-1, 1] },
+        "mode": { "$ref": "#/$defs/renderMode" },
+        "fallbackModes": {
+          "type": "array",
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/renderMode" }
+        },
+        "sprite": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["image", "metadata"],
+              "properties": {
+                "image": { "type": "string", "minLength": 1, "maxLength": 512 },
+                "metadata": { "type": "string", "minLength": 1, "maxLength": 512 }
+              }
+            }
+          ]
+        },
+        "mesh": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source", "skinIndex"],
+              "properties": {
+                "source": { "const": "source" },
+                "skinIndex": { "type": "integer", "minimum": 0 }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "rig": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coordinateSystem",
+        "motionRoot",
+        "jointOrder",
+        "joints",
+        "drivenJointOrder",
+        "drivenJointIndices",
+        "drivenParentIndices",
+        "maskGroups"
+      ],
+      "properties": {
+        "coordinateSystem": { "$ref": "#/$defs/coordinateSystem" },
+        "motionRoot": { "$ref": "#/$defs/jointId" },
+        "jointOrder": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 512,
+          "items": { "$ref": "#/$defs/jointId" }
+        },
+        "joints": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 512,
+          "items": { "$ref": "#/$defs/joint" }
+        },
+        "drivenJointOrder": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "$ref": "#/$defs/jointId" }
+        },
+        "drivenJointIndices": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "drivenParentIndices": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "items": { "type": "integer", "minimum": -1 }
+        },
+        "maskGroups": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "$ref": "#/$defs/id" },
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 128,
+            "items": { "type": "boolean" }
+          }
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "metadataSchema",
+        "path",
+        "characterId",
+        "rigFingerprint",
+        "drivenJointOrder"
+      ],
+      "properties": {
+        "format": { "const": "pet-character-motion-checkpoint-v1" },
+        "metadataSchema": { "const": "pet-character-motion-checkpoint-metadata-v1" },
+        "path": {
+          "type": "string",
+          "maxLength": 512,
+          "pattern": "^checkpoints/characters/(?!(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\\.|/))[a-z0-9](?:[a-z0-9._-]*[a-z0-9_-])?/[0-9a-f]{64}/motion\\.pt$"
+        },
+        "characterId": { "$ref": "#/$defs/characterId" },
+        "rigFingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "drivenJointOrder": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 128,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/jointId" }
+        }
+      }
+    },
+    "buffer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["index", "uri", "byteLength", "sha256"],
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "uri": { "type": ["string", "null"] },
+        "byteLength": { "type": "integer", "minimum": 0 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "skin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "skinIndex",
+        "name",
+        "skeletonNodeIndex",
+        "jointNodeIndices",
+        "inverseBindMatricesAccessor",
+        "inverseBindMatrices"
+      ],
+      "properties": {
+        "skinIndex": { "type": "integer", "minimum": 0 },
+        "name": { "type": ["string", "null"] },
+        "skeletonNodeIndex": { "type": "integer", "minimum": 0 },
+        "jointNodeIndices": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "integer", "minimum": 0 }
+        },
+        "inverseBindMatricesAccessor": { "type": ["integer", "null"], "minimum": 0 },
+        "inverseBindMatrices": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 16,
+            "maxItems": 16,
+            "items": { "type": "number" }
+          }
+        }
+      }
+    },
+    "meshSkinReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeIndex", "nodeName", "meshIndex", "skinIndex", "primitives"],
+      "properties": {
+        "nodeIndex": { "type": "integer", "minimum": 0 },
+        "nodeName": { "type": ["string", "null"] },
+        "meshIndex": { "type": "integer", "minimum": 0 },
+        "skinIndex": { "type": "integer", "minimum": 0 },
+        "primitives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["primitiveIndex", "mode", "indicesAccessor", "materialIndex", "attributes"],
+            "properties": {
+              "primitiveIndex": { "type": "integer", "minimum": 0 },
+              "mode": { "type": "integer", "minimum": 0 },
+              "indicesAccessor": { "type": ["integer", "null"], "minimum": 0 },
+              "materialIndex": { "type": ["integer", "null"], "minimum": 0 },
+              "attributes": {
+                "type": "object",
+                "additionalProperties": { "type": "integer", "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "sourceAnimation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["animationIndex", "name", "channelCount", "durationMs"],
+      "properties": {
+        "animationIndex": { "type": "integer", "minimum": 0 },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "channelCount": { "type": "integer", "minimum": 0 },
+        "durationMs": { "type": "number", "minimum": 0 }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "uri",
+        "requiredAtBuild",
+        "availableInCleanClone",
+        "sha256",
+        "selectedSkinIndex",
+        "buffers",
+        "skins",
+        "meshSkinReferences",
+        "animations"
+      ],
+      "properties": {
+        "format": { "enum": ["gltf-2.0", "glb-2.0", "fbx"] },
+        "uri": { "type": "string", "minLength": 1, "maxLength": 1024 },
+        "requiredAtBuild": { "type": "boolean" },
+        "availableInCleanClone": { "type": "boolean" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "selectedSkinIndex": { "type": "integer", "minimum": 0 },
+        "buffers": { "type": "array", "items": { "$ref": "#/$defs/buffer" } },
+        "skins": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/skin" } },
+        "meshSkinReferences": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/meshSkinReference" }
+        },
+        "animations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/sourceAnimation" }
+        }
+      }
+    },
+    "trainingClip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clipId", "path", "fingerprint", "playbackMode"],
+      "properties": {
+        "clipId": { "$ref": "#/$defs/id" },
+        "path": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "playbackMode": { "enum": ["loop", "once"] }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["generator", "generatorVersion", "profile", "f64Accumulation"],
+      "properties": {
+        "generator": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "generatorVersion": { "const": 2 },
+        "profile": { "type": ["string", "null"], "maxLength": 512 },
+        "f64Accumulation": { "const": "pet-left-to-right-f64-sum-v1" }
+      }
+    }
+  }
+}

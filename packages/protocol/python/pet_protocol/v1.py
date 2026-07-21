@@ -224,14 +224,32 @@ class PlanPointRequired(TypedDict):
     expression: str
 
 
-class PlanPoint(PlanPointRequired, total=False):
-    """Full plan point including optional skeletal pose fields."""
-    bone_rotations: List[float]
+class PlanPointOptionalChannels(TypedDict, total=False):
+    """Channels independent from the mutually exclusive skeletal branches."""
     facial_params: FacialParams
-    # ── 3D skeletal pose (v2) ──
+
+
+class PlanPointWithoutSkeletalPose(PlanPointRequired, PlanPointOptionalChannels):
+    """Plan point with no skeletal pose payload."""
+
+
+class PlanPointLegacyPose(PlanPointRequired, PlanPointOptionalChannels):
+    """Legacy planar pose; mutually exclusive with the 3D branch."""
+    bone_rotations: List[float]
+
+
+class PlanPoint3DPose(PlanPointRequired, PlanPointOptionalChannels):
+    """Atomic 3D pose: all three fields are required together."""
     root_translation: Vec3
     root_rotation: Quat
     local_rotation_deltas: List[Quat]
+
+
+PlanPoint = Union[
+    PlanPointWithoutSkeletalPose,
+    PlanPointLegacyPose,
+    PlanPoint3DPose,
+]
 
 
 class HorizonPlanPayloadRequired(TypedDict):

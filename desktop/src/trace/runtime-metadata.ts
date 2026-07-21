@@ -19,6 +19,12 @@ export interface RuntimeTraceMetadataOptions {
   readonly appVersion: string;
   readonly displays: readonly DisplayState[];
   readonly generator?: Readonly<Record<string, unknown>>;
+  readonly character?: Readonly<{
+    readonly characterId: string;
+    readonly rigId: string;
+    readonly rigFingerprint: string;
+    readonly drivenJointOrder: readonly string[];
+  }>;
 }
 
 /** Builds replay provenance without persisting usernames, hostnames, or absolute paths. */
@@ -37,6 +43,12 @@ export async function buildRuntimeTraceMetadata(options: RuntimeTraceMetadataOpt
       chrome: process.versions.chrome ?? "unknown",
     },
     generator: toJsonObject(options.generator ?? {}),
+    character: options.character ? {
+      character_id: options.character.characterId,
+      rig_id: options.character.rigId,
+      rig_fingerprint: options.character.rigFingerprint,
+      driven_joint_order: [...options.character.drivenJointOrder],
+    } : { configured: false },
     checkpoint,
     source,
     config: {

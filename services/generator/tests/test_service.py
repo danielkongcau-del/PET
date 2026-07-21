@@ -1,19 +1,27 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import io
 import json
 from pathlib import Path
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPOSITORY_ROOT / "packages" / "protocol" / "python"))
 
 from pet_protocol import validate_message  # noqa: E402
 from pet_generator.planner import AutoregressiveMotionBackend
-from pet_generator.protocol import decode_line
-from pet_generator.service import GeneratorService, ServiceMetrics, _LatestStateInbox
+from pet_generator.character_rig import load_selected_character_rig
+from pet_generator.protocol import ProtocolWriter, decode_line
+from pet_generator.service import (
+    GeneratorService,
+    ServiceMetrics,
+    _LatestStateInbox,
+    _skeletal_capabilities_for_joint_count,
+)
 
 from tests.helpers import envelope, hello, line, world_state
 
@@ -26,7 +34,51 @@ class _ExplodingInput:
         raise self.error
 
 
+class _CausalBackend(AutoregressiveMotionBackend):
+    def __init__(self) -> None:
+        super().__init__()
+        self.events: list[tuple[str, object]] = []
+
+    def generate(self, world, seed: int, generated_at_ms: int):
+        self.events.append(("generate", world.seq))
+        return super().generate(world, seed, generated_at_ms)
+
+    def cancel(self, plan_id: str | None = None) -> bool:
+        self.events.append(("cancel", plan_id))
+        return super().cancel(plan_id)
+
+
 class ServiceTests(unittest.TestCase):
+    def test_ready_does_not_advertise_legacy_2d_for_rigs_above_32_joints(self) -> None:
+        self.assertEqual(
+            set(_skeletal_capabilities_for_joint_count(30)),
+            {"skeletal_motion", "skeletal_motion_3d_local_quat"},
+        )
+        self.assertEqual(
+            _skeletal_capabilities_for_joint_count(33),
+            ("skeletal_motion_3d_local_quat",),
+        )
+        rig = load_selected_character_rig()
+        large_rig = replace(
+            rig,
+            driven_joint_order=tuple(f"joint-{index}" for index in range(33)),
+        )
+        old_host = hello()
+        old_host["payload"]["capabilities"] = ["skeletal_motion"]
+        output = io.StringIO()
+        with patch(
+            "pet_generator.character_rig.load_selected_character_rig",
+            return_value=large_rig,
+        ):
+            GeneratorService(
+                AutoregressiveMotionBackend(), session_seed=1, metrics_interval_ms=0,
+            ).run(io.StringIO(line(old_host) + line(world_state())), output)
+        ready, plan = [json.loads(item) for item in output.getvalue().splitlines()]
+        self.assertNotIn("skeletal_motion", ready["payload"]["capabilities"])
+        self.assertIn("skeletal_motion_3d_local_quat", ready["payload"]["capabilities"])
+        self.assertNotIn("bone_rotations", plan["payload"]["points"][0])
+        self.assertNotIn("local_rotation_deltas", plan["payload"]["points"][0])
+
     def test_latest_state_queue_replaces_state_and_preserves_click_edges(self) -> None:
         metrics = ServiceMetrics()
         inbox = _LatestStateInbox(metrics)
@@ -58,6 +110,64 @@ class ServiceTests(unittest.TestCase):
         self.assertEqual(inbox.get().payload["session_id"], "session-b")
         self.assertEqual(metrics.world_states_dropped, 0)
 
+    def test_latest_state_does_not_cross_cancel_boundary(self) -> None:
+        metrics = ServiceMetrics()
+        inbox = _LatestStateInbox(metrics)
+        first = decode_line(line(world_state(seq=1)))
+        cancel = decode_line(line(envelope(
+            "cancel",
+            2,
+            {"reason": "safety", "requested_at_ms": 1_750_000_001_010},
+        )))
+        latest = decode_line(line(world_state(seq=3)))
+
+        inbox.put(first)
+        inbox.put(cancel)
+        inbox.put(latest)
+
+        queued = [inbox.get(), inbox.get(), inbox.get()]
+        self.assertTrue(all(item is not None for item in queued))
+        self.assertEqual(
+            [(item.type, item.seq) for item in queued if item is not None],
+            [("world_state", 1), ("cancel", 2), ("world_state", 3)],
+        )
+        self.assertEqual(metrics.world_states_dropped, 0)
+
+    def test_cancel_keeps_service_generation_causality(self) -> None:
+        metrics = ServiceMetrics()
+        inbox = _LatestStateInbox(metrics)
+        for message in (
+            hello(seq=0),
+            world_state(seq=1),
+            envelope(
+                "cancel",
+                2,
+                {"reason": "safety", "requested_at_ms": 1_750_000_001_010},
+            ),
+            world_state(seq=3),
+        ):
+            inbox.put(decode_line(line(message)))
+
+        backend = _CausalBackend()
+        service = GeneratorService(backend, session_seed=3, metrics_interval_ms=0)
+        output = io.StringIO()
+        writer = ProtocolWriter(output)
+        for _ in range(4):
+            item = inbox.get()
+            assert item is not None
+            service._handle(item, writer)
+
+        self.assertEqual(backend.events, [
+            ("generate", 1),
+            ("cancel", None),
+            ("generate", 3),
+        ])
+        self.assertEqual(
+            [message["type"] for message in map(json.loads, output.getvalue().splitlines())],
+            ["ready", "horizon_plan", "horizon_plan"],
+        )
+        self.assertEqual(metrics.world_states_dropped, 0)
+
     def test_burst_session_handoff_keeps_new_session_state(self) -> None:
         input_stream = io.StringIO(
             line(hello(seq=0, session_id="session-a"))
@@ -77,6 +187,28 @@ class ServiceTests(unittest.TestCase):
             ["ready", "horizon_plan", "ready", "horizon_plan"],
         )
         self.assertEqual(messages[-1]["payload"]["based_on_seq"], 3)
+
+    def test_new_session_resets_world_sequence_ordering_domain(self) -> None:
+        input_stream = io.StringIO(
+            line(hello(seq=0, session_id="session-a"))
+            + line(world_state(seq=10, session_id="session-a"))
+            + line(hello(seq=11, session_id="session-b"))
+            + line(world_state(seq=0, session_id="session-b"))
+        )
+        output_stream = io.StringIO()
+
+        service = GeneratorService(
+            AutoregressiveMotionBackend(), session_seed=3, metrics_interval_ms=0,
+        )
+        service.run(input_stream, output_stream)
+
+        messages = [json.loads(item) for item in output_stream.getvalue().splitlines()]
+        self.assertEqual(
+            [item["type"] for item in messages],
+            ["ready", "horizon_plan", "ready", "horizon_plan"],
+        )
+        self.assertEqual(messages[-1]["payload"]["based_on_seq"], 0)
+        self.assertEqual(service.metrics.last_world_seq, 0)
 
     def test_in_process_handshake_plan_and_pong(self) -> None:
         ping = envelope("ping", 2, {"nonce": "probe:1", "sent_at_ms": 1_750_000_001_100})

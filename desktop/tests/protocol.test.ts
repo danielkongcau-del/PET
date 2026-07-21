@@ -5,6 +5,41 @@ import { fileURLToPath } from "node:url";
 import { resolve } from "node:path";
 
 import { createEnvelope, decodeEnvelope, encodeEnvelope, parseHorizonPlan, parseMetrics } from "../src/protocol.js";
+import type { PlanPoint, Quat, Vec3 } from "../src/protocol.js";
+
+const TYPE_POINT_BASE = {
+  t_ms: 0,
+  dx: 0,
+  dy: 0,
+  vx: 0,
+  vy: 0,
+  facing: 1 as const,
+  lean: 0,
+  squash: 1,
+  bob: 0,
+  expression: "neutral",
+};
+const TYPE_VEC3 = [0, 0, 0] as Vec3;
+const TYPE_QUAT = [0, 0, 0, 1] as Quat;
+
+const VALID_3D_TYPE_POINT: PlanPoint = {
+  ...TYPE_POINT_BASE,
+  root_translation: TYPE_VEC3,
+  root_rotation: TYPE_QUAT,
+  local_rotation_deltas: [TYPE_QUAT],
+};
+// @ts-expect-error A partial 3D branch must fail at compile time.
+const INVALID_PARTIAL_3D_TYPE_POINT: PlanPoint = {
+  ...TYPE_POINT_BASE,
+  root_translation: TYPE_VEC3,
+};
+// @ts-expect-error Legacy and 3D branches are mutually exclusive at compile time.
+const INVALID_MIXED_TYPE_POINT: PlanPoint = {
+  ...VALID_3D_TYPE_POINT,
+  bone_rotations: [0],
+};
+void INVALID_PARTIAL_3D_TYPE_POINT;
+void INVALID_MIXED_TYPE_POINT;
 
 function validPlan(now: number) {
   return {
@@ -40,10 +75,76 @@ test("plan boundary accepts exact dt sequence and rejects timing drift", () => {
   assert.equal(parseHorizonPlan(createEnvelope("horizon_plan", 3, invalid, now), now), null);
 });
 
+test("facial parameters accept bounded sparse overrides and reject invalid channels", () => {
+  const now = 1_800_000_000_000;
+  const plan = validPlan(now);
+  const withFacial = (facialParams: Record<string, unknown>) => ({
+    ...plan,
+    points: [
+      { ...plan.points[0], facial_params: facialParams },
+      plan.points[1],
+    ],
+  });
+
+  assert.ok(parseHorizonPlan(
+    createEnvelope("horizon_plan", 20, withFacial({ mouth_open: 0.5 }), now),
+    now,
+  ));
+  assert.equal(parseHorizonPlan(
+    createEnvelope("horizon_plan", 21, withFacial({ unknown: 0.5 }), now),
+    now,
+  ), null);
+  assert.equal(parseHorizonPlan(
+    createEnvelope("horizon_plan", 22, withFacial({ mouth_open: Number.NaN }), now),
+    now,
+  ), null);
+  assert.equal(parseHorizonPlan(
+    createEnvelope("horizon_plan", 23, withFacial({ mouth_open: 1.1 }), now),
+    now,
+  ), null);
+});
+
 test("expired plans never cross the host authority boundary", () => {
   const now = 1_800_000_000_000;
   const plan = { ...validPlan(now), valid_until_ms: now };
   assert.equal(parseHorizonPlan(createEnvelope("horizon_plan", 2, plan, now), now), null);
+});
+
+test("3D pose fields are an atomic branch and cannot mix with legacy rotations", () => {
+  const now = 1_800_000_000_000;
+  const plan = validPlan(now);
+  const points = plan.points.map((point) => ({
+    ...point,
+    root_translation: [0, 0, 0] as [number, number, number],
+    root_rotation: [0, 0, 0, 1] as [number, number, number, number],
+    local_rotation_deltas: [[0, 0, 0, 1] as [number, number, number, number]],
+  }));
+  const complete = { ...plan, points };
+  assert.ok(parseHorizonPlan(createEnvelope("horizon_plan", 20, complete, now), now));
+
+  for (const field of [
+    "root_translation",
+    "root_rotation",
+    "local_rotation_deltas",
+  ] as const) {
+    const first = { ...points[0] };
+    delete first[field];
+    const invalid = { ...complete, points: [first, ...points.slice(1)] };
+    assert.equal(
+      parseHorizonPlan(createEnvelope("horizon_plan", 21, invalid, now), now),
+      null,
+      `partial 3D group unexpectedly accepted without ${field}`,
+    );
+  }
+
+  const mixed = {
+    ...complete,
+    points: [{ ...points[0], bone_rotations: [0] }, ...points.slice(1)],
+  };
+  assert.equal(
+    parseHorizonPlan(createEnvelope("horizon_plan", 22, mixed, now), now),
+    null,
+  );
 });
 
 test("generator metrics are finite, strict and available to the debug boundary", () => {
