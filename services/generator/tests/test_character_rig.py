@@ -398,8 +398,8 @@ class CharacterRigTests(unittest.TestCase):
             self.load_manifest(manifest)
 
     def test_protocol_joint_limit_is_enforced(self) -> None:
-        with self.assertRaisesRegex(ValueError, "between 1 and 128"):
-            self.load_manifest(make_manifest(make_rig(129)))
+        with self.assertRaisesRegex(ValueError, "between 1 and 512"):
+            self.load_manifest(make_manifest(make_rig(513)))
 
     def test_nearest_driven_parent_is_exact(self) -> None:
         manifest = make_manifest(make_rig(3))
