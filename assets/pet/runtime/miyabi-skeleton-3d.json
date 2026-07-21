@@ -1,0 +1,7179 @@
+{
+  "schema": "pet-rig-v2",
+  "coordinateSystem": {
+    "handedness": "right",
+    "up": "+Y",
+    "forward": "+X"
+  },
+  "motionRoot": "__motion_root__",
+  "canvas": [
+    48,
+    48
+  ],
+  "displayScale": 2,
+  "sourceFacing": -1,
+  "joints": [
+    {
+      "id": "__motion_root__",
+      "name": "Motion Root",
+      "parent": null,
+      "role": "motion_root",
+      "deform": false,
+      "restLocal": {
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": false,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_pelvis",
+      "name": "Bip001 Pelvis",
+      "parent": "__motion_root__",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.5,
+          -0.5,
+          -0.499999,
+          0.500001
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_thigh",
+      "name": "Bip001 L Thigh",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          0.0,
+          0.078879
+        ],
+        "rotation": [
+          -0.012991,
+          -0.999433,
+          -0.010042,
+          0.029405
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_calf",
+      "name": "Bip001 L Calf",
+      "parent": "bip001_l_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.375725,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.000691,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_calf_adv",
+      "name": "Bip001 L Calf Adv",
+      "parent": "bip001_l_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          1e-06,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "jh_l",
+      "name": "JH_L",
+      "parent": "bip001_l_calf_adv",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.331013,
+          0.018908,
+          -0.005775
+        ],
+        "rotation": [
+          0.114543,
+          -0.061584,
+          0.204332,
+          0.970225
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_foot",
+      "name": "Bip001 L Foot",
+      "parent": "bip001_l_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.404121,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.121625,
+          -0.0284,
+          -0.005113,
+          0.992157
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_toe0",
+      "name": "Bip001 L Toe0",
+      "parent": "bip001_l_foot",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.10004,
+          0.080283,
+          4.1e-05
+        ],
+        "rotation": [
+          -0.001528,
+          -0.001523,
+          0.708719,
+          0.705488
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "knee_l",
+      "name": "knee_L",
+      "parent": "bip001_l_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          1e-06,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          0.705808,
+          0.708403
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_thigh_twis",
+      "name": "Bip001 L Thigh_Twis",
+      "parent": "bip001_l_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -4e-05,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "thigh_fix02",
+      "name": "Thigh_fix02",
+      "parent": "bip001_l_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.044746,
+          0.060602,
+          0.001471
+        ],
+        "rotation": [
+          -0.998871,
+          -0.002039,
+          0.046504,
+          0.009494
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "thigh_fix03",
+      "name": "Thigh_fix03",
+      "parent": "bip001_l_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.035132,
+          -0.006547,
+          -0.059495
+        ],
+        "rotation": [
+          -0.697405,
+          0.114499,
+          0.05488,
+          0.70534
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_thigh",
+      "name": "Bip001 R Thigh",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          -0.0,
+          -0.078879
+        ],
+        "rotation": [
+          0.009392,
+          0.999471,
+          -0.01015,
+          0.029442
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_calf",
+      "name": "Bip001 R Calf",
+      "parent": "bip001_r_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.375726,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.000691,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_calf_adv",
+      "name": "Bip001 R Calf Adv",
+      "parent": "bip001_r_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1e-06,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "jh_r",
+      "name": "JH_R",
+      "parent": "bip001_r_calf_adv",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.331013,
+          0.018908,
+          0.005771
+        ],
+        "rotation": [
+          -0.114959,
+          0.061603,
+          0.205891,
+          0.969845
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_foot",
+      "name": "Bip001 R Foot",
+      "parent": "bip001_r_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.404118,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.121727,
+          0.028033,
+          -0.001533,
+          0.992166
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_toe0",
+      "name": "Bip001 R Toe0",
+      "parent": "bip001_r_foot",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.10004,
+          0.080283,
+          -4.1e-05
+        ],
+        "rotation": [
+          0.001528,
+          0.001523,
+          0.708719,
+          0.705488
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "knee_r",
+      "name": "knee_R",
+      "parent": "bip001_r_calf",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          -0.0,
+          -1e-06
+        ],
+        "rotation": [
+          1e-06,
+          -1e-06,
+          0.705808,
+          0.708403
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_thigh_twis",
+      "name": "Bip001 R Thigh_Twis",
+      "parent": "bip001_r_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "thigh_fix01",
+      "name": "Thigh_fix01",
+      "parent": "bip001_r_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.044746,
+          0.060601,
+          -0.001479
+        ],
+        "rotation": [
+          0.998872,
+          0.004499,
+          0.046325,
+          0.009445
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "thigh_fix04",
+      "name": "Thigh_fix04",
+      "parent": "bip001_r_thigh",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.035132,
+          -0.006543,
+          0.059491
+        ],
+        "rotation": [
+          -0.70505,
+          -0.056786,
+          -0.112591,
+          0.697856
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_spine",
+      "name": "Bip001 Spine",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.050711,
+          0.010133,
+          0.0
+        ],
+        "rotation": [
+          -2e-06,
+          -1e-06,
+          0.018212,
+          0.999834
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_spine1",
+      "name": "Bip001 Spine1",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.088334,
+          -7.4e-05,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.024366,
+          0.999703
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_spine2",
+      "name": "Bip001 Spine2",
+      "parent": "bip001_spine1",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.093488,
+          -0.000156,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.084485,
+          0.996425
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_clavicle",
+      "name": "Bip001 L Clavicle",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.169149,
+          -0.023955,
+          0.015531
+        ],
+        "rotation": [
+          -0.601141,
+          0.02505,
+          -0.79854,
+          0.01836
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_upperarm",
+      "name": "Bip001 L UpperArm",
+      "parent": "bip001_l_clavicle",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.082837,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.09152,
+          0.283453,
+          0.034858,
+          0.953973
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_forearm",
+      "name": "Bip001 L Forearm",
+      "parent": "bip001_l_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.223552,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.035634,
+          0.999365
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_forearm_adv",
+      "name": "Bip001 L Forearm Adv",
+      "parent": "bip001_l_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          9.4e-05,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1e-06,
+          -0.000233,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_foretwist",
+      "name": "Bip001_L_ForeTwist",
+      "parent": "bip001_l_forearm_adv",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.000208,
+          -0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_hand",
+      "name": "Bip001 L Hand",
+      "parent": "bip001_l_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.202115,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.706209,
+          -0.020915,
+          -0.008055,
+          0.707649
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger0",
+      "name": "Bip001 L Finger0",
+      "parent": "bip001_l_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.008499,
+          0.005413,
+          -0.010966
+        ],
+        "rotation": [
+          0.50346,
+          0.309138,
+          -0.03783,
+          0.805935
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger01",
+      "name": "Bip001 L Finger01",
+      "parent": "bip001_l_finger0",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.036986,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.020018,
+          -0.028918,
+          -0.026715,
+          0.999024
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger02",
+      "name": "Bip001 L Finger02",
+      "parent": "bip001_l_finger01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.025576,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.000946,
+          0.001501,
+          -0.050372,
+          0.998729
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger1",
+      "name": "Bip001 L Finger1",
+      "parent": "bip001_l_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.069582,
+          -0.002418,
+          -0.016843
+        ],
+        "rotation": [
+          0.08013,
+          0.036006,
+          0.009898,
+          0.996085
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger11",
+      "name": "Bip001 L Finger11",
+      "parent": "bip001_l_finger1",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.030228,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.027397,
+          0.999625
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger12",
+      "name": "Bip001 L Finger12",
+      "parent": "bip001_l_finger11",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.018891,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.024208,
+          0.999707
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger2",
+      "name": "Bip001 L Finger2",
+      "parent": "bip001_l_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.067578,
+          -0.005533,
+          -0.001746
+        ],
+        "rotation": [
+          0.002741,
+          -0.015174,
+          0.029316,
+          0.999451
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger21",
+      "name": "Bip001 L Finger21",
+      "parent": "bip001_l_finger2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.032065,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.036439,
+          0.999336
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger22",
+      "name": "Bip001 L Finger22",
+      "parent": "bip001_l_finger21",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.022008,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.056761,
+          0.998388
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger3",
+      "name": "Bip001 L Finger3",
+      "parent": "bip001_l_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.064869,
+          -0.002157,
+          0.012728
+        ],
+        "rotation": [
+          -0.075125,
+          -0.068075,
+          0.026119,
+          0.994505
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger31",
+      "name": "Bip001 L Finger31",
+      "parent": "bip001_l_finger3",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.029342,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.050927,
+          0.998702
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger32",
+      "name": "Bip001 L Finger32",
+      "parent": "bip001_l_finger31",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.021058,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.024581,
+          0.999698
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger4",
+      "name": "Bip001 L Finger4",
+      "parent": "bip001_l_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.056248,
+          0.006112,
+          0.023447
+        ],
+        "rotation": [
+          -0.101132,
+          -0.111061,
+          0.018419,
+          0.988483
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger41",
+      "name": "Bip001 L Finger41",
+      "parent": "bip001_l_finger4",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.024419,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.017853,
+          0.999841
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_finger42",
+      "name": "Bip001 L Finger42",
+      "parent": "bip001_l_finger41",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.014353,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.034803,
+          0.999394
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "elbow_l",
+      "name": "Elbow_L",
+      "parent": "bip001_l_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          6.7e-05,
+          0.000107,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          0.71039,
+          0.703809
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_uparmtwist01",
+      "name": "Bip001_L_UpArmTwist01",
+      "parent": "bip001_l_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.075683,
+          0.0,
+          -0.0,
+          0.997132
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bone010",
+      "name": "Bone010",
+      "parent": "bip001_l_uparmtwist01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.088717,
+          0.013021,
+          0.023439
+        ],
+        "rotation": [
+          0.533963,
+          0.0,
+          0.0,
+          0.845508
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_l_uparmtwist02",
+      "name": "Bip001_L_UpArmTwist02",
+      "parent": "bip001_l_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.106629,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.009438,
+          0.0,
+          -0.0,
+          0.999955
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_elbow_",
+      "name": "Bn_elbow ",
+      "parent": "bip001_l_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.205727,
+          0.026936,
+          -0.012921
+        ],
+        "rotation": [
+          -0.0,
+          1e-06,
+          0.683162,
+          0.730267
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_neck",
+      "name": "Bip001 Neck",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.194175,
+          -0.016186,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          0.108482,
+          0.994098
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_head",
+      "name": "Bip001 Head",
+      "parent": "bip001_neck",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.064967,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.021679,
+          0.999765
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear1_01",
+      "name": "Ear1_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.164335,
+          -0.009944,
+          0.043926
+        ],
+        "rotation": [
+          -0.981476,
+          -0.09903,
+          -0.089295,
+          0.137569
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear1_02",
+      "name": "Ear1_02",
+      "parent": "ear1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06122,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.029894,
+          0.999553
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear1_03",
+      "name": "Ear1_03",
+      "parent": "ear1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.065378,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.00288,
+          0.999996
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear2_01",
+      "name": "Ear2_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.164335,
+          -0.009944,
+          -0.04393
+        ],
+        "rotation": [
+          0.981476,
+          0.09903,
+          -0.089294,
+          0.137567
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear2_02",
+      "name": "Ear2_02",
+      "parent": "ear2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06122,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.029894,
+          0.999553
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ear2_03",
+      "name": "Ear2_03",
+      "parent": "ear2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.065378,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.00288,
+          0.999996
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "eye_l",
+      "name": "Eye_L",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06289,
+          -0.010343,
+          0.02581
+        ],
+        "rotation": [
+          0.065377,
+          -0.057637,
+          0.747258,
+          0.658794
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "eye_r",
+      "name": "Eye_R",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.062894,
+          -0.010376,
+          -0.025806
+        ],
+        "rotation": [
+          -0.065376,
+          0.057636,
+          0.747258,
+          0.658794
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb1_01",
+      "name": "HairB1_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.025877,
+          -0.071005,
+          0.058952
+        ],
+        "rotation": [
+          -0.053869,
+          -0.128624,
+          -0.980161,
+          0.140847
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb1_02",
+      "name": "HairB1_02",
+      "parent": "hairb1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.153576,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1e-06,
+          -0.024443,
+          0.999701
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb1_03",
+      "name": "HairB1_03",
+      "parent": "hairb1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.162839,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          0.004916,
+          0.999988
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb1_04",
+      "name": "HairB1_04",
+      "parent": "hairb1_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.146366,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.001926,
+          0.045354,
+          0.015252,
+          0.998853
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb1_05",
+      "name": "HairB1_05",
+      "parent": "hairb1_04",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.152885,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.018484,
+          0.063615,
+          -0.021225,
+          0.997578
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb2_01",
+      "name": "HairB2_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.025876,
+          -0.071005,
+          -0.05895
+        ],
+        "rotation": [
+          -0.140847,
+          0.980161,
+          0.128626,
+          0.05387
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb2_02",
+      "name": "HairB2_02",
+      "parent": "hairb2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.153576,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          1e-06,
+          0.024444,
+          0.999701
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb2_03",
+      "name": "HairB2_03",
+      "parent": "hairb2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.162839,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.004915,
+          0.999988
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb2_04",
+      "name": "HairB2_04",
+      "parent": "hairb2_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.146367,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.001926,
+          0.045354,
+          -0.015253,
+          0.998853
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb2_05",
+      "name": "HairB2_05",
+      "parent": "hairb2_04",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.152885,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.018484,
+          0.063615,
+          0.021225,
+          0.997578
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb3_01",
+      "name": "HairB3_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.036258,
+          -0.109875,
+          0.000108
+        ],
+        "rotation": [
+          0.0,
+          1e-06,
+          -0.981705,
+          0.190409
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb3_02",
+      "name": "HairB3_02",
+      "parent": "hairb3_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134884,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.00139,
+          0.999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb3_03",
+      "name": "HairB3_03",
+      "parent": "hairb3_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.117985,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          1e-06,
+          -0.017346,
+          0.99985
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairb3_04",
+      "name": "HairB3_04",
+      "parent": "hairb3_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.108708,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          -0.048241,
+          0.998836
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf1_01",
+      "name": "HairF1_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.156649,
+          0.060665,
+          -0.036
+        ],
+        "rotation": [
+          0.194081,
+          0.886576,
+          -0.399818,
+          0.128302
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf1_02",
+      "name": "HairF1_02",
+      "parent": "hairf1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.039873,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.004215,
+          0.037456,
+          -0.111141,
+          0.99309
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf1_03",
+      "name": "HairF1_03",
+      "parent": "hairf1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.031248,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.002614,
+          0.025768,
+          -0.096082,
+          0.995036
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf2_01",
+      "name": "HairF2_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.156365,
+          0.072069,
+          -0.010708
+        ],
+        "rotation": [
+          0.17584,
+          0.978745,
+          -0.091868,
+          0.051958
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf2_02",
+      "name": "HairF2_02",
+      "parent": "hairf2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.03986,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.004468,
+          0.022026,
+          -0.051049,
+          0.998443
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf2_03",
+      "name": "HairF2_03",
+      "parent": "hairf2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.027016,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.000274,
+          0.019645,
+          -0.082055,
+          0.996434
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf3_01",
+      "name": "HairF3_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.156907,
+          0.067556,
+          0.018811
+        ],
+        "rotation": [
+          -0.185666,
+          -0.971384,
+          -0.142704,
+          0.039721
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf3_02",
+      "name": "HairF3_02",
+      "parent": "hairf3_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.039722,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          1e-06,
+          -0.048656,
+          0.998816
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf3_03",
+      "name": "HairF3_03",
+      "parent": "hairf3_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.028737,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.123185,
+          0.992384
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf4_01",
+      "name": "HairF4_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.155975,
+          0.056563,
+          0.036096
+        ],
+        "rotation": [
+          -0.181261,
+          -0.872629,
+          -0.431739,
+          0.138795
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf4_02",
+      "name": "HairF4_02",
+      "parent": "hairf4_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.039721,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.001082,
+          -0.039343,
+          -0.06533,
+          0.997087
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairf4_03",
+      "name": "HairF4_03",
+      "parent": "hairf4_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.031584,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.005114,
+          -0.029669,
+          -0.085091,
+          0.995918
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs1_01",
+      "name": "HairS1_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.128854,
+          0.039756,
+          0.065826
+        ],
+        "rotation": [
+          -0.074601,
+          -0.717842,
+          -0.691489,
+          0.031309
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs1_02",
+      "name": "HairS1_02",
+      "parent": "hairs1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.061219,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.00261,
+          -0.034878,
+          -0.074593,
+          0.996601
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs1_03",
+      "name": "HairS1_03",
+      "parent": "hairs1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.047752,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -2e-06,
+          -0.064362,
+          0.997927
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs2_01",
+      "name": "HairS2_01",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.128854,
+          0.039756,
+          -0.06583
+        ],
+        "rotation": [
+          0.074601,
+          0.717843,
+          -0.691488,
+          0.031309
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs2_02",
+      "name": "HairS2_02",
+      "parent": "hairs2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06122,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.002609,
+          0.034875,
+          -0.074593,
+          0.996601
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "hairs2_03",
+      "name": "HairS2_03",
+      "parent": "hairs2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.047752,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          6e-06,
+          -0.064362,
+          0.997927
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "mouth_a",
+      "name": "Mouth_A",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.000834,
+          0.063611,
+          -0.009146
+        ],
+        "rotation": [
+          -0.0,
+          -1e-06,
+          0.672211,
+          0.740359
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "mouth_b",
+      "name": "Mouth_B",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.002261,
+          0.063473,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -1e-06,
+          0.672211,
+          0.740359
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "mouth_c",
+      "name": "Mouth_C",
+      "parent": "bip001_head",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.000831,
+          0.063611,
+          0.00915
+        ],
+        "rotation": [
+          -0.0,
+          -1e-06,
+          0.672211,
+          0.740359
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_clavicle",
+      "name": "Bip001 R Clavicle",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.169149,
+          -0.023955,
+          -0.015531
+        ],
+        "rotation": [
+          0.703314,
+          -0.022344,
+          -0.710201,
+          0.021567
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_upperarm",
+      "name": "Bip001 R UpperArm",
+      "parent": "bip001_r_clavicle",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.082837,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.083271,
+          0.004631,
+          -0.013117,
+          0.99643
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_forearm",
+      "name": "Bip001 R Forearm",
+      "parent": "bip001_r_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.223553,
+          0.0,
+          1e-06
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.03563,
+          0.999365
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_forearm_adv",
+      "name": "Bip001 R Forearm Adv",
+      "parent": "bip001_r_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0,
+          0.000128,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.000316,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_foretwist",
+      "name": "Bip001_R_ForeTwist",
+      "parent": "bip001_r_forearm_adv",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -2e-06,
+          1e-06,
+          1e-06
+        ],
+        "rotation": [
+          -0.000209,
+          -1e-06,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "sleevedown001",
+      "name": "SleeveDown001",
+      "parent": "bip001_r_foretwist",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          1e-06,
+          -1e-06,
+          -2e-06
+        ],
+        "rotation": [
+          0.000675,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_hand",
+      "name": "Bip001 R Hand",
+      "parent": "bip001_r_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.202114,
+          -0.0,
+          -1e-06
+        ],
+        "rotation": [
+          0.706209,
+          0.020914,
+          -0.008057,
+          0.707649
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger0",
+      "name": "Bip001 R Finger0",
+      "parent": "bip001_r_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.008499,
+          0.005413,
+          0.010966
+        ],
+        "rotation": [
+          -0.50346,
+          -0.309138,
+          -0.03783,
+          0.805935
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger01",
+      "name": "Bip001 R Finger01",
+      "parent": "bip001_r_finger0",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.036985,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.020018,
+          0.028918,
+          -0.026716,
+          0.999024
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger02",
+      "name": "Bip001 R Finger02",
+      "parent": "bip001_r_finger01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.025576,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.000946,
+          -0.001501,
+          -0.050371,
+          0.998729
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger1",
+      "name": "Bip001 R Finger1",
+      "parent": "bip001_r_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.069582,
+          -0.002418,
+          0.016843
+        ],
+        "rotation": [
+          -0.08013,
+          -0.036005,
+          0.009898,
+          0.996085
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger11",
+      "name": "Bip001 R Finger11",
+      "parent": "bip001_r_finger1",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.030228,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.027397,
+          0.999625
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger12",
+      "name": "Bip001 R Finger12",
+      "parent": "bip001_r_finger11",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.018891,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.024209,
+          0.999707
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger2",
+      "name": "Bip001 R Finger2",
+      "parent": "bip001_r_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.067578,
+          -0.005533,
+          0.001746
+        ],
+        "rotation": [
+          -0.002741,
+          0.015174,
+          0.029316,
+          0.999451
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger21",
+      "name": "Bip001 R Finger21",
+      "parent": "bip001_r_finger2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.032065,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.036439,
+          0.999336
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger22",
+      "name": "Bip001 R Finger22",
+      "parent": "bip001_r_finger21",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.022008,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.056761,
+          0.998388
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger3",
+      "name": "Bip001 R Finger3",
+      "parent": "bip001_r_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.064869,
+          -0.002157,
+          -0.012728
+        ],
+        "rotation": [
+          0.075125,
+          0.068075,
+          0.02612,
+          0.994505
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger31",
+      "name": "Bip001 R Finger31",
+      "parent": "bip001_r_finger3",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.029342,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.050927,
+          0.998702
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger32",
+      "name": "Bip001 R Finger32",
+      "parent": "bip001_r_finger31",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.021058,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.024581,
+          0.999698
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger4",
+      "name": "Bip001 R Finger4",
+      "parent": "bip001_r_hand",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.056249,
+          0.006112,
+          -0.023447
+        ],
+        "rotation": [
+          0.101132,
+          0.111062,
+          0.018419,
+          0.988483
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger41",
+      "name": "Bip001 R Finger41",
+      "parent": "bip001_r_finger4",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.024419,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.017853,
+          0.999841
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_finger42",
+      "name": "Bip001 R Finger42",
+      "parent": "bip001_r_finger41",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.014354,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.034803,
+          0.999394
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "elbow_r",
+      "name": "Elbow_R",
+      "parent": "bip001_r_forearm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          9.2e-05,
+          5.1e-05,
+          1e-06
+        ],
+        "rotation": [
+          1e-06,
+          -1e-06,
+          0.708013,
+          0.706199
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_uparmtwist01",
+      "name": "Bip001_R_UpArmTwist01",
+      "parent": "bip001_r_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.035906,
+          -0.0,
+          1e-06,
+          0.999355
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bip001_r_uparmtwist02",
+      "name": "Bip001_R_UpArmTwist02",
+      "parent": "bip001_r_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.106626,
+          1e-06,
+          4e-06
+        ],
+        "rotation": [
+          -0.014073,
+          -0.0,
+          0.0,
+          0.999901
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_sleeveup",
+      "name": "Bn_SleeveUP",
+      "parent": "bip001_r_upperarm",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.012312,
+          -0.0,
+          0.0,
+          0.999924
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode1_01",
+      "name": "Furisode1_01",
+      "parent": "bn_sleeveup",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.119626,
+          0.004648,
+          0.047056
+        ],
+        "rotation": [
+          0.468944,
+          -0.473143,
+          0.512209,
+          0.542097
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode1_02",
+      "name": "Furisode1_02",
+      "parent": "furisode1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.13534,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.008713,
+          0.030825,
+          0.005768,
+          0.99947
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode1_03",
+      "name": "Furisode1_03",
+      "parent": "furisode1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.110093,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.000959,
+          0.021197,
+          -0.021593,
+          0.999542
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode2_01",
+      "name": "Furisode2_01",
+      "parent": "bn_sleeveup",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.213879,
+          0.001013,
+          0.041968
+        ],
+        "rotation": [
+          0.472743,
+          -0.469411,
+          0.507828,
+          0.546149
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode2_02",
+      "name": "Furisode2_02",
+      "parent": "furisode2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.137216,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.000363,
+          0.030304,
+          0.016513,
+          0.999404
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode2_03",
+      "name": "Furisode2_03",
+      "parent": "furisode2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.111676,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.000151,
+          0.022783,
+          -0.014016,
+          0.999642
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_spine2fix",
+      "name": "Bn_Spine2FIX",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.140979,
+          0.024387,
+          0.065848
+        ],
+        "rotation": [
+          0.040769,
+          -0.393533,
+          -0.331615,
+          0.856447
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "chest_l",
+      "name": "Chest_L",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06583,
+          0.02817,
+          0.0423
+        ],
+        "rotation": [
+          0.101455,
+          -0.087924,
+          0.748863,
+          0.648985
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "chest_r",
+      "name": "Chest_R",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.065826,
+          0.028168,
+          -0.0423
+        ],
+        "rotation": [
+          -0.10135,
+          0.087832,
+          0.748879,
+          0.648995
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia1_01",
+      "name": "MaJia1_01",
+      "parent": "chest_r",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.057811,
+          0.009142,
+          -0.027734
+        ],
+        "rotation": [
+          0.238588,
+          0.26132,
+          0.665055,
+          0.65764
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia1_02",
+      "name": "MaJia1_02",
+      "parent": "majia1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.074827,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.00294,
+          0.999996
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia1_03",
+      "name": "MaJia1_03",
+      "parent": "majia1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.08686,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -1e-06,
+          -0.0,
+          0.001508,
+          0.999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_01_root",
+      "name": "Furisode_B_01_ROOT",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.129399,
+          -0.064115,
+          0.142026
+        ],
+        "rotation": [
+          0.215215,
+          -0.968286,
+          0.126451,
+          0.01073
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_01",
+      "name": "Furisode_B_01",
+      "parent": "furisode_b_01_root",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.03386,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -1e-06,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_02",
+      "name": "Furisode_B_02",
+      "parent": "furisode_b_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.121897,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_03",
+      "name": "Furisode_B_03",
+      "parent": "furisode_b_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.127852,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -2e-06,
+          -0.0,
+          -2e-06,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_04",
+      "name": "Furisode_B_04",
+      "parent": "furisode_b_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.11059,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -4e-06,
+          -0.02944,
+          0.0,
+          0.999567
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode_b_05",
+      "name": "Furisode_B_05",
+      "parent": "furisode_b_04",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.107719,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -4e-06,
+          -0.027168,
+          3e-06,
+          0.999631
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ld_01",
+      "name": "LD_01",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.102088,
+          0.076647,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -1e-06,
+          0.951305,
+          0.30825
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ld_02",
+      "name": "LD_02",
+      "parent": "ld_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.026278,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          0.214862,
+          0.976644
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "ld_03",
+      "name": "LD_03",
+      "parent": "ld_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.029247,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          0.18862,
+          0.98205
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia2_01",
+      "name": "MaJia2_01",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.068409,
+          -0.017743,
+          -0.112009
+        ],
+        "rotation": [
+          0.074414,
+          -0.711539,
+          -0.698061,
+          0.029764
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia2_02",
+      "name": "MaJia2_02",
+      "parent": "majia2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.079146,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          -0.009765,
+          0.999952
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia2_03",
+      "name": "MaJia2_03",
+      "parent": "majia2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.085833,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          0.0031,
+          0.999995
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia3_01",
+      "name": "MaJia3_01",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.08658,
+          -0.08339,
+          -0.057407
+        ],
+        "rotation": [
+          0.063287,
+          -0.980384,
+          -0.186006,
+          0.015626
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia3_02",
+      "name": "MaJia3_02",
+      "parent": "majia3_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.090367,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          -0.009938,
+          0.999951
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia3_03",
+      "name": "MaJia3_03",
+      "parent": "majia3_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.086093,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -3e-06,
+          -1e-06,
+          0.002579,
+          0.999997
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia4_01",
+      "name": "MaJia4_01",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.08743,
+          -0.087376,
+          0.060686
+        ],
+        "rotation": [
+          0.095028,
+          -0.995282,
+          -0.004735,
+          0.019028
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia4_02",
+      "name": "MaJia4_02",
+      "parent": "majia4_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.090367,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          -0.009938,
+          0.999951
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia4_03",
+      "name": "MaJia4_03",
+      "parent": "majia4_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.086094,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -3e-06,
+          -1e-06,
+          0.019523,
+          0.999809
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia5_01_root",
+      "name": "MaJia5_01_ROOT",
+      "parent": "bip001_spine2",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.123858,
+          -0.075189,
+          0.173767
+        ],
+        "rotation": [
+          0.096715,
+          -0.987058,
+          0.127763,
+          0.006211
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia5_01",
+      "name": "MaJia5_01",
+      "parent": "majia5_01_root",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.037703,
+          0.00131,
+          0.001101
+        ],
+        "rotation": [
+          2e-06,
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia5_02",
+      "name": "MaJia5_02",
+      "parent": "majia5_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.090367,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          0.018561,
+          0.999828
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "majia5_03",
+      "name": "MaJia5_03",
+      "parent": "majia5_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.086093,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -3e-06,
+          -0.0,
+          -0.018986,
+          0.99982
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pds_01",
+      "name": "PDS_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.0666,
+          0.062712,
+          0.050581
+        ],
+        "rotation": [
+          -0.007204,
+          -0.293607,
+          0.952285,
+          0.083044
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pds_02",
+      "name": "PDS_02",
+      "parent": "pds_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.024225,
+          -1e-06,
+          -0.0
+        ],
+        "rotation": [
+          -3.2e-05,
+          0.01697,
+          0.00189,
+          0.999854
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pds_03",
+      "name": "PDS_03",
+      "parent": "pds_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.031327,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.00972,
+          0.999953
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt1_01",
+      "name": "Skirt1_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.083582,
+          0.06894,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -1e-06,
+          0.99927,
+          0.038192
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt1_02",
+      "name": "Skirt1_02",
+      "parent": "skirt1_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134437,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.012008,
+          0.999928
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt1_03",
+      "name": "Skirt1_03",
+      "parent": "skirt1_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.121101,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -1e-06,
+          -1e-06,
+          -0.00809,
+          0.999967
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt1_04",
+      "name": "Skirt1_04",
+      "parent": "skirt1_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.132028,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          -0.024248,
+          0.999706
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt2_01",
+      "name": "Skirt2_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.082401,
+          0.049777,
+          0.066561
+        ],
+        "rotation": [
+          0.021279,
+          -0.295082,
+          0.954008,
+          0.048412
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt2_02",
+      "name": "Skirt2_02",
+      "parent": "skirt2_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134437,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          -0.012008,
+          0.999928
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt2_03",
+      "name": "Skirt2_03",
+      "parent": "skirt2_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.121101,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.00809,
+          0.999967
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt2_04",
+      "name": "Skirt2_04",
+      "parent": "skirt2_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.132027,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -2e-06,
+          1e-06,
+          -0.024247,
+          0.999706
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt3_01",
+      "name": "Skirt3_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.079304,
+          -0.007244,
+          0.097205
+        ],
+        "rotation": [
+          0.057812,
+          -0.704741,
+          0.703103,
+          0.07513
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt3_02",
+      "name": "Skirt3_02",
+      "parent": "skirt3_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.13438,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          -0.007415,
+          0.999973
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt3_03",
+      "name": "Skirt3_03",
+      "parent": "skirt3_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.12112,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          3.1e-05,
+          0.01942,
+          0.999811
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt3_04",
+      "name": "Skirt3_04",
+      "parent": "skirt3_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.131989,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -3e-06,
+          -0.0,
+          0.008903,
+          0.99996
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt4_01",
+      "name": "Skirt4_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.075521,
+          -0.05626,
+          0.061665
+        ],
+        "rotation": [
+          0.092973,
+          -0.950701,
+          0.288328,
+          0.066266
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt4_02",
+      "name": "Skirt4_02",
+      "parent": "skirt4_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134437,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          2e-06,
+          0.0,
+          0.026534,
+          0.999648
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt4_03",
+      "name": "Skirt4_03",
+      "parent": "skirt4_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.1211,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          0.040693,
+          0.999172
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt4_04",
+      "name": "Skirt4_04",
+      "parent": "skirt4_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.132028,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          1e-06,
+          0.0,
+          0.028922,
+          0.999582
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt5_01",
+      "name": "Skirt5_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.076019,
+          -0.072109,
+          -0.0
+        ],
+        "rotation": [
+          -0.095374,
+          0.995441,
+          1e-06,
+          0.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt5_02",
+      "name": "Skirt5_02",
+      "parent": "skirt5_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134437,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          -0.0,
+          0.024887,
+          0.99969
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt5_03",
+      "name": "Skirt5_03",
+      "parent": "skirt5_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.1211,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          4e-06,
+          0.0,
+          0.051254,
+          0.998686
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt5_04",
+      "name": "Skirt5_04",
+      "parent": "skirt5_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.132028,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.0,
+          0.0,
+          0.017207,
+          0.999852
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt6_01",
+      "name": "Skirt6_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.075521,
+          -0.05626,
+          -0.06166
+        ],
+        "rotation": [
+          -0.092973,
+          0.9507,
+          0.288329,
+          0.066266
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt6_02",
+      "name": "Skirt6_02",
+      "parent": "skirt6_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.134437,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          -0.0,
+          0.026533,
+          0.999648
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt6_03",
+      "name": "Skirt6_03",
+      "parent": "skirt6_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.1211,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -3e-06,
+          3.2e-05,
+          0.040693,
+          0.999172
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt6_04",
+      "name": "Skirt6_04",
+      "parent": "skirt6_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.132027,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -2e-06,
+          0.0,
+          0.028922,
+          0.999582
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt7_01",
+      "name": "Skirt7_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.079304,
+          -0.007244,
+          -0.09721
+        ],
+        "rotation": [
+          -0.078953,
+          0.706681,
+          0.701045,
+          0.053881
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt7_02",
+      "name": "Skirt7_02",
+      "parent": "skirt7_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.13438,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.007415,
+          0.999973
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt7_03",
+      "name": "Skirt7_03",
+      "parent": "skirt7_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.121119,
+          -1e-06,
+          0.0
+        ],
+        "rotation": [
+          0.000249,
+          -0.012734,
+          0.019419,
+          0.99973
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt7_04",
+      "name": "Skirt7_04",
+      "parent": "skirt7_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.131989,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.000176,
+          -0.019398,
+          0.008902,
+          0.999772
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_01",
+      "name": "Skirt8_01",
+      "parent": "bip001_spine",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.082401,
+          0.049777,
+          -0.06656
+        ],
+        "rotation": [
+          -0.068686,
+          0.29697,
+          0.951746,
+          0.035638
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_02",
+      "name": "Skirt8_02",
+      "parent": "skirt8_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.168927,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.001322,
+          -0.067479,
+          -0.005812,
+          0.997703
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_03",
+      "name": "Skirt8_03",
+      "parent": "skirt8_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.11336,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -4e-06,
+          0.00179,
+          -0.001694,
+          0.999997
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_04",
+      "name": "Skirt8_04",
+      "parent": "skirt8_03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.10804,
+          -0.0,
+          0.0
+        ],
+        "rotation": [
+          -0.001028,
+          -0.0164,
+          -0.003675,
+          0.999858
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_06",
+      "name": "Skirt8_06",
+      "parent": "skirt8_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.173099,
+          -0.000512,
+          -0.021337
+        ],
+        "rotation": [
+          -0.002752,
+          -0.000225,
+          0.016084,
+          0.999867
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_07",
+      "name": "Skirt8_07",
+      "parent": "skirt8_06",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.10977,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          -0.016322,
+          0.0,
+          0.999867
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "skirt8_08",
+      "name": "Skirt8_08",
+      "parent": "skirt8_07",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.113813,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          3.3e-05,
+          -0.038889,
+          -0.0163,
+          0.999111
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pelvis_l",
+      "name": "Pelvis_L",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.054649,
+          -0.057681,
+          0.074635
+        ],
+        "rotation": [
+          0.70102,
+          -0.713141,
+          1e-06,
+          1e-06
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pelvis_l2",
+      "name": "Pelvis_L2",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.009945,
+          -0.076498,
+          0.067901
+        ],
+        "rotation": [
+          -1e-06,
+          -1e-06,
+          -0.510625,
+          0.859804
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pelvis_r",
+      "name": "Pelvis_R",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.05465,
+          -0.057686,
+          -0.07463
+        ],
+        "rotation": [
+          0.70102,
+          -0.713141,
+          1e-06,
+          1e-06
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "pelvis_r2",
+      "name": "Pelvis_R2",
+      "parent": "bip001_pelvis",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.009946,
+          -0.076498,
+          -0.0679
+        ],
+        "rotation": [
+          -1e-06,
+          -1e-06,
+          -0.510625,
+          0.859804
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_hilt",
+      "name": "Bn_katana_hilt",
+      "parent": "__motion_root__",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.021774,
+          -0.358709,
+          1.05335
+        ],
+        "rotation": [
+          -0.504268,
+          -0.504265,
+          0.495696,
+          0.495697
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst",
+      "name": "Bn_katana_burst",
+      "parent": "bn_katana_hilt",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.126207,
+          -0.00448,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst_eye",
+      "name": "Bn_katana_burst_eye",
+      "parent": "bn_katana_burst",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.111075,
+          -0.016952,
+          -0.012526
+        ],
+        "rotation": [
+          0.915304,
+          -0.402765,
+          1e-06,
+          0.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst01",
+      "name": "Bn_katana_burst01",
+      "parent": "bn_katana_hilt",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.178973,
+          0.051468,
+          0.003967
+        ],
+        "rotation": [
+          0.707107,
+          0.707106,
+          0.0,
+          1e-06
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst02",
+      "name": "Bn_katana_burst02",
+      "parent": "bn_katana_burst01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.06069,
+          0.0,
+          0.0
+        ],
+        "rotation": [
+          -3e-06,
+          -0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst03",
+      "name": "Bn_katana_burst03",
+      "parent": "bn_katana_burst02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.062808,
+          -1.2e-05,
+          0.0
+        ],
+        "rotation": [
+          0.0,
+          -0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_burst04",
+      "name": "Bn_katana_burst04",
+      "parent": "bn_katana_burst03",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.062455,
+          -1e-05,
+          0.0
+        ],
+        "rotation": [
+          3e-06,
+          -0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_katana_hilt2",
+      "name": "Bn_katana_hilt2",
+      "parent": "bn_katana_hilt",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.180854,
+          0.030129,
+          0.002678
+        ],
+        "rotation": [
+          -0.849499,
+          -0.505879,
+          0.149258,
+          0.012677
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_weapon",
+      "name": "Bn_Weapon",
+      "parent": "__motion_root__",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.021774,
+          -0.169303,
+          1.053351
+        ],
+        "rotation": [
+          -0.707081,
+          -0.00606,
+          -0.00606,
+          0.707081
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbarda_01",
+      "name": "Bn_scabbardA_01",
+      "parent": "bn_weapon",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.003967,
+          0.042987,
+          0.083819
+        ],
+        "rotation": [
+          0.500001,
+          0.500001,
+          0.499999,
+          0.499999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbarda_02",
+      "name": "Bn_scabbardA_02",
+      "parent": "bn_scabbarda_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.039352,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbarda_03",
+      "name": "Bn_scabbardA_03",
+      "parent": "bn_scabbarda_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.037063,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbardb_01",
+      "name": "Bn_scabbardB_01",
+      "parent": "bn_weapon",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.003967,
+          0.039715,
+          0.018181
+        ],
+        "rotation": [
+          0.500001,
+          0.500001,
+          0.499999,
+          0.499999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbardb_02",
+      "name": "Bn_scabbardB_02",
+      "parent": "bn_scabbardb_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.039353,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -1e-06,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bn_scabbardb_03",
+      "name": "Bn_scabbardB_03",
+      "parent": "bn_scabbardb_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.037063,
+          -0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          -0.0,
+          1.0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "bone015",
+      "name": "Bone015",
+      "parent": "__motion_root__",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.0484,
+          -0.490719,
+          0.389445
+        ],
+        "rotation": [
+          -0.720277,
+          0.693623,
+          -0.003108,
+          0.008897
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode3_01",
+      "name": "Furisode3_01",
+      "parent": "bone015",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          -0.044109,
+          0.003759,
+          0.033897
+        ],
+        "rotation": [
+          0.500368,
+          -0.453025,
+          0.516262,
+          0.527137
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode3_02",
+      "name": "Furisode3_02",
+      "parent": "furisode3_01",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.137216,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          -0.000417,
+          0.030282,
+          0.014799,
+          0.999432
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    },
+    {
+      "id": "furisode3_03",
+      "name": "Furisode3_03",
+      "parent": "furisode3_02",
+      "role": "bone",
+      "deform": true,
+      "restLocal": {
+        "translation": [
+          0.112232,
+          0.0,
+          -0.0
+        ],
+        "rotation": [
+          0.000464,
+          0.022669,
+          0.012766,
+          0.999661
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ]
+      },
+      "poseDofs": {
+        "translation": false,
+        "rotation": true,
+        "scale": false
+      },
+      "limits": {},
+      "sprite": null
+    }
+  ],
+  "drawOrder": [
+    "bip001_pelvis",
+    "bip001_l_thigh",
+    "bip001_l_calf",
+    "bip001_l_calf_adv",
+    "jh_l",
+    "bip001_l_foot",
+    "bip001_l_toe0",
+    "knee_l",
+    "bip001_l_thigh_twis",
+    "thigh_fix02",
+    "thigh_fix03",
+    "bip001_r_thigh",
+    "bip001_r_calf",
+    "bip001_r_calf_adv",
+    "jh_r",
+    "bip001_r_foot",
+    "bip001_r_toe0",
+    "knee_r",
+    "bip001_r_thigh_twis",
+    "thigh_fix01",
+    "thigh_fix04",
+    "bip001_spine",
+    "bip001_spine1",
+    "bip001_spine2",
+    "bip001_l_clavicle",
+    "bip001_l_upperarm",
+    "bip001_l_forearm",
+    "bip001_l_forearm_adv",
+    "bip001_l_foretwist",
+    "bip001_l_hand",
+    "bip001_l_finger0",
+    "bip001_l_finger01",
+    "bip001_l_finger02",
+    "bip001_l_finger1",
+    "bip001_l_finger11",
+    "bip001_l_finger12",
+    "bip001_l_finger2",
+    "bip001_l_finger21",
+    "bip001_l_finger22",
+    "bip001_l_finger3",
+    "bip001_l_finger31",
+    "bip001_l_finger32",
+    "bip001_l_finger4",
+    "bip001_l_finger41",
+    "bip001_l_finger42",
+    "elbow_l",
+    "bip001_l_uparmtwist01",
+    "bone010",
+    "bip001_l_uparmtwist02",
+    "bn_elbow_",
+    "bip001_neck",
+    "bip001_head",
+    "ear1_01",
+    "ear1_02",
+    "ear1_03",
+    "ear2_01",
+    "ear2_02",
+    "ear2_03",
+    "eye_l",
+    "eye_r",
+    "hairb1_01",
+    "hairb1_02",
+    "hairb1_03",
+    "hairb1_04",
+    "hairb1_05",
+    "hairb2_01",
+    "hairb2_02",
+    "hairb2_03",
+    "hairb2_04",
+    "hairb2_05",
+    "hairb3_01",
+    "hairb3_02",
+    "hairb3_03",
+    "hairb3_04",
+    "hairf1_01",
+    "hairf1_02",
+    "hairf1_03",
+    "hairf2_01",
+    "hairf2_02",
+    "hairf2_03",
+    "hairf3_01",
+    "hairf3_02",
+    "hairf3_03",
+    "hairf4_01",
+    "hairf4_02",
+    "hairf4_03",
+    "hairs1_01",
+    "hairs1_02",
+    "hairs1_03",
+    "hairs2_01",
+    "hairs2_02",
+    "hairs2_03",
+    "mouth_a",
+    "mouth_b",
+    "mouth_c",
+    "bip001_r_clavicle",
+    "bip001_r_upperarm",
+    "bip001_r_forearm",
+    "bip001_r_forearm_adv",
+    "bip001_r_foretwist",
+    "sleevedown001",
+    "bip001_r_hand",
+    "bip001_r_finger0",
+    "bip001_r_finger01",
+    "bip001_r_finger02",
+    "bip001_r_finger1",
+    "bip001_r_finger11",
+    "bip001_r_finger12",
+    "bip001_r_finger2",
+    "bip001_r_finger21",
+    "bip001_r_finger22",
+    "bip001_r_finger3",
+    "bip001_r_finger31",
+    "bip001_r_finger32",
+    "bip001_r_finger4",
+    "bip001_r_finger41",
+    "bip001_r_finger42",
+    "elbow_r",
+    "bip001_r_uparmtwist01",
+    "bip001_r_uparmtwist02",
+    "bn_sleeveup",
+    "furisode1_01",
+    "furisode1_02",
+    "furisode1_03",
+    "furisode2_01",
+    "furisode2_02",
+    "furisode2_03",
+    "bn_spine2fix",
+    "chest_l",
+    "chest_r",
+    "majia1_01",
+    "majia1_02",
+    "majia1_03",
+    "furisode_b_01_root",
+    "furisode_b_01",
+    "furisode_b_02",
+    "furisode_b_03",
+    "furisode_b_04",
+    "furisode_b_05",
+    "ld_01",
+    "ld_02",
+    "ld_03",
+    "majia2_01",
+    "majia2_02",
+    "majia2_03",
+    "majia3_01",
+    "majia3_02",
+    "majia3_03",
+    "majia4_01",
+    "majia4_02",
+    "majia4_03",
+    "majia5_01_root",
+    "majia5_01",
+    "majia5_02",
+    "majia5_03",
+    "pds_01",
+    "pds_02",
+    "pds_03",
+    "skirt1_01",
+    "skirt1_02",
+    "skirt1_03",
+    "skirt1_04",
+    "skirt2_01",
+    "skirt2_02",
+    "skirt2_03",
+    "skirt2_04",
+    "skirt3_01",
+    "skirt3_02",
+    "skirt3_03",
+    "skirt3_04",
+    "skirt4_01",
+    "skirt4_02",
+    "skirt4_03",
+    "skirt4_04",
+    "skirt5_01",
+    "skirt5_02",
+    "skirt5_03",
+    "skirt5_04",
+    "skirt6_01",
+    "skirt6_02",
+    "skirt6_03",
+    "skirt6_04",
+    "skirt7_01",
+    "skirt7_02",
+    "skirt7_03",
+    "skirt7_04",
+    "skirt8_01",
+    "skirt8_02",
+    "skirt8_03",
+    "skirt8_04",
+    "skirt8_06",
+    "skirt8_07",
+    "skirt8_08",
+    "pelvis_l",
+    "pelvis_l2",
+    "pelvis_r",
+    "pelvis_r2",
+    "bn_katana_hilt",
+    "bn_katana_burst",
+    "bn_katana_burst_eye",
+    "bn_katana_burst01",
+    "bn_katana_burst02",
+    "bn_katana_burst03",
+    "bn_katana_burst04",
+    "bn_katana_hilt2",
+    "bn_weapon",
+    "bn_scabbarda_01",
+    "bn_scabbarda_02",
+    "bn_scabbarda_03",
+    "bn_scabbardb_01",
+    "bn_scabbardb_02",
+    "bn_scabbardb_03",
+    "bone015",
+    "furisode3_01",
+    "furisode3_02",
+    "furisode3_03"
+  ]
+}
